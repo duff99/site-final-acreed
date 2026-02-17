@@ -1,0 +1,149 @@
+import type { Job, CreateJobInput, UpdateJobInput, LoginInput, AuthResponse, AdminUser, CreateAdminInput, UpdateAdminInput } from '@shared/types';
+
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
+
+class ApiClient {
+  private accessToken: string | null = null;
+
+  setToken(token: string | null) {
+    this.accessToken = token;
+  }
+
+  getToken() {
+    return this.accessToken;
+  }
+
+  private async request<T>(path: string, options: RequestInit = {}): Promise<T> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...((options.headers as Record<string, string>) || {}),
+    };
+
+    if (this.accessToken) {
+      headers['Authorization'] = `Bearer ${this.accessToken}`;
+    }
+
+    const res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers,
+      credentials: 'include',
+    });
+
+    if (res.status === 401 && this.accessToken) {
+      // Try to refresh the token
+      const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (refreshRes.ok) {
+        const data = await refreshRes.json();
+        this.accessToken = data.accessToken;
+        headers['Authorization'] = `Bearer ${data.accessToken}`;
+        const retry = await fetch(`${API_BASE}${path}`, {
+          ...options,
+          headers,
+          credentials: 'include',
+        });
+        if (!retry.ok) throw new Error((await retry.json()).message);
+        return retry.json();
+      }
+      // Refresh failed — force logout
+      this.accessToken = null;
+      window.location.href = '/admin/login';
+      throw new Error('Session expiree');
+    }
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({ message: 'Erreur inconnue' }));
+      throw new Error(error.message);
+    }
+
+    return res.json();
+  }
+
+  // Public
+  getJobs(sector?: string) {
+    const params = sector && sector !== 'Tous' ? `?sector=${encodeURIComponent(sector)}` : '';
+    return this.request<Job[]>(`/jobs${params}`);
+  }
+
+  getJob(id: string) {
+    return this.request<Job>(`/jobs/${id}`);
+  }
+
+  // Auth
+  login(data: LoginInput) {
+    return this.request<AuthResponse>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  logout() {
+    return this.request<{ message: string }>('/auth/logout', { method: 'POST' });
+  }
+
+  // Admin CRUD
+  getAdminJobs() {
+    return this.request<Job[]>('/admin/jobs');
+  }
+
+  getAdminJob(id: string) {
+    return this.request<Job>(`/admin/jobs/${id}`);
+  }
+
+  createJob(data: CreateJobInput) {
+    return this.request<Job>('/admin/jobs', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  updateJob(id: string, data: UpdateJobInput) {
+    return this.request<Job>(`/admin/jobs/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  deleteJob(id: string) {
+    return this.request<{ message: string }>(`/admin/jobs/${id}`, { method: 'DELETE' });
+  }
+
+  toggleJob(id: string) {
+    return this.request<Job>(`/admin/jobs/${id}/toggle`, { method: 'PATCH' });
+  }
+
+  // Admin User Management
+  getAdminUsers() {
+    return this.request<AdminUser[]>('/admin/users');
+  }
+
+  getAdminUser(id: string) {
+    return this.request<AdminUser>(`/admin/users/${id}`);
+  }
+
+  createAdmin(data: CreateAdminInput) {
+    return this.request<AdminUser>('/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  updateAdmin(id: string, data: UpdateAdminInput) {
+    return this.request<AdminUser>(`/admin/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  deleteAdmin(id: string) {
+    return this.request<{ message: string }>(`/admin/users/${id}`, { method: 'DELETE' });
+  }
+
+  getMe() {
+    return this.request<AdminUser>('/auth/me');
+  }
+}
+
+export const apiClient = new ApiClient();

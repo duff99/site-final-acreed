@@ -1,0 +1,18 @@
+FROM node:20-alpine
+WORKDIR /app
+
+# Copy shared types
+COPY shared/ ../shared/
+
+# Install server dependencies
+COPY server/package*.json ./
+RUN npm ci --production
+
+# Copy server source
+COPY server/ .
+
+# Create data directory for SQLite
+RUN mkdir -p /app/data
+
+EXPOSE 3001
+CMD ["npx", "tsx", "src/index.ts"]

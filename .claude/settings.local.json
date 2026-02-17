@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(wc:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm install)",
+      "Bash(powershell -Command:*)",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:www.raycast.com)",
+      "WebSearch",
+      "Bash(npm run build:*)",
+      "WebFetch(domain:www.lapa.ninja)",
+      "Bash(npx tsx:*)",
+      "Bash(rd /s /q node_modules)",
+      "Bash(set:*)",
+      "Bash(set ADMIN_PASSWORD=admin123456)",
+      "Bash(timeout:*)",
+      "Bash(curl:*)",
+      "Bash(ADMIN_EMAIL=admin@acreedconsulting.com ADMIN_PASSWORD=admin123456 ADMIN_NAME=\"Admin Acreed\" npx tsx:*)",
+      "Bash(npx vite:*)",
+      "Bash(npm install:*)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(ping:*)",
+      "Bash(netstat:*)"
+    ]
+  }
+}

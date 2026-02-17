@@ -1,0 +1,433 @@
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ArrowLeft,
+  ArrowRight,
+  MapPin,
+  Briefcase,
+  Clock,
+  Calendar,
+  CheckCircle2,
+  Wifi,
+  Send,
+} from 'lucide-react';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
+import AnimatedSection from '@/components/AnimatedSection';
+import SpotlightCard from '@/components/SpotlightCard';
+import { useJobs } from '@/hooks/use-jobs';
+import type { Job } from '@shared/types';
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const SECTORS = ['Tous', 'Télécoms', 'IT & Digital', 'Cybersécurité'] as const;
+type Sector = (typeof SECTORS)[number];
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Format ISO date string to DD/MM/YYYY */
+const formatDate = (iso: string): string => {
+  const [year, month, day] = iso.split('-');
+  return `${day}/${month}/${year}`;
+};
+
+// ---------------------------------------------------------------------------
+// Animation Variants
+// ---------------------------------------------------------------------------
+
+const filterVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const cardListVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+    },
+  },
+};
+
+const cardItemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
+  },
+  exit: {
+    opacity: 0,
+    y: -12,
+    transition: { duration: 0.25 },
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Sub-components
+// ---------------------------------------------------------------------------
+
+/** A single detail section inside a job card (Missions, Profil, Avantages) */
+const CardSection = ({
+  title,
+  items,
+}: {
+  title: string;
+  items: string[];
+}) => (
+  <div className="space-y-3">
+    <h4 className="text-sm font-semibold uppercase tracking-premium text-white/50 pl-4 border-l-2 border-white/20">
+      {title}
+    </h4>
+    <ul className="space-y-2 pl-4">
+      {items.map((item, i) => (
+        <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm leading-relaxed">
+          <CheckCircle2
+            size={14}
+            className="mt-1 flex-shrink-0 text-white/30"
+          />
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+/** Inline tags for the skills list */
+const SkillTags = ({ skills }: { skills: string[] }) => (
+  <div className="space-y-3">
+    <h4 className="text-sm font-semibold uppercase tracking-premium text-white/50 pl-4 border-l-2 border-white/20">
+      Compétences
+    </h4>
+    <div className="flex flex-wrap gap-2 pl-4">
+      {skills.map((skill) => (
+        <span
+          key={skill}
+          className="premium-badge text-[11px]"
+        >
+          {skill}
+        </span>
+      ))}
+    </div>
+  </div>
+);
+
+/** A single job card */
+const JobCard = ({ job, index }: { job: Job; index: number }) => {
+  const mailSubject = encodeURIComponent(`Candidature : ${job.title}`);
+  const mailBody = encodeURIComponent(
+    `Bonjour,\n\nJe souhaite postuler à l'offre "${job.title}" (Ref: ${job.id}).\n\nCordialement,`
+  );
+  const mailtoHref = `mailto:contact@acreedconsulting.com?subject=${mailSubject}&body=${mailBody}`;
+
+  return (
+    <motion.div
+      variants={cardItemVariants}
+      layout
+      id={job.id}
+      className="scroll-mt-28"
+    >
+      <SpotlightCard className="p-8 md:p-10">
+        {/* ---- Header meta row ---- */}
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <span className="job-tag font-medium">{job.type}</span>
+
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <MapPin size={13} />
+            {job.location}
+          </span>
+
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Briefcase size={13} />
+            {job.sector}
+          </span>
+
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Clock size={13} />
+            {job.experience}
+          </span>
+
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Calendar size={13} />
+            {formatDate(job.publishedDate)}
+          </span>
+        </div>
+
+        {/* ---- Title ---- */}
+        <h3 className="text-2xl md:text-3xl font-display font-bold mb-3 text-gradient">
+          {job.title}
+        </h3>
+
+        {/* ---- Remote badge ---- */}
+        <div className="flex items-center gap-2 mb-6">
+          <Wifi size={14} className="text-white/40" />
+          <span className="text-sm text-muted-foreground">{job.remote}</span>
+        </div>
+
+        {/* ---- Full description ---- */}
+        <p className="text-muted-foreground leading-relaxed mb-10">
+          {job.fullDescription}
+        </p>
+
+        {/* ---- Detail sections ---- */}
+        <div className="space-y-8 mb-10">
+          <CardSection title="Missions principales" items={job.responsibilities} />
+          <CardSection title="Profil recherché" items={job.profile} />
+          <SkillTags skills={job.skills} />
+          <CardSection title="Ce que nous offrons" items={job.advantages} />
+        </div>
+
+        {/* ---- Action row ---- */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-6 border-t border-white/10">
+          <motion.a
+            href={mailtoHref}
+            className="btn-premium btn-premium-primary inline-flex items-center gap-2 text-sm"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+            aria-label={`Postuler à l'offre ${job.title}`}
+          >
+            <Send size={16} />
+            Postuler
+          </motion.a>
+          <span className="text-xs text-white/30">
+            Ref : {job.id}
+          </span>
+        </div>
+      </SpotlightCard>
+    </motion.div>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Page Component
+// ---------------------------------------------------------------------------
+
+const Jobs = () => {
+  const [activeSector, setActiveSector] = useState<Sector>('Tous');
+  const location = useLocation();
+  const { data: jobs = [] } = useJobs();
+
+  // Scroll to anchor when navigating from main page (e.g. /offres#job-id)
+  useEffect(() => {
+    if (location.hash) {
+      const timer = setTimeout(() => {
+        const el = document.getElementById(location.hash.slice(1));
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 600); // Wait for animations to settle
+      return () => clearTimeout(timer);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location.hash]);
+
+  const filteredJobs =
+    activeSector === 'Tous'
+      ? jobs
+      : jobs.filter((j) => j.sector === activeSector);
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+
+      {/* Navigation */}
+      <Navigation />
+
+      {/* Main Content */}
+      <main className="pt-32">
+        {/* -------------------------------------------------------------- */}
+        {/* HERO COMPACT                                                    */}
+        {/* -------------------------------------------------------------- */}
+        <section className="relative py-20 md:py-28 overflow-hidden">
+          {/* Subtle radial glow behind heading */}
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%)',
+            }}
+          />
+
+          <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
+            {/* Back link */}
+            <AnimatedSection>
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-12 group"
+                aria-label="Retour à l'accueil"
+              >
+                <ArrowLeft
+                  size={16}
+                  className="group-hover:-translate-x-1 transition-transform"
+                />
+                Retour à l'accueil
+              </Link>
+            </AnimatedSection>
+
+            {/* Heading */}
+            <AnimatedSection delay={0.1} className="max-w-3xl">
+              <span className="text-sm text-muted-foreground uppercase tracking-premium mb-4 block">
+                Recrutement
+              </span>
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold mb-6 text-gradient">
+                Nos Offres
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8">
+                Découvrez toutes nos opportunités dans les télécoms, l'IT et la cybersécurité.
+              </p>
+              <div className="flex items-center gap-3">
+                <span className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-white/5 text-sm font-semibold">
+                  {jobs.length}
+                </span>
+                <span className="text-muted-foreground text-sm">
+                  postes ouverts
+                </span>
+              </div>
+            </AnimatedSection>
+          </div>
+        </section>
+
+        {/* -------------------------------------------------------------- */}
+        {/* FILTER BAR                                                      */}
+        {/* -------------------------------------------------------------- */}
+        <section className="pb-16">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+            <AnimatedSection delay={0.2}>
+              <div className="flex flex-wrap gap-3">
+                {SECTORS.map((sector) => {
+                  const isActive = activeSector === sector;
+                  return (
+                    <motion.button
+                      key={sector}
+                      onClick={() => setActiveSector(sector)}
+                      className={`
+                        relative px-5 py-2.5 rounded-xl text-sm font-medium transition-colors duration-300
+                        ${
+                          isActive
+                            ? 'bg-white text-background'
+                            : 'border border-white/10 text-muted-foreground hover:text-foreground hover:border-white/20 hover:bg-white/5'
+                        }
+                      `}
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.97 }}
+                      aria-label={`Filtrer par ${sector}`}
+                      aria-pressed={isActive}
+                    >
+                      {sector}
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </AnimatedSection>
+          </div>
+        </section>
+
+        {/* -------------------------------------------------------------- */}
+        {/* JOB CARDS LIST                                                  */}
+        {/* -------------------------------------------------------------- */}
+        <section className="pb-32 md:pb-40">
+          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeSector}
+                className="space-y-8"
+                variants={cardListVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+              >
+                {filteredJobs.length > 0 ? (
+                  filteredJobs.map((job, index) => (
+                    <JobCard key={job.id} job={job} index={index} />
+                  ))
+                ) : (
+                  <motion.div
+                    variants={cardItemVariants}
+                    className="text-center py-20"
+                  >
+                    <p className="text-muted-foreground text-lg">
+                      Aucune offre dans cette catégorie pour le moment.
+                    </p>
+                    <button
+                      onClick={() => setActiveSector('Tous')}
+                      className="mt-4 text-sm text-white/50 hover:text-white transition-colors underline underline-offset-4"
+                    >
+                      Voir toutes les offres
+                    </button>
+                  </motion.div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </section>
+
+        {/* -------------------------------------------------------------- */}
+        {/* BOTTOM CTA                                                      */}
+        {/* -------------------------------------------------------------- */}
+        <section className="relative py-32 md:py-40 overflow-hidden">
+          {/* Decorative horizontal line */}
+          <div
+            className="absolute top-0 left-0 right-0 h-px pointer-events-none"
+            style={{
+              background:
+                'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%)',
+            }}
+          />
+
+          {/* Subtle glow */}
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 70%)',
+            }}
+          />
+
+          <div className="relative max-w-3xl mx-auto px-6 lg:px-12 text-center">
+            <AnimatedSection>
+              <span className="text-sm text-muted-foreground uppercase tracking-premium mb-4 block">
+                Candidature spontanée
+              </span>
+              <h2 className="text-3xl md:text-5xl font-display font-bold mb-6 text-gradient">
+                Aucune offre ne correspond ?
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-10 max-w-xl mx-auto">
+                Envoyez-nous votre candidature spontanée. Nous étudions chaque profil avec
+                attention et vous recontactons dès qu'une opportunité se présente.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <motion.a
+                  href="mailto:contact@acreedconsulting.com?subject=Candidature%20spontan%C3%A9e"
+                  className="btn-premium btn-premium-primary inline-flex items-center gap-2"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  aria-label="Envoyer une candidature spontanée"
+                >
+                  <Send size={16} />
+                  Envoyer ma candidature
+                </motion.a>
+                <Link
+                  to="/"
+                  className="btn-premium btn-premium-secondary inline-flex items-center gap-2 text-sm"
+                >
+                  <ArrowRight size={16} />
+                  Retour au site
+                </Link>
+              </div>
+            </AnimatedSection>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <Footer />
+    </div>
+  );
+};
+
+export default Jobs;

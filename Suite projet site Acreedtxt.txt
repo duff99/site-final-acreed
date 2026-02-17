@@ -1,0 +1,10 @@
+Ajouter le contenu "candidature spontannée" -> ne pas créer de nouvelle page, mais plutôt un pop up avec les informations classique à remplir dans ce genre de processus (nom/prenom/mail/message/raison du contact). Respecter le design actuel du site. Si jamais l'utilisateur clique par erreur hors du pop up, il faut pas que ce qu'il a écrit soit perdu. Avec également une zone de dépôt pour poser le CV du candidat (on ajoutera plus tard le backend de l'outil).
+
+
+Le résumé des offres sur le page principale est bien, et en cliquant sur voir toutes les offres, il faut ouvrir une nouvelle page avec un détail bien plus détaillé pour chaque offre. En restant dans le thème du site evidemment.
+
+Ajouter les logos de nos clients et partenaires (avec le même effet noir/blanc et couleur si la souris passe dessus).
+
+La structure des blocs est toujours la même (titre à gauche, contenu en dessous), c'est trop redondant. Il faut de la nouveauté quand je fais défiler la page, sinon, l'expérience utilisateur est mauvaise et ennuyeuse. Il faudrait changer quelque chose. Par exemple ajouter des photos en fond de certaines parties, une fois en haut à gauche, une fois en bas à droite… (avec un effet fondu derrière le contenu de la partie en question. Propose moi un plan.
+
+Animations de mouvement ? (pour défiler le contenu ?)

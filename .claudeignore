@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Build output
+dist/
+server/dist/
+
+# Database files
+server/data/
+
+# Lock files (large, not useful for context)
+package-lock.json
+server/package-lock.json
+
+# shadcn/ui generated components (standard library, rarely need full reads)
+src/components/ui/
+
+# Git
+.git/
