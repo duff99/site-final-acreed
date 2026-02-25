@@ -1,39 +1,34 @@
 import { motion } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const HeroSection = () => {
-  const scrollToServices = () => {
-    const element = document.querySelector('#services');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const stats = [
-    { value: '30+', label: 'Consultants' },
-    { value: '10+', label: 'Clients' },
-    { value: '98%', label: 'Satisfaction' },
-  ];
-
   return (
     <section className="relative min-h-[80vh] md:min-h-screen flex items-center overflow-hidden">
-      {/* Video Background */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-40"
-        style={{ objectPosition: 'center center' }}
+      {/* Background Elements Container */}
+      <div
+        className="absolute inset-0 pointer-events-none"
       >
-        <source src="/videos/hero-video.mp4" type="video/mp4" />
-      </video>
+        {/* Video Background */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          style={{ objectPosition: 'center center' }}
+        >
+          <source src="/videos/hero-video.mp4" type="video/mp4" />
+        </video>
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 hero-overlay" />
-      
-      {/* Additional gradient for depth */}
-      <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-background/60" />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 hero-overlay" />
+
+        {/* Additional gradient for depth */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-background/60" />
+
+        {/* Smooth Transition to Next Section */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background to-transparent" />
+      </div>
 
       {/* Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 pt-24">
@@ -43,15 +38,16 @@ const HeroSection = () => {
 
           {/* Right Content */}
           <div className="lg:col-span-7 space-y-8 max-w-2xl">
-            {/* Badge */}
+            {/* Badge / Sur-title */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <span className="premium-badge">
+              <div className="flex items-center gap-[15px] text-[11px] uppercase tracking-[6px] text-[#dbcca5]">
+                <div className="w-[50px] h-[1px] bg-[#dbcca5]"></div>
                 Recrutement & Conseil
-              </span>
+              </div>
             </motion.div>
 
             {/* Title */}
@@ -59,11 +55,15 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-bold leading-[0.95] tracking-tight"
+              className="font-light text-[50px] md:text-[65px] lg:text-[85px] leading-[0.9] tracking-[-2px] text-white"
             >
-            Fantastique
-            <br />
-            <span className="text-gradient">simplicité</span>
+              Fantastique
+              <em
+                className="block font-display text-[80px] md:text-[100px] lg:text-[130px] font-normal text-[#dbcca5] -mt-[10px] pl-0 italic"
+                style={{ textShadow: "0 10px 40px rgba(219, 204, 165, 0.1)" }}
+              >
+                simplicité
+              </em>
             </motion.h1>
 
             {/* Subtitle */}
@@ -71,10 +71,9 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-light"
+              className="text-[16px] leading-[1.8] text-white/60 font-light max-w-[480px]"
             >
-              Nous plaçons les meilleurs consultants auprès des leaders de l'industrie. 
-              Simplicité, transparence et excellence.
+              Nous plaçons les meilleurs consultants auprès des leaders du marché. Simplicité, transparence et excellence.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -84,30 +83,17 @@ const HeroSection = () => {
               transition={{ duration: 0.8, delay: 0.8 }}
               className="flex flex-col sm:flex-row gap-4 pt-4"
             >
-              <motion.a
-                href="#jobs"
-                className="btn-premium btn-premium-primary text-center"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.querySelector('#jobs')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Voir les offres
-              </motion.a>
-              <motion.a
+              <a
                 href="#contact"
-                className="btn-premium btn-premium-secondary text-center"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="group inline-flex items-center justify-center gap-[12px] py-[18px] px-[45px] rounded-[50px] text-[13px] font-medium uppercase tracking-[3px] text-[#dbcca5] bg-[#0a0a0a]/60 border border-[#dbcca5] backdrop-blur-[5px] no-underline transition-all duration-400 ease-[cubic-bezier(0.2,1,0.3,1)] hover:bg-[#dbcca5] hover:text-[#0A0A0A] hover:-translate-y-[4px] hover:shadow-[0_15px_30px_rgba(219,204,165,0.2)]"
                 onClick={(e) => {
                   e.preventDefault();
                   document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
                 Nous contacter
-              </motion.a>
+                <ArrowRight className="text-[18px] transition-transform duration-400 ease-[cubic-bezier(0.2,1,0.3,1)] group-hover:translate-x-[6px]" size={18} />
+              </a>
             </motion.div>
 
             {/* Stats */}
@@ -115,29 +101,30 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1 }}
-              className="grid grid-cols-3 gap-8 pt-12 border-t border-border/50 mt-12"
+              className="flex flex-wrap sm:flex-nowrap gap-[30px] lg:gap-[50px] pt-12 border-t border-border/50 mt-12 w-full"
             >
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 1.2 + index * 0.1 }}
-                >
-                  <div className="text-4xl md:text-5xl font-display font-bold mb-2">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-muted-foreground uppercase tracking-premium">
-                    {stat.label}
-                  </div>
-                </motion.div>
-              ))}
+              <div className="flex flex-col">
+                <span className="font-display text-[36px] italic text-white leading-none mb-[5px]">
+                  30<span className="font-sans text-[20px] not-italic text-[#dbcca5]">+</span>
+                </span>
+                <span className="text-[10px] uppercase tracking-[2px] text-white/60">Experts</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-display text-[36px] italic text-white leading-none mb-[5px]">
+                  10<span className="font-sans text-[20px] not-italic text-[#dbcca5]">+</span>
+                </span>
+                <span className="text-[10px] uppercase tracking-[2px] text-white/60">Clients</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-display text-[36px] italic text-white leading-none mb-[5px]">
+                  98<span className="font-sans text-[20px] not-italic text-[#dbcca5]">%</span>
+                </span>
+                <span className="text-[10px] uppercase tracking-[2px] text-white/60">Satisfaction</span>
+              </div>
             </motion.div>
           </div>
         </div>
       </div>
-
-      {/* Scroll Indicator removed */}
     </section>
   );
 };

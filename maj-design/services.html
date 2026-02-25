@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section Offres & Services - Particules Masquées</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --bg-dark: #0A0A0A;
+            --text-light: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --accent-gold: #e2d4bc;
+            /* La couleur de teinte "verre" */
+            --glass-tint: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --transition-smooth: 0.6s cubic-bezier(0.25, 1, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- CONTENEUR PRINCIPAL --- */
+        .services-section {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 100px 20px;
+            overflow: hidden;
+            /* Important : S'assurer que le fond de la section est bien celui du body */
+            background-color: var(--bg-dark);
+        }
+
+        /* --- CANVAS DES PARTICULES --- */
+        #particleCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* --- CONTENU (Par-dessus le canvas) --- */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 400;
+        }
+
+        .title span {
+            font-style: italic;
+            color: var(--accent-gold);
+        }
+
+        .header-desc {
+            color: var(--text-muted);
+            margin-top: 20px;
+            font-size: 15px;
+            max-width: 500px;
+            line-height: 1.6;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* --- LA GRILLE --- */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            width: 100%;
+            perspective: 1000px;
+        }
+
+        /* --- LES CARTES (MODIFICATION ICI) --- */
+        .service-card {
+            /* C'est L'ASTUCE : On superpose deux fonds.
+               1. Le premier (au-dessus) est un dégradé qui n'utilise que la teinte transparente.
+               2. Le second (en dessous, après la virgule) est la couleur solide du fond de page.
+               Résultat : La carte est opaque (cache les particules) mais semble transparente visuellement.
+            */
+            background:
+                linear-gradient(var(--glass-tint), var(--glass-tint)),
+                /* Couche visuelle (teinte) */
+                var(--bg-dark);
+            /* Couche bloquante solide (#0A0A0A) */
+
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 320px;
+            cursor: pointer;
+            /* Pas de backdrop-filter ici pour éviter le flou/loupe */
+            transition: all var(--transition-smooth);
+        }
+
+        /* Lueur interne (Glow) au survol */
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 0%, rgba(226, 212, 188, 0.15), transparent 60%);
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Effet de survol uniquement sur la carte active */
+        .service-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            z-index: 10;
+            border-color: rgba(226, 212, 188, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- CONTENU DE LA CARTE --- */
+        .card-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: auto;
+        }
+
+        .icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            color: var(--text-muted);
+            transition: all var(--transition-smooth);
+        }
+
+        .service-card:hover .icon-wrapper {
+            background: var(--accent-gold);
+            color: var(--bg-dark);
+            transform: scale(1.1);
+            border-color: var(--accent-gold);
+            box-shadow: 0 10px 20px rgba(226, 212, 188, 0.2);
+        }
+
+        .action-arrow {
+            font-size: 24px;
+            color: var(--accent-gold);
+            opacity: 0;
+            transform: translate(-15px, 15px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .service-card:hover .action-arrow {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+
+        .card-body {
+            margin-top: 40px;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 500;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            color: #ffffff;
+            transition: color 0.3s ease;
+        }
+
+        .divider {
+            width: 0;
+            height: 2px;
+            background: var(--accent-gold);
+            margin-bottom: 20px;
+            transition: width var(--transition-smooth);
+            opacity: 0.8;
+        }
+
+        .service-card:hover .divider {
+            width: 60px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            transform: translateY(10px);
+            opacity: 0.8;
+            transition: all var(--transition-smooth);
+        }
+
+        .service-card:hover .card-desc {
+            transform: translateY(0);
+            opacity: 1;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* --- MICRO-ANIMATIONS DES ICÔNES AU SURVOL --- */
+        @keyframes floatUsers {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        .service-card:nth-child(1):hover .ph-users-three {
+            animation: floatUsers 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulsePlus {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .service-card:nth-child(2):hover .ph-user-plus {
+            animation: pulsePlus 1s infinite ease-in-out;
+        }
+
+        @keyframes scanGlass {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(-15deg);
+            }
+
+            75% {
+                transform: rotate(15deg);
+            }
+        }
+
+        .service-card:nth-child(3):hover .ph-magnifying-glass {
+            animation: scanGlass 1.5s infinite ease-in-out;
+            transform-origin: bottom right;
+        }
+
+        @keyframes slideCheck {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px) scale(1.05);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .service-card:nth-child(4):hover .ph-kanban {
+            animation: slideCheck 1.2s infinite ease-in-out;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .service-card {
+                min-height: auto;
+            }
+
+            .service-card:hover {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="services-section">
+        <canvas id="particleCanvas"></canvas>
+
+        <div class="content-wrapper">
+            <div class="section-header">
+                <span class="subtitle">Nos Services</span>
+                <h2 class="title">Offres <span>&</span> Services</h2>
+                <p class="header-desc">ACREED Consulting propose une gamme complète de services pour accompagner votre
+                    croissance et sécuriser vos projets complexes.</p>
+            </div>
+
+            <div class="services-grid">
+
+                <div class="service-card">
+                    <div class="card-content">
+                        <div class="card-header">
+                            <div class="icon-wrapper">
+                                <i class="ph ph-users-three"></i>
+                            </div>
+                            <i class="ph ph-arrow-up-right action-arrow"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Consulting Externe sur Mesure</h3>
+                            <div class="divider"></div>
+                            <p class="card-desc">Mise à disposition de consultants spécialisés pour des missions
+                                temporaires ou longues dans les télécoms, IT et cybersécurité.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="card-content">
+                        <div class="card-header">
+                            <div class="icon-wrapper">
+                                <i class="ph ph-user-plus"></i>
+                            </div>
+                            <i class="ph ph-arrow-up-right action-arrow"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Prestation + Internalisation</h3>
+                            <div class="divider"></div>
+                            <p class="card-desc">Possibilité d'intégrer nos consultants directement chez le client après
+                                une première mission réussie et validée.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="card-content">
+                        <div class="card-header">
+                            <div class="icon-wrapper">
+                                <i class="ph ph-magnifying-glass"></i>
+                            </div>
+                            <i class="ph ph-arrow-up-right action-arrow"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Recrutement Interne</h3>
+                            <div class="divider"></div>
+                            <p class="card-desc">Assistance complète au recrutement de talents qualifiés pour répondre
+                                avec précision aux besoins spécifiques de nos clients.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="card-content">
+                        <div class="card-header">
+                            <div class="icon-wrapper">
+                                <i class="ph ph-kanban"></i>
+                            </div>
+                            <i class="ph ph-arrow-up-right action-arrow"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Gestion de Projets</h3>
+                            <div class="divider"></div>
+                            <p class="card-desc">Accompagnement complet avec création d'outils personnalisés, pilotage
+                                agile et coordination de vos projets complexes.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let particlesArray = [];
+        const numberOfParticles = 40;
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        // Petit délai pour s'assurer que le DOM est prêt
+        setTimeout(resizeCanvas, 100);
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.size = Math.random() * 2 + 0.5;
+                this.baseAlpha = Math.random() * 0.5 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(226, 212, 188, ${this.baseAlpha})`;
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = 'rgba(226, 212, 188, 0.5)';
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animate() {
+            // Important : On efface le canvas avec la couleur de fond solide pour éviter les traces
+            ctx.fillStyle = getComputedStyle(document.body).backgroundColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+    </script>
+</body>
+
+</html>

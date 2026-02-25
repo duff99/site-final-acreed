@@ -1,0 +1,316 @@
+/* --- SECTION CONTAINER --- */
+.about-section {
+    padding: 80px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+/* --- HEADER --- */
+.about-header {
+    text-align: center;
+    margin-bottom: 80px;
+    max-width: 600px;
+    z-index: 2;
+    position: relative;
+}
+
+.section-subtitle {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 15px;
+    display: block;
+    opacity: 0.8;
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 64px;
+    font-style: italic;
+    color: #dbcca5;
+    margin-bottom: 25px;
+    text-shadow: 0 0 20px rgba(219, 204, 165, 0.2);
+}
+
+.section-desc {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+}
+
+/* --- CHAPTERS CONTAINER --- */
+.chapters-container {
+    width: 100%;
+    max-width: 1100px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 150px;
+}
+
+/* --- NOUVELLE TIMELINE FLOW (Le Rail + La Lumière) --- */
+.timeline-track {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.1) 15%, rgba(255, 255, 255, 0.1) 85%, transparent 100%);
+    z-index: 0;
+    overflow: hidden;
+}
+
+.timeline-glow {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(to bottom, transparent 0%, #dbcca5 50%, transparent 100%);
+    animation: flowAnimation 3.5s linear infinite;
+    opacity: 0.9;
+    box-shadow: 0 0 20px rgba(219, 204, 165, 0.4);
+}
+
+@keyframes flowAnimation {
+    0% {
+        top: -400px;
+    }
+
+    100% {
+        top: 100%;
+    }
+}
+
+/* --- ROW STYLE (Structure) --- */
+.chapter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 1s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+.chapter-row.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.chapter-row:nth-child(even) {
+    flex-direction: row-reverse;
+}
+
+/* --- TEXTE EN BLOC --- */
+.chapter-content {
+    flex: 1;
+    padding: 0 80px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chapter-row:nth-child(odd) .chapter-content {
+    align-items: flex-end;
+    text-align: right;
+}
+
+.chapter-row:nth-child(even) .chapter-content {
+    align-items: flex-start;
+    text-align: left;
+}
+
+.chapter-dates {
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: #dbcca5;
+    margin-bottom: 15px;
+    display: block;
+    font-weight: 600;
+}
+
+.chapter-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #ffffff;
+}
+
+.chapter-text-block {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.9;
+    max-width: 400px;
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+}
+
+/* --- CARTE VISUELLE GLASSMORPHISM --- */
+.chapter-visual {
+    flex: 1;
+    padding: 0 40px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.connector-dot {
+    position: absolute;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    background: #dbcca5;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(219, 204, 165, 0.4);
+    z-index: 1;
+}
+
+.chapter-row:nth-child(odd) .connector-dot {
+    left: -6px;
+}
+
+.chapter-row:nth-child(even) .connector-dot {
+    right: -6px;
+}
+
+.glass-stat-card {
+    width: 100%;
+    max-width: 300px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 50px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+.glass-stat-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(219, 204, 165, 0.4);
+    transform: translateY(-8px);
+}
+
+/* --- ANIMATION DES ICONES --- */
+.stat-icon {
+    font-size: 36px;
+    color: #ffffff;
+    margin-bottom: 25px;
+    background: rgba(255, 255, 255, 0.05);
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.stat-icon .svg-icon {
+    display: inline-block;
+    animation: floatingIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatingIcon {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.glass-stat-card:hover .stat-icon {
+    color: #dbcca5;
+    background: rgba(219, 204, 165, 0.15);
+    box-shadow: 0 0 20px rgba(219, 204, 165, 0.4);
+}
+
+.stat-value {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+/* --- MISE EN VALEUR DU LIEN (Dernière carte IA) --- */
+a.glass-stat-card.highlight-link {
+    text-decoration: none;
+    color: #ffffff;
+    cursor: pointer;
+    border-color: #dbcca5;
+    box-shadow: 0 0 30px rgba(219, 204, 165, 0.4), inset 0 0 20px rgba(219, 204, 165, 0.1);
+    animation: pulseHalo 2.5s infinite;
+}
+
+@keyframes pulseHalo {
+
+    0%,
+    100% {
+        box-shadow: 0 0 30px rgba(219, 204, 165, 0.4), inset 0 0 20px rgba(219, 204, 165, 0.1);
+    }
+
+    50% {
+        box-shadow: 0 0 50px rgba(219, 204, 165, 0.6), inset 0 0 30px rgba(219, 204, 165, 0.2);
+        scale: 1.02;
+    }
+}
+
+a.glass-stat-card.highlight-link:hover {
+    transform: translateY(-8px) scale(1.05);
+}
+
+a.glass-stat-card.highlight-link .stat-icon {
+    color: #dbcca5;
+    background: rgba(219, 204, 165, 0.2);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+    .timeline-track {
+        display: none;
+    }
+
+    .chapter-row,
+    .chapter-row:nth-child(even) {
+        flex-direction: column;
+        align-items: center;
+        gap: 50px;
+        margin-bottom: 80px;
+    }
+
+    .chapter-content {
+        padding: 0 20px;
+        align-items: center !important;
+        text-align: center !important;
+    }
+
+    .chapter-text-block {
+        text-align: center;
+    }
+
+    .chapter-visual {
+        padding: 0;
+    }
+
+    .connector-dot {
+        display: none;
+    }
+}

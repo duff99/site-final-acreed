@@ -1,10 +1,12 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import ParticleCanvas from "@/components/ParticleCanvas";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/use-auth";
 import Index from "./pages/Index";
+import AcreedVisionPremium from "./pages/AcreedVisionPremium";
 import Jobs from "./pages/Jobs";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
@@ -25,10 +27,12 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <ParticleCanvas />
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Index />} />
+            <Route path="/vision" element={<AcreedVisionPremium />} />
             <Route path="/offres" element={<Jobs />} />
             <Route path="/contact" element={<Contact />} />
 

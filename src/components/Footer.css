@@ -1,0 +1,109 @@
+/* --- SÉPARATEUR FLUIDE --- */
+/* Remplace la bordure dure par un dégradé qui s'efface sur les bords */
+.footer-divider {
+    width: 100%;
+    max-width: 800px;
+    height: 1px;
+    margin: 0 auto;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+}
+
+/* --- FOOTER CONTAINER --- */
+.minimal-footer {
+    margin-top: auto;
+    padding: 80px 20px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    background-color: #0A0A0A;
+}
+
+/* --- LOGO & SIGNATURE --- */
+.footer-brand {
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin-bottom: 12px;
+}
+
+.footer-logo i {
+    font-size: 28px;
+    color: #dbcca5;
+}
+
+.footer-signature {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: #dbcca5;
+    opacity: 0.8;
+    letter-spacing: 1px;
+}
+
+/* --- NAVIGATION EN LIGNE --- */
+.footer-nav {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer-nav a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+}
+
+.footer-nav a .lucide {
+    color: rgba(255, 255, 255, 0.3);
+    transition: color 0.3s ease;
+}
+
+.footer-nav a:hover {
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.footer-nav a:hover .lucide {
+    color: #dbcca5;
+}
+
+/* --- LÉGAL & COPYRIGHT --- */
+.footer-legal {
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 11px;
+    letter-spacing: 1px;
+    line-height: 1.8;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+    .footer-nav {
+        flex-direction: column;
+        gap: 25px;
+    }
+}

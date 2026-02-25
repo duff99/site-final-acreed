@@ -1,0 +1,179 @@
+/* --- CONTENEUR SANS CADRE --- */
+.ultimate-cta {
+    position: relative;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 120px 20px;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* --- CONTENU --- */
+.cta-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cta-title {
+    font-weight: 300;
+    font-size: 56px;
+    line-height: 1.1;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.cta-title em {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 100px;
+    font-weight: 400;
+    color: #dbcca5;
+    margin-top: 5px;
+    text-shadow: 0 10px 40px rgba(219, 204, 165, 0.2);
+}
+
+.cta-desc {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.5);
+    max-width: 480px;
+    line-height: 1.8;
+    font-weight: 300;
+    margin-top: 20px;
+}
+
+.guide-line {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, #dbcca5 50%, transparent);
+    margin: 40px 0;
+    opacity: 0.6;
+}
+
+/* --- LE BOUTON "AURA" CORRIGÉ --- */
+.button-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ambient-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 200px;
+    background: radial-gradient(ellipse, rgba(219, 204, 165, 0.2) 0%, transparent 70%);
+    filter: blur(40px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.btn-aura {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 45px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #dbcca5;
+    text-decoration: none;
+    overflow: hidden;
+    /* Coupe la lumière qui dépasse */
+    transition: all 0.4s ease;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    z-index: 2;
+}
+
+/* Le fond réel du bouton (centre noir) */
+.btn-aura::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    /* L'épaisseur de ta bordure animée */
+    background-color: #0A0A0A;
+    border-radius: 50px;
+    z-index: -1;
+    transition: background-color 0.4s ease;
+}
+
+/* LE SECRET DE LA ROTATION PARFAITE */
+.btn-aura::before {
+    content: '';
+    position: absolute;
+    /* On le place exactement au centre */
+    top: 50%;
+    left: 50%;
+    /* On force un carré parfait et très grand */
+    width: 500px;
+    height: 500px;
+    /* Le dégradé tournant en queue de comète */
+    background: conic-gradient(from 0deg, transparent 0%, transparent 70%, #dbcca5 100%);
+    /* Centrage avec le transform, + la rotation */
+    animation: borderSpin 2.5s linear infinite;
+    z-index: -2;
+}
+
+@keyframes borderSpin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* Interactions au survol */
+.btn-aura:hover {
+    transform: translateY(-5px);
+    color: #0A0A0A;
+    box-shadow: 0 15px 40px rgba(219, 204, 165, 0.3);
+}
+
+.btn-aura:hover::after {
+    background-color: #dbcca5;
+}
+
+.btn-aura .btn-icon {
+    font-size: 18px;
+    transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+.btn-aura:hover .btn-icon {
+    transform: translateX(5px);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .cta-title {
+        font-size: 40px;
+    }
+
+    .cta-title em {
+        font-size: 64px;
+    }
+
+    .btn-aura {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .ambient-glow {
+        width: 100vw;
+    }
+}

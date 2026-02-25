@@ -1,69 +1,129 @@
 import AnimatedSection from './AnimatedSection';
-import SpotlightCard from './SpotlightCard';
-import { Radio, Code, Shield, Zap, Factory } from 'lucide-react';
+import './ServicesSection.css';
 
 const ServicesSection = () => {
-  const services = [
-    { icon: Radio, title: 'Télécoms', description: 'Déploiement, ingénierie réseau, optimisation d\'infrastructures : nos consultants accompagnent opérateurs et équipementiers sur leurs projets les plus exigeants.' },
-    { icon: Code, title: 'IT / Digital', description: 'Intégrés directement au sein de vos équipes, nos experts pilotent vos projets de transformation digitale, développement logiciel et modernisation SI.' },
-    { icon: Shield, title: 'Cybersécurité', description: 'Audit, gouvernance, conformité, réponse aux incidents — des profils spécialisés pour renforcer durablement la sécurité de vos infrastructures critiques.' },
-    { icon: Zap, title: 'Énergie Renouvelable', description: 'Solaire, éolien, smart grids, efficacité énergétique : des ingénieurs-consultants engagés aux côtés des acteurs de la transition.' },
-    { icon: Factory, title: 'Industrie', description: 'En milieu industriel, nos équipes optimisent vos processus de production, votre supply chain et accompagnent la conduite du changement.' },
-  ];
-
   return (
-    <section id="services" className="relative py-20 overflow-hidden scroll-mt-24">
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
+    <section id="services" className="relative py-20 overflow-hidden scroll-mt-24 expertise-wrapper">
+      <div className="relative max-w-6xl xl:max-w-[1200px] mx-auto px-6 lg:px-12 w-full flex flex-col items-center">
         {/* Header - centré */}
-        <AnimatedSection className="max-w-3xl mx-auto text-center mb-20">
+        <AnimatedSection className="max-w-3xl mx-auto text-center mb-16">
           <span className="text-sm text-muted-foreground uppercase tracking-premium mb-4 block">
             Secteurs d'Intervention
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6">
-            Nos Domaines d'Expertise
+            Nos Domaines <span>d'Expertise</span>
           </h2>
-          <p className="text-xl text-muted-foreground leading-relaxed">
+          <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             Nos consultants interviennent au coeur de 5 secteurs stratégiques, apportant leur savoir-faire technique et une approche sur-mesure à chaque mission.
           </p>
         </AnimatedSection>
 
-        {/* Services Grid - Row 1 (3 cards) */}
-        <div className="grid md:grid-cols-3 gap-8">
-          {services.slice(0, 3).map((service, index) => (
-            <AnimatedSection key={service.title} delay={index * 0.15}>
-              <SpotlightCard className="p-10 h-full">
-                <div className="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center mb-8 group-hover:bg-white/10 transition-colors duration-500 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-                  <service.icon className="w-7 h-7 text-foreground/70 group-hover:text-foreground transition-colors duration-500" />
-                </div>
-                <h3 className="text-2xl font-display font-semibold mb-4">
-                  {service.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed text-lg">
-                  {service.description}
-                </p>
-              </SpotlightCard>
-            </AnimatedSection>
-          ))}
-        </div>
+        {/* L'Accordéon */}
+        <AnimatedSection delay={0.2} className="w-full flex justify-center">
+          <div className="gallery-container">
 
-        {/* Services Grid - Row 2 (2 centered cards) */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto mt-8">
-          {services.slice(3).map((service, index) => (
-            <AnimatedSection key={service.title} delay={index * 0.15 + 0.45}>
-              <SpotlightCard className="p-10 h-full">
-                <div className="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center mb-8 group-hover:bg-white/10 transition-colors duration-500 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-                  <service.icon className="w-7 h-7 text-foreground/70 group-hover:text-foreground transition-colors duration-500" />
+            <div className="panel"
+              style={{ backgroundImage: "url('https://plus.unsplash.com/premium_photo-1664693751174-5c216023fcae?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }}>
+              <div className="collapsed-content">
+                <div className="num-line"><span>01</span></div>
+                <div className="vertical-text">Télécoms</div>
+              </div>
+              <div className="expanded-content">
+                <div className="top-row">
+                  <div className="big-num">01</div>
+                  <div className="circle-badge">Infrastructure Réseau</div>
                 </div>
-                <h3 className="text-2xl font-display font-semibold mb-4">
-                  {service.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed text-lg">
-                  {service.description}
-                </p>
-              </SpotlightCard>
-            </AnimatedSection>
-          ))}
-        </div>
+                <div className="glass-card">
+                  <div className="card-icon"><i className="ph ph-broadcast"></i></div>
+                  <h3 className="glass-card-title">Télécoms</h3>
+                  <p>Déploiement, ingénierie réseau, optimisation d'infrastructures : nos consultants accompagnent
+                    opérateurs et équipementiers sur leurs projets les plus exigeants.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="panel"
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop')" }}>
+              <div className="collapsed-content">
+                <div className="num-line"><span>02</span></div>
+                <div className="vertical-text">IT / Digital</div>
+              </div>
+              <div className="expanded-content">
+                <div className="top-row">
+                  <div className="big-num">02</div>
+                  <div className="circle-badge">Transformation Digitale</div>
+                </div>
+                <div className="glass-card">
+                  <div className="card-icon"><i className="ph ph-code"></i></div>
+                  <h3 className="glass-card-title">IT / Digital</h3>
+                  <p>Intégrés directement au sein de vos équipes, nos experts pilotent vos projets de
+                    transformation digitale, développement logiciel et modernisation SI.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="panel"
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop')" }}>
+              <div className="collapsed-content">
+                <div className="num-line"><span>03</span></div>
+                <div className="vertical-text">Cybersécurité</div>
+              </div>
+              <div className="expanded-content">
+                <div className="top-row">
+                  <div className="big-num">03</div>
+                  <div className="circle-badge">Sécurité des SI</div>
+                </div>
+                <div className="glass-card">
+                  <div className="card-icon"><i className="ph ph-shield-check"></i></div>
+                  <h3 className="glass-card-title">Cybersécurité</h3>
+                  <p>Audit, gouvernance, conformité, réponse aux incidents — des profils spécialisés pour
+                    renforcer durablement la sécurité de vos infrastructures critiques.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="panel"
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop')" }}>
+              <div className="collapsed-content">
+                <div className="num-line"><span>04</span></div>
+                <div className="vertical-text">Énergie Renouvelable</div>
+              </div>
+              <div className="expanded-content">
+                <div className="top-row">
+                  <div className="big-num">04</div>
+                  <div className="circle-badge">Transition Énergétique</div>
+                </div>
+                <div className="glass-card">
+                  <div className="card-icon"><i className="ph ph-lightning"></i></div>
+                  <h3 className="glass-card-title">Énergie Renouvelable</h3>
+                  <p>Solaire, éolien, smart grids, efficacité énergétique : des ingénieurs-consultants engagés aux
+                    côtés des acteurs de la transition.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="panel"
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1717386255773-1e3037c81788?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }}>
+              <div className="collapsed-content">
+                <div className="num-line"><span>05</span></div>
+                <div className="vertical-text">Industrie</div>
+              </div>
+              <div className="expanded-content">
+                <div className="top-row">
+                  <div className="big-num">05</div>
+                  <div className="circle-badge">Performance Industrielle</div>
+                </div>
+                <div className="glass-card">
+                  <div className="card-icon"><i className="ph ph-factory"></i></div>
+                  <h3 className="glass-card-title">Industrie</h3>
+                  <p>En milieu industriel, nos équipes optimisent vos processus de production, votre supply chain
+                    et accompagnent la conduite du changement.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );

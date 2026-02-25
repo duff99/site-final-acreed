@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section Valeurs - ACREED Consulting</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --accent: #e2d4bc;
+            --accent-rgb: 226, 212, 188;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0A0A0A;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            padding: 100px 20px;
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .values-section {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- EN-TÊTE DE SECTION (Basé sur votre image) --- */
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+            z-index: 1;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 64px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            line-height: 1.1;
+        }
+
+        /* Style spécifique pour le "&" de l'image */
+        .title span {
+            font-style: italic;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .description {
+            max-width: 700px;
+            margin: 0 auto;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 18px;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* --- ZONE DES CARTES --- */
+        .cards-hand {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            padding-top: 40px;
+            padding-left: 80px;
+        }
+
+        .playing-card {
+            width: 300px;
+            height: 420px;
+            /* Gris très sombre pour se distinguer du fond noir pur */
+            background: #121212;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 45px 30px;
+            cursor: pointer;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform-origin: bottom center;
+        }
+
+        .playing-card:not(:first-child) {
+            margin-left: -100px;
+        }
+
+        /* Rotations d'éventail */
+        .playing-card:nth-child(1) {
+            transform: rotate(-12deg) translateY(20px);
+            z-index: 1;
+        }
+
+        .playing-card:nth-child(2) {
+            transform: rotate(-4deg) translateY(0px);
+            z-index: 2;
+        }
+
+        .playing-card:nth-child(3) {
+            transform: rotate(4deg) translateY(0px);
+            z-index: 3;
+        }
+
+        .playing-card:nth-child(4) {
+            transform: rotate(12deg) translateY(20px);
+            z-index: 4;
+        }
+
+        /* Hover : On ne change plus la luminosité des cartes voisines */
+        .playing-card:hover {
+            transform: rotate(0deg) translateY(-80px) scale(1.08);
+            z-index: 10;
+            border-color: var(--accent);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9), 0 0 30px rgba(var(--accent-rgb), 0.15);
+            background: linear-gradient(135deg, #121212 0%, rgba(var(--accent-rgb), 0.05) 100%);
+        }
+
+        /* --- CONTENU & ANIMATIONS --- */
+        .card-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transform: translateY(60px);
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .playing-card:hover .card-content-wrapper {
+            transform: translateY(0);
+        }
+
+        .card-icon {
+            font-size: 32px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 24px;
+            transition: all 0.4s ease;
+        }
+
+        .playing-card:hover .card-icon {
+            color: var(--accent);
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), 0.6));
+        }
+
+        /* Animations spécifiques d'icônes au hover */
+        .playing-card:hover .ph-lightning {
+            animation: flicker 0.8s infinite;
+        }
+
+        .playing-card:hover .ph-currency-eur {
+            animation: coinBounce 1.2s infinite ease-in-out;
+        }
+
+        .playing-card:hover .ph-broadcast {
+            animation: pulseRadio 1.5s infinite;
+        }
+
+        .playing-card:hover .ph-eye {
+            animation: eyeGlow 1s infinite alternate ease-in-out;
+        }
+
+        @keyframes flicker {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        @keyframes coinBounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes pulseRadio {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes eyeGlow {
+            0% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 600;
+            line-height: 1.2;
+            max-width: 140px;
+        }
+
+        .divider {
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            margin-top: 20px;
+            transition: width 0.6s ease;
+            opacity: 0.4;
+        }
+
+        .playing-card:hover .divider {
+            width: 40px;
+            opacity: 1;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+            margin-top: 25px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .playing-card:hover .card-desc {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            transition-delay: 0.1s;
+        }
+
+        /* Mobile */
+        @media (max-width: 900px) {
+            .title {
+                font-size: 42px;
+            }
+
+            .cards-hand {
+                flex-direction: column;
+                padding-left: 0;
+            }
+
+            .playing-card:not(:first-child) {
+                margin-left: 0;
+                margin-top: -50px;
+            }
+
+            .playing-card {
+                width: 100%;
+                max-width: 320px;
+                transform: none !important;
+            }
+
+            .card-content-wrapper {
+                transform: none;
+            }
+
+            .card-desc {
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="values-section">
+        <div class="section-header">
+            <span class="subtitle">Notre Force</span>
+            <h2 class="title">Valeurs <span>&</span> Atouts</h2>
+            <p class="description">ACREED Consulting se distingue par sa rapidité, sa compétitivité et son expertise
+                reconnue.</p>
+        </div>
+
+        <div class="cards-hand">
+            <div class="playing-card">
+                <div class="card-content-wrapper">
+                    <i class="ph ph-lightning card-icon"></i>
+                    <h3 class="card-title">Rapidité d'Intervention</h3>
+                    <div class="divider"></div>
+                    <p class="card-desc">Efficacité opérationnelle avec des déploiements rapides et adaptés aux
+                        exigences de vos projets.</p>
+                </div>
+            </div>
+
+            <div class="playing-card">
+                <div class="card-content-wrapper">
+                    <i class="ph ph-currency-eur card-icon"></i>
+                    <h3 class="card-title">Politique Tarifaire</h3>
+                    <div class="divider"></div>
+                    <p class="card-desc">Des tarifs inférieurs à la moyenne du marché sans le moindre compromis sur la
+                        qualité de service.</p>
+                </div>
+            </div>
+
+            <div class="playing-card">
+                <div class="card-content-wrapper">
+                    <i class="ph ph-broadcast card-icon"></i>
+                    <h3 class="card-title">Expertise Télécoms</h3>
+                    <div class="divider"></div>
+                    <p class="card-desc">Un savoir-faire pointu reconnu, forgé par l'expertise terrain du fondateur dans
+                        le secteur.</p>
+                </div>
+            </div>
+
+            <div class="playing-card">
+                <div class="card-content-wrapper">
+                    <i class="ph ph-eye card-icon"></i>
+                    <h3 class="card-title">Confiance & Transparence</h3>
+                    <div class="divider"></div>
+                    <p class="card-desc">Nous construisons nos relations sur une base solide de franchise, d'honnêteté
+                        et de transparence.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>

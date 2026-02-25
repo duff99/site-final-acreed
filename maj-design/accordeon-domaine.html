@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expertise - Accordion</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* --- CONTENEUR SECTION --- */
+        .expertise-wrapper {
+            background-color: #0A0A0A;
+            padding: 50px 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+        }
+
+        .gallery-container {
+            display: flex;
+            width: 98vw;
+            max-width: 1600px;
+            height: 750px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background-color: #111;
+        }
+
+        /* --- LES PANNEAUX --- */
+        .panel {
+            position: relative;
+            flex: 1;
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            filter: grayscale(100%);
+            transition: flex 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 1s ease;
+            overflow: hidden;
+        }
+
+        .panel::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            transition: background 0.6s ease;
+            z-index: 1;
+        }
+
+        /* Hover : Couleur + Ouverture */
+        .panel:hover {
+            flex: 5;
+            filter: grayscale(0%);
+        }
+
+        .panel:hover::after {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Flou sur les autres au hover */
+        .gallery-container:hover .panel:not(:hover) {
+            filter: grayscale(100%) blur(5px);
+        }
+
+        .panel:not(:last-child) {
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- CONTENU FERMÉ --- */
+        .collapsed-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+            z-index: 2;
+            transition: opacity 0.4s ease;
+        }
+
+        .panel:hover .collapsed-content {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .num-line {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .vertical-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            margin-top: auto;
+            margin-bottom: 40px;
+            white-space: nowrap;
+            letter-spacing: 1px;
+        }
+
+        /* --- CONTENU OUVERT --- */
+        .expanded-content {
+            position: absolute;
+            inset: 0;
+            padding: 40px;
+            z-index: 3;
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: opacity 0.6s ease 0.2s;
+            pointer-events: none;
+        }
+
+        .panel:hover .expanded-content {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .big-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Badge circulaire fixe et de biais */
+        .circle-badge {
+            width: 80px;
+            height: 80px;
+            /* La bordure prend aussi la couleur demandée mais avec un peu de transparence */
+            border: 1px dashed rgba(226, 212, 188, 0.4);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 8px;
+            letter-spacing: 2px;
+            text-align: center;
+            text-transform: uppercase;
+            /* TA NOUVELLE COULEUR ICI */
+            color: #e2d4bc;
+            transform: rotate(-15deg);
+        }
+
+        /* --- CARTE GLASSMORPHISM --- */
+        .glass-card {
+            background: rgba(20, 20, 20, 0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            width: 440px;
+            max-width: 100%;
+            transform: translateY(30px);
+            transition:
+                transform 1s ease-out 0.3s,
+                background 1.5s ease-out 0.3s,
+                backdrop-filter 1.5s ease-out 0.3s,
+                -webkit-backdrop-filter 1.5s ease-out 0.3s;
+        }
+
+        .panel:hover .glass-card {
+            transform: translateY(0);
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .card-icon {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.1);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        /* Animation des icônes à l'intérieur de la carte */
+        .card-icon i {
+            display: inline-block;
+        }
+
+        @keyframes iconPulse {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-3px) scale(1.1);
+            }
+        }
+
+        .panel:hover .card-icon i {
+            animation: iconPulse 2.5s ease-in-out infinite 0.5s;
+        }
+
+        .glass-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .glass-card p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="expertise-wrapper">
+        <div class="gallery-container">
+
+            <div class="panel"
+                style="background-image: url('https://plus.unsplash.com/premium_photo-1664693751174-5c216023fcae?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                <div class="collapsed-content">
+                    <div class="num-line"><span>01</span></div>
+                    <div class="vertical-text">Télécoms</div>
+                </div>
+                <div class="expanded-content">
+                    <div class="top-row">
+                        <div class="big-num">01</div>
+                        <div class="circle-badge">Infrastructure Réseau</div>
+                    </div>
+                    <div class="glass-card">
+                        <div class="card-icon"><i class="ph ph-broadcast"></i></div>
+                        <h2>Télécoms</h2>
+                        <p>Déploiement, ingénierie réseau, optimisation d'infrastructures : nos consultants accompagnent
+                            opérateurs et équipementiers sur leurs projets les plus exigeants.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel"
+                style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');">
+                <div class="collapsed-content">
+                    <div class="num-line"><span>02</span></div>
+                    <div class="vertical-text">IT / Digital</div>
+                </div>
+                <div class="expanded-content">
+                    <div class="top-row">
+                        <div class="big-num">02</div>
+                        <div class="circle-badge">Transformation Digitale</div>
+                    </div>
+                    <div class="glass-card">
+                        <div class="card-icon"><i class="ph ph-code"></i></div>
+                        <h2>IT / Digital</h2>
+                        <p>Intégrés directement au sein de vos équipes, nos experts pilotent vos projets de
+                            transformation digitale, développement logiciel et modernisation SI.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel"
+                style="background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop');">
+                <div class="collapsed-content">
+                    <div class="num-line"><span>03</span></div>
+                    <div class="vertical-text">Cybersécurité</div>
+                </div>
+                <div class="expanded-content">
+                    <div class="top-row">
+                        <div class="big-num">03</div>
+                        <div class="circle-badge">Sécurité des SI</div>
+                    </div>
+                    <div class="glass-card">
+                        <div class="card-icon"><i class="ph ph-shield-check"></i></div>
+                        <h2>Cybersécurité</h2>
+                        <p>Audit, gouvernance, conformité, réponse aux incidents — des profils spécialisés pour
+                            renforcer durablement la sécurité de vos infrastructures critiques.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel"
+                style="background-image: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop');">
+                <div class="collapsed-content">
+                    <div class="num-line"><span>04</span></div>
+                    <div class="vertical-text">Énergie Renouvelable</div>
+                </div>
+                <div class="expanded-content">
+                    <div class="top-row">
+                        <div class="big-num">04</div>
+                        <div class="circle-badge">Transition Énergétique</div>
+                    </div>
+                    <div class="glass-card">
+                        <div class="card-icon"><i class="ph ph-lightning"></i></div>
+                        <h2>Énergie Renouvelable</h2>
+                        <p>Solaire, éolien, smart grids, efficacité énergétique : des ingénieurs-consultants engagés aux
+                            côtés des acteurs de la transition.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel"
+                style="background-image: url('https://images.unsplash.com/photo-1717386255773-1e3037c81788?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                <div class="collapsed-content">
+                    <div class="num-line"><span>05</span></div>
+                    <div class="vertical-text">Industrie</div>
+                </div>
+                <div class="expanded-content">
+                    <div class="top-row">
+                        <div class="big-num">05</div>
+                        <div class="circle-badge">Performance Industrielle</div>
+                    </div>
+                    <div class="glass-card">
+                        <div class="card-icon"><i class="ph ph-factory"></i></div>
+                        <h2>Industrie</h2>
+                        <p>En milieu industriel, nos équipes optimisent vos processus de production, votre supply chain
+                            et accompagnent la conduite du changement.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</body>
+
+</html>

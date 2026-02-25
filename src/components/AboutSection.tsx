@@ -1,49 +1,46 @@
 import AnimatedSection from './AnimatedSection';
-import SpotlightCard from './SpotlightCard';
 import { Zap, BadgeEuro, Radio, Eye } from 'lucide-react';
+import './AboutSection.css';
 
 const AboutSection = () => {
   const values = [
-    { icon: Zap, title: "Rapidité d'Intervention", description: 'Efficacité opérationnelle avec des déploiements rapides et adaptés.' },
-    { icon: BadgeEuro, title: 'Politique Tarifaire Compétitive', description: 'Tarifs inférieurs à la moyenne du marché sans compromis sur la qualité.' },
-    { icon: Radio, title: 'Expertise Télécoms Pointue', description: "Savoir-faire reconnu grâce à l'expertise du fondateur dans le secteur." },
-    { icon: Eye, title: 'Transparence & Confiance', description: 'Relations basées sur la franchise et la transparence totale.' },
+    { icon: Zap, title: "Rapidité d'Intervention", description: 'Efficacité opérationnelle avec des déploiements rapides et adaptés aux exigences de vos projets.', customClass: 'icon-flicker' },
+    { icon: BadgeEuro, title: 'Politique Tarifaire', description: 'Des tarifs inférieurs à la moyenne du marché sans le moindre compromis sur la qualité de service.', customClass: 'icon-bounce' },
+    { icon: Radio, title: 'Expertise Télécoms', description: "Un savoir-faire pointu reconnu, forgé par l'expertise terrain du fondateur dans le secteur.", customClass: 'icon-pulse' },
+    { icon: Eye, title: 'Confiance & Transparence', description: 'Nous construisons nos relations sur une base solide de franchise, d\'honnêteté et de transparence.', customClass: 'icon-glow' },
   ];
 
   return (
     <section id="about" className="relative py-20 overflow-hidden scroll-mt-24">
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-12 flex flex-col items-center">
         {/* Header - centre */}
         <AnimatedSection className="max-w-3xl mb-20 mx-auto text-center">
           <span className="text-sm text-muted-foreground uppercase tracking-premium mb-4 block">
             Notre Force
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6">
-            Valeurs & Atouts
+            Valeurs <span className="italic font-normal text-white/90">&</span> Atouts
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
             ACREED Consulting se distingue par sa rapidité, sa compétitivité et son expertise reconnue.
           </p>
         </AnimatedSection>
 
-        {/* Values Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {values.map((value, index) => (
-            <AnimatedSection key={value.title} delay={index * 0.15}>
-              <SpotlightCard className="p-8 h-full">
-                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-6 group-hover:bg-white/10 transition-colors duration-500 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-                  <value.icon className="w-6 h-6 text-foreground/70 group-hover:text-foreground transition-colors duration-500" />
+        {/* Cards Hand */}
+        <AnimatedSection delay={0.2} className="w-full relative z-10 flex justify-center">
+          <div className="cards-hand">
+            {values.map((value, index) => (
+              <div key={index} className="playing-card group">
+                <div className="card-content-wrapper">
+                  <value.icon className={`card-icon w-8 h-8 text-white/80 group-hover:text-[#D3B982] ${value.customClass}`} />
+                  <h3 className="card-title">{value.title}</h3>
+                  <div className="card-divider" />
+                  <p className="card-desc">{value.description}</p>
                 </div>
-                <h3 className="text-xl font-display font-semibold mb-3">
-                  {value.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {value.description}
-                </p>
-              </SpotlightCard>
-            </AnimatedSection>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );

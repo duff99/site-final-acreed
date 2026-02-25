@@ -1,0 +1,220 @@
+.cards-hand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    padding-top: 40px;
+    padding-left: 80px;
+}
+
+.playing-card {
+    width: 300px;
+    height: 420px;
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02)),
+        #0A0A0A;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 45px 30px;
+    cursor: pointer;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform-origin: bottom center;
+}
+
+.playing-card:not(:first-child) {
+    margin-left: -100px;
+}
+
+/* Rotations d'éventail */
+.playing-card:nth-child(1) {
+    transform: rotate(-12deg) translateY(20px);
+    z-index: 1;
+}
+
+.playing-card:nth-child(2) {
+    transform: rotate(-4deg) translateY(0px);
+    z-index: 2;
+}
+
+.playing-card:nth-child(3) {
+    transform: rotate(4deg) translateY(0px);
+    z-index: 3;
+}
+
+.playing-card:nth-child(4) {
+    transform: rotate(12deg) translateY(20px);
+    z-index: 4;
+}
+
+.playing-card:hover {
+    transform: translateY(-20px) scale(1.05);
+    z-index: 10;
+    border-color: #dbcca5;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(219, 204, 165, 0.25);
+    background: linear-gradient(135deg, #0A0A0A 0%, rgba(219, 204, 165, 0.08) 100%);
+}
+
+.card-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transform: translateY(60px);
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.playing-card:hover .card-content-wrapper {
+    transform: translateY(0);
+}
+
+.card-icon {
+    margin-bottom: 24px;
+    transition: all 0.4s ease;
+}
+
+.playing-card:hover .card-icon {
+    color: #dbcca5;
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 12px rgba(219, 204, 165, 0.7));
+}
+
+/* Animations spécifiques d'icônes au hover, adaptées pour les lucide-react */
+.playing-card:hover .icon-flicker {
+    animation: flicker 0.8s infinite;
+}
+
+.playing-card:hover .icon-bounce {
+    animation: coinBounce 1.2s infinite ease-in-out;
+}
+
+.playing-card:hover .icon-pulse {
+    animation: pulseRadio 1.5s infinite;
+}
+
+.playing-card:hover .icon-glow {
+    animation: eyeGlow 1s infinite alternate ease-in-out;
+}
+
+@keyframes flicker {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes coinBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes pulseRadio {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes eyeGlow {
+    0% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+.card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.2;
+    max-width: 140px;
+    color: white;
+}
+
+.card-divider {
+    width: 0;
+    height: 2px;
+    background: #dbcca5;
+    margin-top: 20px;
+    transition: width 0.6s ease;
+    opacity: 0.6;
+}
+
+.playing-card:hover .card-divider {
+    width: 40px;
+    opacity: 1;
+}
+
+.card-desc {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.6;
+    margin-top: 25px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+
+.playing-card:hover .card-desc {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition-delay: 0.1s;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+    .cards-hand {
+        flex-direction: column;
+        padding-left: 0;
+    }
+
+    .playing-card:not(:first-child) {
+        margin-left: 0;
+        margin-top: -50px;
+    }
+
+    .playing-card {
+        width: 100%;
+        max-width: 320px;
+        transform: none !important;
+    }
+
+    .card-content-wrapper {
+        transform: none;
+    }
+
+    .card-desc {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+    }
+}

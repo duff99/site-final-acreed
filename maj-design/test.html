@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section À Propos Redesign - Acreed</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg-color: #0A0A0A;
+            --accent-color: #e2d4bc;
+            /* Or/Beige */
+            --accent-glow: rgba(226, 212, 188, 0.4);
+            --primary-white: #ffffff;
+            --muted-white: rgba(255, 255, 255, 0.7);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--primary-white);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- SECTION CONTAINER --- */
+        .about-section {
+            padding: 150px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- HEADER --- */
+        .about-header {
+            text-align: center;
+            margin-bottom: 120px;
+            max-width: 600px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .section-subtitle {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--muted-white);
+            margin-bottom: 15px;
+            display: block;
+            opacity: 0.8;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 64px;
+            font-style: italic;
+            color: var(--accent-color);
+            margin-bottom: 25px;
+            text-shadow: 0 0 20px rgba(226, 212, 188, 0.2);
+        }
+
+        .section-desc {
+            font-size: 16px;
+            color: var(--muted-white);
+            line-height: 1.6;
+        }
+
+        /* --- CHAPTERS CONTAINER --- */
+        .chapters-container {
+            width: 100%;
+            max-width: 1100px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 150px;
+        }
+
+        /* --- NOUVELLE TIMELINE FLOW (Le Rail + La Lumière) --- */
+        .timeline-track {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            transform: translateX(-50%);
+            /* Le rail de base, fondu aux extrémités */
+            background: linear-gradient(to bottom, transparent 0%, var(--glass-border) 15%, var(--glass-border) 85%, transparent 100%);
+            z-index: 0;
+            /* L'overflow hidden empêche de voir la lumière en dehors du rail */
+            overflow: hidden;
+        }
+
+        .timeline-glow {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 400px;
+            /* La longueur du faisceau lumineux */
+            /* Faisceau avec un coeur intense et des bords 100% transparents */
+            background: linear-gradient(to bottom, transparent 0%, var(--accent-color) 50%, transparent 100%);
+            /* Animation plus rapide (3.5s) */
+            animation: flowAnimation 3.5s linear infinite;
+            opacity: 0.9;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        @keyframes flowAnimation {
+
+            /* Démarre complètement au-dessus (invisible grâce à l'overflow et la transparence) */
+            0% {
+                top: -400px;
+            }
+
+            /* Finit complètement en dessous */
+            100% {
+                top: 100%;
+            }
+        }
+
+        /* --- ROW STYLE (Structure) --- */
+        .chapter-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .chapter-row.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chapter-row:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        /* --- TEXTE EN BLOC --- */
+        .chapter-content {
+            flex: 1;
+            padding: 0 80px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chapter-row:nth-child(odd) .chapter-content {
+            align-items: flex-end;
+            text-align: right;
+        }
+
+        .chapter-row:nth-child(even) .chapter-content {
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .chapter-dates {
+            font-size: 12px;
+            letter-spacing: 3px;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .chapter-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--primary-white);
+        }
+
+        /* Le style "Bloc Rectangle" */
+        .chapter-text-block {
+            font-size: 15px;
+            color: var(--muted-white);
+            line-height: 1.9;
+            max-width: 400px;
+            text-align: justify;
+            hyphens: auto;
+            -webkit-hyphens: auto;
+        }
+
+        /* --- CARTE VISUELLE GLASSMORPHISM --- */
+        .chapter-visual {
+            flex: 1;
+            padding: 0 40px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Point connecteur */
+        .connector-dot {
+            position: absolute;
+            top: 50%;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--accent-glow);
+            z-index: 1;
+        }
+
+        .chapter-row:nth-child(odd) .connector-dot {
+            left: -6px;
+        }
+
+        .chapter-row:nth-child(even) .connector-dot {
+            right: -6px;
+        }
+
+        .glass-stat-card {
+            width: 100%;
+            max-width: 300px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 50px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.5s ease;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+        }
+
+        .chapter-row:hover .glass-stat-card {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(226, 212, 188, 0.4);
+            transform: translateY(-8px);
+        }
+
+        /* --- ANIMATION DES ICONES --- */
+        .stat-icon {
+            font-size: 36px;
+            color: var(--primary-white);
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.5s ease;
+        }
+
+        .stat-icon i {
+            display: inline-block;
+            animation: floatingIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes floatingIcon {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .chapter-row:hover .stat-icon {
+            color: var(--accent-color);
+            background: rgba(226, 212, 188, 0.15);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .stat-value {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- MISE EN VALEUR DU LIEN (Dernière carte IA) --- */
+        a.glass-stat-card.highlight-link {
+            text-decoration: none;
+            color: var(--primary-white);
+            cursor: pointer;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 30px var(--accent-glow), inset 0 0 20px rgba(226, 212, 188, 0.1);
+            animation: pulseHalo 2.5s infinite;
+        }
+
+        @keyframes pulseHalo {
+
+            0%,
+            100% {
+                box-shadow: 0 0 30px var(--accent-glow), inset 0 0 20px rgba(226, 212, 188, 0.1);
+            }
+
+            50% {
+                box-shadow: 0 0 50px rgba(226, 212, 188, 0.6), inset 0 0 30px rgba(226, 212, 188, 0.2);
+                scale: 1.02;
+            }
+        }
+
+        a.glass-stat-card.highlight-link:hover {
+            transform: translateY(-8px) scale(1.05);
+        }
+
+        a.glass-stat-card.highlight-link .stat-icon {
+            color: var(--accent-color);
+            background: rgba(226, 212, 188, 0.2);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .timeline-track {
+                display: none;
+            }
+
+            .chapter-row,
+            .chapter-row:nth-child(even) {
+                flex-direction: column;
+                align-items: center;
+                gap: 50px;
+                margin-bottom: 80px;
+            }
+
+            .chapter-content {
+                padding: 0 20px;
+                align-items: center !important;
+                text-align: center !important;
+            }
+
+            .chapter-text-block {
+                text-align: center;
+            }
+
+            .chapter-visual {
+                padding: 0;
+            }
+
+            .connector-dot {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="about-section">
+
+        <div class="about-header">
+            <span class="section-subtitle">Notre Histoire</span>
+            <h2 class="section-title">À propos</h2>
+            <p class="section-desc">Trois chapitres qui racontent notre trajectoire vers l'excellence.</p>
+        </div>
+
+        <div class="chapters-container">
+
+            <div class="timeline-track">
+                <div class="timeline-glow"></div>
+            </div>
+
+            <div class="chapter-row">
+                <div class="chapter-content">
+                    <span class="chapter-dates">2020-2022</span>
+                    <h3 class="chapter-title">L'Origine</h3>
+                    <p class="chapter-text-block">Lancée par son fondateur, l'aventure Acreed a rapidement fédéré une
+                        première équipe de 5 consultants. Dès le début, une seule obsession : la qualité technique qui a
+                        permis de sécuriser plus de 20 missions critiques.</p>
+                </div>
+                <div class="chapter-visual">
+                    <div class="connector-dot"></div>
+                    <div class="glass-stat-card">
+                        <div class="stat-icon"><i class="ph ph-rocket-launch"></i></div>
+                        <span class="stat-value">20+ missions critiques</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chapter-row">
+                <div class="chapter-content">
+                    <span class="chapter-dates">2023-2024</span>
+                    <h3 class="chapter-title">La Performance</h3>
+                    <p class="chapter-text-block">Le cap de la maturité. 30 consultants, 2M€ de CA et un staffing en
+                        moins d'une semaine. Mais au-delà des chiffres, c'est la qualité de nos missions et la
+                        fidélisation de nos clients qui témoignent de notre exigence.</p>
+                </div>
+                <div class="chapter-visual">
+                    <div class="connector-dot"></div>
+                    <div class="glass-stat-card">
+                        <div class="stat-icon"><i class="ph ph-trend-up"></i></div>
+                        <span class="stat-value">2M€ de CA annuel</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chapter-row">
+                <div class="chapter-content">
+                    <span class="chapter-dates">2025-2026</span>
+                    <h3 class="chapter-title">L'Horizon IA</h3>
+                    <p class="chapter-text-block">L'ère de l'innovation. Fin 2025 marque la naissance d'Acreed IA
+                        Solutions, notre filière dédiée à l'intelligence artificielle. Une expertise de pointe qui vient
+                        compléter notre ouverture vers l'Industrie et les Énergies Renouvelables.</p>
+                </div>
+                <div class="chapter-visual">
+                    <div class="connector-dot"></div>
+                    <a href="#lien-ia" class="glass-stat-card highlight-link">
+                        <div class="stat-icon"><i class="ph ph-sparkle"></i></div>
+                        <span class="stat-value">Découvrir IA Solutions &rarr;</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        const rows = document.querySelectorAll('.chapter-row');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.2 });
+
+        rows.forEach(row => { observer.observe(row); });
+    </script>
+
+</body>
+
+</html>

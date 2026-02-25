@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acreed - Ultimate Archer Hero</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --bg-color: #0A0A0A;
+            --accent-color: #e2d4bc;
+            /* Or/Beige de ta charte */
+            --primary-white: #ffffff;
+            --muted-white: rgba(255, 255, 255, 0.6);
+            --grid-line: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--primary-white);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- BACKGROUND VIDEO SÉCURISÉ --- */
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background-color: #000;
+            /* Fallback couleur */
+        }
+
+        .background-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center right;
+            /* Assure que la flèche reste visible même sur petit écran */
+        }
+
+        /* Filtre sombre asymétrique : Foncé à gauche pour lire le texte, transparent à droite pour voir l'archer */
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(10, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0.6) 40%, transparent 100%);
+            z-index: 1;
+        }
+
+        /* --- NAVIGATION --- */
+        .navbar {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 6%;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .logo i {
+            font-size: 24px;
+            color: var(--accent-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            color: var(--muted-white);
+            text-transform: uppercase;
+        }
+
+        .nav-links span {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links span:hover {
+            color: var(--primary-white);
+        }
+
+        /* --- CONTENU PRINCIPAL (Aligné à gauche) --- */
+        .hero-main {
+            position: relative;
+            z-index: 10;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 6%;
+            max-width: 900px;
+        }
+
+        .sur-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            color: var(--accent-color);
+            margin-bottom: 25px;
+        }
+
+        .sur-title .line {
+            width: 40px;
+            height: 1px;
+            background-color: var(--accent-color);
+        }
+
+        /* Titre Massif & Élégant */
+        .main-title {
+            font-weight: 300;
+            font-size: 90px;
+            line-height: 0.9;
+            letter-spacing: -2px;
+            color: var(--primary-white);
+            margin-bottom: 30px;
+        }
+
+        .main-title em {
+            display: block;
+            font-family: 'Playfair Display', serif;
+            font-size: 140px;
+            font-weight: 400;
+            color: var(--accent-color);
+            margin-top: -15px;
+            /* Fait se chevaucher légèrement les textes */
+            padding-left: 40px;
+            /* Décale l'italique pour l'esthétique */
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .hero-desc {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--muted-white);
+            font-weight: 300;
+            max-width: 500px;
+            margin-bottom: 50px;
+        }
+
+        /* --- LE BOUTON PREMIUM STATIQUE --- */
+        .btn-premium {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px 45px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-color);
+            background-color: rgba(10, 10, 10, 0.4);
+            border: 1px solid var(--accent-color);
+            /* Bordure dorée nette et fixe */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+            width: fit-content;
+        }
+
+        .btn-premium i {
+            font-size: 18px;
+            transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        /* Remplissage fluide au survol */
+        .btn-premium:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(226, 212, 188, 0.2);
+        }
+
+        .btn-premium:hover i {
+            transform: translateX(6px);
+        }
+
+        /* --- DOCK KPI (Barre en bas) --- */
+        .kpi-dock {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            background: linear-gradient(to top, rgba(10, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0.2) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--grid-line);
+            z-index: 10;
+        }
+
+        .kpi-item {
+            padding: 35px 6%;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            border-right: 1px solid var(--grid-line);
+        }
+
+        .kpi-item:last-child {
+            border-right: none;
+        }
+
+        .kpi-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-style: italic;
+            color: var(--primary-white);
+            line-height: 1;
+        }
+
+        .kpi-val .plus {
+            font-family: 'Inter', sans-serif;
+            font-size: 24px;
+            font-style: normal;
+            color: var(--accent-color);
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--muted-white);
+            line-height: 1.5;
+        }
+
+        /* --- ANIMATIONS D'ENTRÉE --- */
+        .animate-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+        }
+
+        .delay-1 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.4s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            .main-title {
+                font-size: 70px;
+            }
+
+            .main-title em {
+                font-size: 110px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-main {
+                padding-top: 50px;
+            }
+
+            .main-title {
+                font-size: 50px;
+            }
+
+            .main-title em {
+                font-size: 80px;
+                padding-left: 20px;
+            }
+
+            .kpi-dock {
+                position: relative;
+                grid-template-columns: 1fr;
+                border-top: none;
+            }
+
+            .kpi-item {
+                border-right: none;
+                border-bottom: 1px solid var(--grid-line);
+                padding: 25px 6%;
+                justify-content: center;
+            }
+
+            .video-overlay {
+                background: linear-gradient(0deg, rgba(10, 10, 10, 1) 0%, rgba(10, 10, 10, 0.6) 100%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="hero-section">
+
+        <div class="video-container">
+            <div class="video-overlay"></div>
+            <video class="background-video" autoplay loop muted playsinline>
+                <source src="hero-video.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <nav class="navbar animate-up">
+            <div class="logo">
+                <i class="ph ph-target"></i> ACREED
+            </div>
+            <div class="nav-links">
+                <span>Accueil</span>
+                <span>Expertise</span>
+                <span>Services</span>
+                <span>L'Équipe</span>
+            </div>
+        </nav>
+
+        <div class="hero-main">
+            <div class="sur-title animate-up delay-1">
+                <div class="line"></div> Précision & Conseil
+            </div>
+
+            <h1 class="main-title animate-up delay-2">
+                Fantastique
+                <em>simplicité</em>
+            </h1>
+
+            <p class="hero-desc animate-up delay-3">
+                Nous plaçons les meilleurs consultants auprès des leaders de l'industrie. La précision d'un archer,
+                l'excellence d'un partenaire.
+            </p>
+
+            <div class="animate-up delay-3">
+                <a href="#contact" class="btn-premium">
+                    Nous contacter
+                    <i class="ph ph-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="kpi-dock animate-up delay-3">
+            <div class="kpi-item">
+                <span class="kpi-val">30<span class="plus">+</span></span>
+                <span class="kpi-label">Experts<br>déployés</span>
+            </div>
+            <div class="kpi-item">
+                <span class="kpi-val">10<span class="plus">+</span></span>
+                <span class="kpi-label">Clients<br>leaders</span>
+            </div>
+            <div class="kpi-item">
+                <span class="kpi-val">98<span class="plus">%</span></span>
+                <span class="kpi-label">Taux de<br>réussite</span>
+            </div>
+        </div>
+
+    </header>
+
+</body>
+
+</html>

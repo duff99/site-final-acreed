@@ -1,0 +1,251 @@
+/* --- CONTENEUR SECTION --- */
+.expertise-wrapper {
+    /* Retiré pour que l'arrière-plan avec les particules gère le fond global
+    background-color: #0A0A0A;
+    */
+    width: 100%;
+}
+
+.gallery-container {
+    display: flex;
+    width: 100%;
+    height: 600px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    background-color: #111;
+}
+
+/* --- LES PANNEAUX --- */
+.panel {
+    position: relative;
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    filter: grayscale(100%);
+    transition: flex 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 1s ease;
+    overflow: hidden;
+}
+
+.panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    transition: background 0.6s ease;
+    z-index: 1;
+}
+
+/* Hover : Couleur + Ouverture */
+.panel:hover {
+    flex: 5;
+    filter: grayscale(0%);
+}
+
+.panel:hover::after {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Flou sur les autres au hover */
+.gallery-container:hover .panel:not(:hover) {
+    filter: grayscale(100%) blur(5px);
+}
+
+.panel:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- CONTENU FERMÉ --- */
+.collapsed-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 0;
+    z-index: 2;
+    transition: opacity 0.4s ease;
+}
+
+.panel:hover .collapsed-content {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.num-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.vertical-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    margin-top: auto;
+    margin-bottom: 40px;
+    white-space: nowrap;
+    letter-spacing: 1px;
+}
+
+/* --- CONTENU OUVERT --- */
+.expanded-content {
+    position: absolute;
+    inset: 0;
+    padding: 40px;
+    z-index: 3;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: opacity 0.6s ease 0.2s;
+    pointer-events: none;
+}
+
+.panel:hover .expanded-content {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.big-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+    line-height: 1;
+}
+
+/* Badge circulaire fixe et de biais */
+.circle-badge {
+    width: 80px;
+    height: 80px;
+    border: 1px dashed rgba(219, 204, 165, 0.4);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-align: center;
+    text-transform: uppercase;
+    color: #dbcca5;
+    transform: rotate(-15deg);
+}
+
+/* --- CARTE GLASSMORPHISM --- */
+.glass-card {
+    background: rgba(20, 20, 20, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 32px;
+    width: 440px;
+    max-width: 100%;
+    transform: translateY(30px);
+    transition:
+        transform 1s ease-out 0.3s,
+        background 1.5s ease-out 0.3s,
+        backdrop-filter 1.5s ease-out 0.3s,
+        -webkit-backdrop-filter 1.5s ease-out 0.3s;
+}
+
+.panel:hover .glass-card {
+    transform: translateY(0);
+    background: rgba(20, 20, 20, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.card-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.1);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+/* Animation des icônes à l'intérieur de la carte */
+.card-icon i {
+    display: inline-block;
+}
+
+@keyframes iconPulse {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-3px) scale(1.1);
+    }
+}
+
+.panel:hover .card-icon i {
+    animation: iconPulse 2.5s ease-in-out infinite 0.5s;
+}
+
+.glass-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.glass-card p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+    .gallery-container {
+        flex-direction: column;
+        height: 1200px;
+        /* Plus grand en mobile pour qu'on voit bien les panneaux empilés */
+    }
+
+    .panel {
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .vertical-text {
+        writing-mode: horizontal-tb;
+        transform: none;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .glass-card {
+        padding: 20px;
+        /* Sur mobile, le texte du paragraphe doit être limité pour ne pas tout gâcher */
+    }
+
+    .glass-card-title {
+        font-size: 24px;
+    }
+}

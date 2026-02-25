@@ -1,0 +1,317 @@
+.ecosystem-container {
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --transition-smooth: 0.7s cubic-bezier(0.25, 1, 0.2, 1);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    height: 70vh;
+    min-height: 500px;
+    perspective: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .ecosystem-container {
+        flex-direction: column;
+        height: auto;
+        min-height: auto;
+    }
+
+    .ecosystem-container .panel {
+        min-height: 400px;
+        width: 100%;
+    }
+}
+
+/* PANELS (SLICES) */
+.ecosystem-container .panel {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    border-radius: 28px;
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 25px;
+    cursor: pointer;
+    filter: grayscale(100%);
+    transition: flex var(--transition-smooth),
+        transform var(--transition-smooth),
+        filter var(--transition-smooth),
+        box-shadow var(--transition-smooth),
+        border-color var(--transition-smooth),
+        opacity var(--transition-smooth);
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
+    box-shadow: inset 0 -150px 100px -30px rgba(0, 0, 0, 0.8);
+}
+
+.ecosystem-container:hover .panel {
+    transform: scale(0.95);
+    filter: grayscale(100%) blur(4px) brightness(0.6);
+    opacity: 0.7;
+    border-color: var(--glass-border);
+}
+
+.ecosystem-container .panel:hover {
+    flex: 2.2;
+    transform: scale(1.02);
+    filter: grayscale(0%) blur(0px) brightness(1.1);
+    opacity: 1;
+    z-index: 10;
+    border-color: #dbcca5;
+    box-shadow: 0 0 50px rgba(219, 204, 165, 0.45), inset 0 -350px 200px -20px rgba(0, 0, 0, 0.95);
+}
+
+/* CONTENU INTERNE */
+.ecosystem-container .panel-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ecosystem-container .step-number {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: #dbcca5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    font-family: inherit;
+}
+
+.ecosystem-container .step-number::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: #dbcca5;
+}
+
+.ecosystem-container .title {
+    font-size: 1.8rem;
+    color: #ffffff;
+    white-space: nowrap;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+    font-family: "Playfair Display", serif;
+    font-weight: 400;
+}
+
+.ecosystem-container .details {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--transition-smooth);
+    opacity: 0;
+}
+
+.ecosystem-container .panel:hover .details {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition-delay: 0.1s;
+}
+
+.ecosystem-container .details-inner {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ecosystem-container .description {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #f3f4f6;
+    margin-top: 5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.ecosystem-container .custom-panel-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 5px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ecosystem-container .custom-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    max-width: 60%;
+}
+
+.ecosystem-container .tag {
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #dbcca5;
+}
+
+.ecosystem-container .tag.filled {
+    background: #dbcca5;
+    color: #0a0b0b;
+    border: none;
+}
+
+/* MICRO-ANIMATIONS */
+.ecosystem-container .micro-visual {
+    height: 35px;
+    width: 70px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* 1. BUSINESS DEV */
+.ecosystem-container .anim-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 18px;
+}
+
+.ecosystem-container .chart-bar {
+    width: 5px;
+    background: #dbcca5;
+    border-radius: 2px 2px 0 0;
+    transform-origin: bottom;
+    animation: growBar 1.5s infinite alternate ease-in-out;
+}
+
+.ecosystem-container .chart-bar:nth-child(1) {
+    height: 40%;
+    animation-delay: 0s;
+}
+
+.ecosystem-container .chart-bar:nth-child(2) {
+    height: 70%;
+    animation-delay: 0.2s;
+    opacity: 0.8;
+}
+
+.ecosystem-container .chart-bar:nth-child(3) {
+    height: 100%;
+    animation-delay: 0.4s;
+    opacity: 0.6;
+}
+
+@keyframes growBar {
+    0% {
+        transform: scaleY(0.2);
+    }
+
+    100% {
+        transform: scaleY(1);
+    }
+}
+
+/* 2. CEO */
+.ecosystem-container .anim-ripple {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ecosystem-container .ripple-core {
+    width: 6px;
+    height: 6px;
+    background: #dbcca5;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.ecosystem-container .ripple-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #dbcca5;
+    border-radius: 50%;
+    animation: rippleExpand 2s infinite ease-out;
+}
+
+.ecosystem-container .ripple-ring:nth-child(2) {
+    animation-delay: 1s;
+}
+
+@keyframes rippleExpand {
+    0% {
+        transform: scale(0.3);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* 3. BUSINESS MANAGER */
+.ecosystem-container .anim-kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 40px;
+}
+
+.ecosystem-container .kpi-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(219, 204, 165, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.ecosystem-container .kpi-fill {
+    height: 100%;
+    background: #dbcca5;
+    border-radius: 2px;
+    animation: fillKpi 2s infinite alternate ease-in-out;
+}
+
+.ecosystem-container .kpi-track:nth-child(1) .kpi-fill {
+    width: 90%;
+    animation-delay: 0s;
+}
+
+.ecosystem-container .kpi-track:nth-child(2) .kpi-fill {
+    width: 65%;
+    animation-delay: 0.5s;
+}
+
+@keyframes fillKpi {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}

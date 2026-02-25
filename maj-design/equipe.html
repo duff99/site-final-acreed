@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Présentation Équipe - Accordion</title>
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-dark: #0a0b0b;
+            --text-light: #e5e7eb;
+            --accent-gold: #e2d4bc;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            /* Couleur uniforme de la bordure au repos */
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --transition-smooth: 0.7s cubic-bezier(0.25, 1, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+        }
+
+        /* --- CONTENEUR PRINCIPAL --- */
+        .ecosystem-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 90vw;
+            max-width: 1200px;
+            height: 70vh;
+            min-height: 500px;
+            perspective: 1200px;
+        }
+
+        /* --- PANNEAUX (SLICES) --- */
+        .panel {
+            position: relative;
+            flex: 1;
+            height: 100%;
+            border-radius: 28px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+
+            /* BORDURE FIXE AU REPOS */
+            border: 1px solid var(--glass-border);
+
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 25px;
+            cursor: pointer;
+
+            /* Noir et blanc par défaut */
+            filter: grayscale(100%);
+
+            transition: flex var(--transition-smooth),
+                transform var(--transition-smooth),
+                filter var(--transition-smooth),
+                box-shadow var(--transition-smooth),
+                border-color var(--transition-smooth),
+                opacity var(--transition-smooth);
+
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+
+            /* Ombre interne par défaut pour lire le nom */
+            box-shadow: inset 0 -150px 100px -30px rgba(0, 0, 0, 0.8);
+        }
+
+        .panel:nth-child(1) {
+            background-image: url('public/photo1.jpg');
+        }
+
+        .panel:nth-child(2) {
+            background-image: url('public/photo3.jpg');
+        }
+
+        .panel:nth-child(3) {
+            background-image: url('public/photo2.jpg');
+        }
+
+        /* --- LOGIQUE DE SURVOL (HOVER) --- */
+
+        /* Quand le conteneur est survolé, les autres cartes ne changent pas de bordure */
+        .ecosystem-container:hover .panel {
+            transform: scale(0.95);
+            filter: grayscale(100%) blur(4px) brightness(0.6);
+            opacity: 0.7;
+            /* On maintient la bordure d'origine */
+            border-color: var(--glass-border);
+        }
+
+        /* Uniquement la carte survolée change de bordure */
+        .ecosystem-container .panel:hover {
+            flex: 2.2;
+            transform: scale(1.02);
+            filter: grayscale(0%) blur(0px) brightness(1.1);
+            opacity: 1;
+            z-index: 10;
+
+            /* Bordure dorée au survol */
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 25px rgba(226, 212, 188, 0.4), inset 0 -350px 200px -20px rgba(0, 0, 0, 0.95);
+        }
+
+        /* --- CONTENU INTERNE --- */
+        .panel-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .step-number {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .step-number::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 1px;
+            background: var(--accent-gold);
+        }
+
+        .title {
+            font-size: 1.8rem;
+            color: #ffffff;
+            white-space: nowrap;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+        }
+
+        .details {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows var(--transition-smooth);
+            opacity: 0;
+        }
+
+        .panel:hover .details {
+            grid-template-rows: 1fr;
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .details-inner {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .description {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #f3f4f6;
+            margin-top: 5px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+        }
+
+        .panel-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 5px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- TAGS --- */
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            max-width: 60%;
+        }
+
+        .tag {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--accent-gold);
+        }
+
+        .tag.filled {
+            background: var(--accent-gold);
+            color: var(--bg-dark);
+            border: none;
+        }
+
+        /* --- MICRO-ANIMATIONS MÉTIERS --- */
+        .micro-visual {
+            height: 35px;
+            width: 70px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 1. ANIMATION BUSINESS DEV : Graphique de croissance */
+        .anim-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 18px;
+        }
+
+        .chart-bar {
+            width: 5px;
+            background: var(--accent-gold);
+            border-radius: 2px 2px 0 0;
+            transform-origin: bottom;
+            animation: growBar 1.5s infinite alternate ease-in-out;
+        }
+
+        .chart-bar:nth-child(1) {
+            height: 40%;
+            animation-delay: 0s;
+        }
+
+        .chart-bar:nth-child(2) {
+            height: 70%;
+            animation-delay: 0.2s;
+            opacity: 0.8;
+        }
+
+        .chart-bar:nth-child(3) {
+            height: 100%;
+            animation-delay: 0.4s;
+            opacity: 0.6;
+        }
+
+        @keyframes growBar {
+            0% {
+                transform: scaleY(0.2);
+            }
+
+            100% {
+                transform: scaleY(1);
+            }
+        }
+
+        /* 2. ANIMATION CEO : Ondes d'influence / Rayonnement */
+        .anim-ripple {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ripple-core {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .ripple-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--accent-gold);
+            border-radius: 50%;
+            animation: rippleExpand 2s infinite ease-out;
+        }
+
+        .ripple-ring:nth-child(2) {
+            animation-delay: 1s;
+        }
+
+        @keyframes rippleExpand {
+            0% {
+                transform: scale(0.3);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* 3. ANIMATION BUSINESS MANAGER : Barres de KPI / Processus */
+        .anim-kpi {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 40px;
+        }
+
+        .kpi-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(226, 212, 188, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .kpi-fill {
+            height: 100%;
+            background: var(--accent-gold);
+            border-radius: 2px;
+            animation: fillKpi 2s infinite alternate ease-in-out;
+        }
+
+        .kpi-track:nth-child(1) .kpi-fill {
+            width: 90%;
+            animation-delay: 0s;
+        }
+
+        .kpi-track:nth-child(2) .kpi-fill {
+            width: 65%;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fillKpi {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="ecosystem-container">
+
+        <div class="panel">
+            <div class="panel-content">
+                <div class="step-number">Business Developer</div>
+                <h3 class="title">Tristan</h3>
+
+                <div class="details">
+                    <div class="details-inner">
+                        <p class="description">Architecte de la croissance. Tristan identifie de nouvelles opportunités
+                            et tisse des relations solides avec nos partenaires stratégiques.</p>
+
+                        <div class="panel-footer">
+                            <div class="tags">
+                                <span class="tag filled">PROSPECTION</span>
+                                <span class="tag">RÉSEAU</span>
+                            </div>
+                            <div class="micro-visual">
+                                <div class="anim-chart">
+                                    <div class="chart-bar"></div>
+                                    <div class="chart-bar"></div>
+                                    <div class="chart-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-content">
+                <div class="step-number">CEO & Founder</div>
+                <h3 class="title">Steven</h3>
+
+                <div class="details">
+                    <div class="details-inner">
+                        <p class="description">Visionnaire du projet, Steven dirige la stratégie globale pour assurer
+                            une croissance pérenne et une synergie parfaite de l'équipe.</p>
+
+                        <div class="panel-footer">
+                            <div class="tags">
+                                <span class="tag filled">LEADERSHIP</span>
+                                <span class="tag">STRATEGY</span>
+                            </div>
+                            <div class="micro-visual">
+                                <div class="anim-ripple">
+                                    <div class="ripple-ring"></div>
+                                    <div class="ripple-ring"></div>
+                                    <div class="ripple-core"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-content">
+                <div class="step-number">Business Manager</div>
+                <h3 class="title">Maxime</h3>
+
+                <div class="details">
+                    <div class="details-inner">
+                        <p class="description">Pilote opérationnel. Maxime garantit l'excellence de l'exécution et
+                            veille à l'optimisation continue de nos processus d'affaires.</p>
+
+                        <div class="panel-footer">
+                            <div class="tags">
+                                <span class="tag filled">MANAGEMENT</span>
+                                <span class="tag">OPÉRATIONS</span>
+                            </div>
+                            <div class="micro-visual">
+                                <div class="anim-kpi">
+                                    <div class="kpi-track">
+                                        <div class="kpi-fill"></div>
+                                    </div>
+                                    <div class="kpi-track">
+                                        <div class="kpi-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

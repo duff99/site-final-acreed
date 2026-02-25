@@ -28,8 +28,8 @@ const Index = () => {
     }
   }, [hash]);
   return (
-    <div className="min-h-screen bg-background text-foreground">
-{/* Navigation */}
+    <div className="min-h-screen text-foreground relative z-10">
+      {/* Navigation */}
       <Navigation />
 
       {/* Main Content */}

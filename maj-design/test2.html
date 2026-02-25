@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acreed Manager - Dashboard Harmonisable</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables par défaut (Mode Clair) */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --text-color: #333333;
+            --text-light: #7f8c8d;
+            --bg-light: #f4f6f9;
+            --bg-white: #ffffff;
+            --sidebar-bg: #1a1d21;
+            --sidebar-text: #ecf0f1;
+            --sidebar-hover: #2c3e50;
+            --border-color: #eeeeee;
+            --active-bg: var(--sidebar-hover);
+        }
+
+        /* Variables pour le Mode Sombre (Palette "Profondeur") */
+        body.dark-mode {
+            --primary-color: #20C997;
+            /* Vert émeraude de ton menu */
+            --secondary-color: #E2E8F0;
+            /* Titres clairs */
+            --text-color: #E2E8F0;
+            /* Texte principal clair */
+            --text-light: #8B9BB4;
+            /* Texte secondaire bleuté/gris */
+            --bg-light: #11161D;
+            /* Fond de la page principale */
+            --bg-white: #1A212A;
+            /* Fond des cartes et header */
+            --sidebar-bg: #0A0E13;
+            /* Fond du menu très sombre */
+            --sidebar-text: #E2E8F0;
+            --sidebar-hover: #161E27;
+            /* Survol du menu */
+            --border-color: #262F3B;
+            /* Bordures subtiles */
+            --active-bg: rgba(32, 201, 151, 0.15);
+            /* Fond transparent vert pour l'élément actif */
+        }
+
+        /* Réinitialisation et styles globaux */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Barre latérale du Menu */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            transition: width 0.3s ease, background-color 0.3s;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .sidebar-header .logo-container {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .sidebar-header .logo-icon {
+            font-size: 1.6em;
+            color: var(--primary-color);
+            margin-right: 10px;
+            transition: color 0.3s;
+        }
+
+        .sidebar-header .logo-text {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: var(--primary-color);
+            white-space: nowrap;
+            transition: opacity 0.3s, color 0.3s;
+        }
+
+        .sidebar.collapsed .logo-text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-header .toggle-btn {
+            font-size: 1.2em;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .sidebar-menu {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-menu h3 {
+            color: var(--text-light);
+            font-size: 0.75em;
+            text-transform: uppercase;
+            margin: 20px 0 10px;
+            padding-left: 10px;
+            white-space: nowrap;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.collapsed .sidebar-menu h3 {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-menu ul {
+            list-style: none;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--text-light);
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu li a:hover {
+            background-color: var(--sidebar-hover);
+            color: var(--sidebar-text);
+        }
+
+        .sidebar-menu li a.active {
+            background-color: var(--active-bg);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .sidebar-menu li a i {
+            margin-right: 15px;
+            font-size: 1.1em;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-menu li a span {
+            white-space: nowrap;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.collapsed .sidebar-menu li a span {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-footer {
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 1.3em;
+            color: #f1c40f;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+
+        body.dark-mode .theme-toggle {
+            color: #f39c12;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .user-info {
+            white-space: nowrap;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.collapsed .user-info {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .user-info h4 {
+            font-size: 0.9em;
+            margin-bottom: 2px;
+            color: var(--sidebar-text);
+        }
+
+        .user-info p {
+            font-size: 0.8em;
+            color: var(--text-light);
+        }
+
+        /* Contenu Principal et Header */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: var(--bg-white);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 5;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-title h1 {
+            font-size: 1.8em;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .header-date {
+            color: var(--text-light);
+            font-size: 0.95em;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar input {
+            padding: 12px 15px 12px 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 0.95em;
+            width: 320px;
+            background-color: var(--bg-light);
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(32, 201, 151, 0.3);
+            outline: none;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* Section de Contenu du Tableau de Bord */
+        .dashboard-content {
+            padding: 30px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .dashboard-content h2 {
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            font-size: 1.4em;
+            font-weight: 500;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .card {
+            background-color: var(--bg-white);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-left: 4px solid transparent;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 1.1em;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .card-header i {
+            font-size: 1.6em;
+            opacity: 0.8;
+        }
+
+        .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .card-body .main-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .card-body .sub-value {
+            color: var(--text-light);
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .content-sections {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 1024px) {
+            .content-sections {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .content-card {
+            background-color: var(--bg-white);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            transition: background-color 0.3s;
+        }
+
+        .content-card h3 {
+            font-size: 1.3em;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body class="dark-mode">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <i class="fas fa-layer-group logo-icon"></i>
+                <span class="logo-text">Acreed</span>
+            </div>
+            <i class="fas fa-bars toggle-btn"></i>
+        </div>
+
+        <div class="sidebar-menu">
+            <ul>
+                <h3>Main</h3>
+                <li><a href="#"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                <li><a href="#"><i class="fas fa-file-invoice-dollar"></i><span>Bilan</span></a></li>
+                <li><a href="#"><i class="fas fa-calculator"></i><span>Simulateur</span></a></li>
+            </ul>
+            <ul>
+                <h3>Business</h3>
+                <li><a href="#" class="active"><i class="fas fa-user-tie"></i><span>Consultants</span></a></li>
+                <li><a href="#"><i class="fas fa-receipt"></i><span>Factures</span></a></li>
+                <li><a href="#"><i class="fas fa-chart-line"></i><span>Analyses</span></a></li>
+                <li><a href="#"><i class="fas fa-archive"></i><span>Archives</span></a></li>
+            </ul>
+            <ul>
+                <h3>System</h3>
+                <li><a href="#"><i class="fas fa-users"></i><span>Utilisateurs</span></a></li>
+                <li><a href="#"><i class="fas fa-history"></i><span>Logs</span></a></li>
+                <li><a href="#"><i class="fas fa-database"></i><span>Import/Export BDD</span></a></li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <img src="https://via.placeholder.com/40/2c3e50/ffffff?text=A" alt="Admin Profile">
+                <div class="user-info">
+                    <h4>Admin Acreed</h4>
+                    <p>Système</p>
+                </div>
+            </div>
+            <i class="fas fa-sun theme-toggle" title="Changer le thème"></i>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header class="header">
+            <div class="header-title">
+                <h1>Consultants</h1> <span class="header-date">Mercredi 25 Février 2026</span>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Rechercher consultant, client, mission...">
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <h2>Vue d'ensemble des consultants</h2>
+
+            <div class="dashboard-grid">
+                <div class="card" style="border-color: #3498db;">
+                    <div class="card-header">
+                        <h3>Financier</h3>
+                        <i class="fas fa-euro-sign" style="color: #3498db;"></i>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <p class="sub-value">Marge moyenne</p>
+                            <span class="main-value">11.6%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="border-color: var(--primary-color);">
+                    <div class="card-header">
+                        <h3>Opérationnel</h3>
+                        <i class="fas fa-tasks" style="color: var(--primary-color);"></i>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <p class="sub-value">Inter-contrats</p>
+                            <span class="main-value">16</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-sections">
+                <div class="content-card">
+                    <h3>Zone de test principale</h3>
+                    <p style="color: var(--text-light); line-height: 1.6;">
+                        Remarque comme le fond de cette carte se détache légèrement du fond de la page, tout en gardant
+                        une harmonie parfaite avec le menu très sombre sur la gauche. Il n'y a plus cet effet bleu
+                        "délavé".
+                    </p>
+                </div>
+                <div class="content-card">
+                    <h3>Statistiques</h3>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const sidebar = document.querySelector('.sidebar');
+        const themeToggle = document.querySelector('.theme-toggle');
+        const body = document.body;
+
+        // Gestion du menu rétractable
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+
+        // Gestion propre du mode clair/sombre
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                themeToggle.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                themeToggle.classList.replace('fa-sun', 'fa-moon');
+            }
+        });
+    </script>
+</body>
+
+</html>

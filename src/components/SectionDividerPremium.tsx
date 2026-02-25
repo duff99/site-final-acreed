@@ -14,22 +14,7 @@ const SectionDividerPremium = () => {
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.15) 80%, transparent 100%)',
-          }}
-        />
-      </motion.div>
-      {/* Subtle glow beneath */}
-      <motion.div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: false }}
-        transition={{ duration: 1, delay: 0.2 }}
-      >
-        <div
-          className="w-full max-w-2xl h-6 blur-xl"
-          style={{
-            background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.03) 30%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 70%, transparent 100%)',
+            background: 'linear-gradient(90deg, rgba(219, 204, 165, 0) 0%, rgba(219, 204, 165, 0.3) 50%, rgba(219, 204, 165, 0) 100%)',
           }}
         />
       </motion.div>

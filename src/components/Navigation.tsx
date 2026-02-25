@@ -86,7 +86,7 @@ const Navigation = () => {
     <>
       {/* Raycast-style fixed centered wrapper */}
       <div className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4 pointer-events-none">
-        <nav className="pointer-events-auto w-[75%] glass-nav-raycast">
+        <nav className="pointer-events-auto w-[96%] max-w-[1600px] glass-nav-raycast">
           <div className="relative flex items-center h-[76px] px-8">
             {/* Logo — absolute left */}
             <button
@@ -122,13 +122,12 @@ const Navigation = () => {
 
             {/* CTA — absolute right */}
             <div className="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2">
-              <Button
-                variant="outline"
+              <button
                 onClick={() => navigate(ctaLink.href)}
-                className="btn-shimmer text-sm font-medium border-white/10 bg-white/5 hover:bg-white/10 text-white rounded-md px-4 h-9"
+                className="btn-nav-aura"
               >
                 {ctaLink.label}
-              </Button>
+              </button>
               {location.pathname === ctaLink.href && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
