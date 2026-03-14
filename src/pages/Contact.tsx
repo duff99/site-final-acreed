@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
   Mail,
@@ -12,6 +12,10 @@ import {
   Paperclip,
   FileText,
   X,
+  Clock,
+  CheckCircle2,
+  MessageCircle,
+  Loader2,
 } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -50,13 +54,27 @@ const Contact = () => {
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvError, setCvError] = useState<string | null>(null);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const [form, setForm] = useState({
     name: '',
     email: '',
     phone: '',
     subject: '',
     message: '',
+    // B2B fields (Recrutement / Consulting)
+    company: '',
+    positions: '',
+    timeline: '',
+    // B2C fields (Candidature spontanée)
+    preferredSector: '',
+    availability: '',
   });
+
+  const isB2B = form.subject === 'Recrutement' || form.subject === 'Consulting';
+  const isB2C = form.subject === 'Candidature spontanée';
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -94,15 +112,63 @@ const Contact = () => {
     return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // eslint-disable-next-line no-console
-    console.log('Contact form submitted:', { ...form, cv: cvFile?.name });
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      // Enrich message with conditional fields
+      let enrichedMessage = form.message;
+      if (isB2B) {
+        const extras = [
+          form.company && `Entreprise : ${form.company}`,
+          form.positions && `Postes : ${form.positions}`,
+          form.timeline && `Delai : ${form.timeline}`,
+        ].filter(Boolean);
+        if (extras.length) enrichedMessage = `${extras.join(' | ')}\n\n${enrichedMessage}`;
+      }
+      if (isB2C) {
+        const extras = [
+          form.preferredSector && `Secteur : ${form.preferredSector}`,
+          form.availability && `Disponibilite : ${form.availability}`,
+        ].filter(Boolean);
+        if (extras.length) enrichedMessage = `${extras.join(' | ')}\n\n${enrichedMessage}`;
+      }
+
+      const API_BASE = import.meta.env.VITE_API_URL || '/api';
+      const res = await fetch(`${API_BASE}/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          subject: form.subject,
+          message: enrichedMessage,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ message: 'Erreur inconnue' }));
+        throw new Error(data.message);
+      }
+
+      setSubmitSuccess(true);
+      setForm({ name: '', email: '', phone: '', subject: '', message: '', company: '', positions: '', timeline: '', preferredSector: '', availability: '' });
+      setCvFile(null);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Une erreur est survenue');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Shared input classes
   const inputClasses =
-    'bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-colors w-full';
+    'w-full bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 py-3.5 text-white placeholder:text-white/20 focus:outline-none focus:border-[#dbcca5]/50 focus:bg-white/[0.04] focus:ring-1 focus:ring-[#dbcca5]/50 transition-all duration-300 font-light';
+  const labelClasses =
+    'text-[11px] text-white/50 uppercase tracking-[2px] mb-2 pl-1 block font-medium flex items-center gap-2';
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -110,11 +176,11 @@ const Contact = () => {
       <Navigation />
 
       {/* Main Content */}
-      <main className="pt-32">
+      <main className="pt-24 md:pt-28">
         {/* ---------------------------------------------------------------- */}
         {/* HERO HEADER                                                      */}
         {/* ---------------------------------------------------------------- */}
-        <section className="relative py-20 md:py-28 overflow-hidden">
+        <section className="relative pt-8 pb-20 md:pt-12 md:pb-28 overflow-hidden">
           {/* Subtle radial glow behind heading */}
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none"
@@ -129,7 +195,7 @@ const Contact = () => {
             <AnimatedSection>
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-12 group"
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 group"
                 aria-label="Retour à l'accueil"
               >
                 <ArrowLeft
@@ -170,7 +236,7 @@ const Contact = () => {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {team.map((member, index) => (
                 <AnimatedSection key={member.name} delay={0.3 + index * 0.1}>
-                  <SpotlightCard className="p-6 text-center">
+                  <SpotlightCard className="p-6 text-center" disableHoverMove>
                     <img
                       src={member.image}
                       alt={`Photo de ${member.name}`}
@@ -229,23 +295,121 @@ const Contact = () => {
         </section>
 
         {/* ---------------------------------------------------------------- */}
-        {/* CONTACT FORM (full width, centered)                              */}
+        {/* NOTRE PROCESSUS                                                  */}
         {/* ---------------------------------------------------------------- */}
-        <section className="pb-20">
-          <div className="max-w-5xl mx-auto px-6 lg:px-12">
-            <AnimatedSection delay={0.5}>
-              <SpotlightCard className="p-8 md:p-10">
-                <form onSubmit={handleSubmit} className="space-y-6">
+        <section className="pb-16 pt-8">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+            <AnimatedSection className="text-center mb-16">
+              <span className="text-sm text-[#dbcca5] uppercase tracking-[3px] mb-4 block">
+                Notre Processus
+              </span>
+              <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">
+                Ce qu'il se passe ensuite
+              </h2>
+              <p className="text-muted-foreground leading-relaxed text-lg max-w-2xl mx-auto">
+                Parce que votre temps est précieux, nous nous engageons à vous apporter une réponse rapide et un suivi entièrement personnalisé pour votre projet.
+              </p>
+            </AnimatedSection>
+
+            <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+              {/* Step 1 */}
+              <AnimatedSection delay={0.2} className="h-full">
+                <SpotlightCard className="p-8 h-full flex flex-col items-center text-center" disableHoverMove>
+                  <div className="w-14 h-14 bg-[#dbcca5]/10 border border-[#dbcca5]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(219,204,165,0.1)]">
+                    <MessageCircle className="w-6 h-6 text-[#dbcca5]" />
+                  </div>
+                  <h3 className="text-xl font-display font-bold text-white mb-3">1. Prise en compte</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Dès réception de votre message ou de votre candidature, notre équipe analyse votre besoin avec la plus grande attention.
+                  </p>
+                </SpotlightCard>
+              </AnimatedSection>
+
+              {/* Step 2 */}
+              <AnimatedSection delay={0.3} className="h-full">
+                <SpotlightCard className="p-8 h-full flex flex-col items-center text-center" disableHoverMove>
+                  <div className="w-14 h-14 bg-[#dbcca5]/10 border border-[#dbcca5]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(219,204,165,0.1)]">
+                    <Clock className="w-6 h-6 text-[#dbcca5]" />
+                  </div>
+                  <h3 className="text-xl font-display font-bold text-white mb-3">2. Retours rapides</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Un consultant spécialisé de la direction vous recontacte dans les plus brefs délais pour qualifier et approfondir vos enjeux.
+                  </p>
+                </SpotlightCard>
+              </AnimatedSection>
+
+              {/* Step 3 */}
+              <AnimatedSection delay={0.4} className="h-full">
+                <SpotlightCard className="p-8 h-full flex flex-col items-center text-center" disableHoverMove>
+                  <div className="w-14 h-14 bg-[#dbcca5]/10 border border-[#dbcca5]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(219,204,165,0.1)]">
+                    <CheckCircle2 className="w-6 h-6 text-[#dbcca5]" />
+                  </div>
+                  <h3 className="text-xl font-display font-bold text-white mb-3">3. Proposition d'action</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Nous vous présentons une solution sur-mesure (profils exclusifs, stratégie de consulting) totalement adaptée à votre contexte.
+                  </p>
+                </SpotlightCard>
+              </AnimatedSection>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* CONTACT FORM (Centered)                                          */}
+        {/* ---------------------------------------------------------------- */}
+        <section className="pb-24 pt-12">
+          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+            <AnimatedSection>
+              <div className="mb-12 text-center">
+                <h3 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">Envoyez-nous un message</h3>
+                <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto">Remplissez les informations ci-dessous et notre équipe vous recontactera dans les plus brefs délais.</p>
+              </div>
+
+              <SpotlightCard className="p-8 md:p-12 relative overflow-hidden" disableHoverMove>
+                {/* Subtle inner ambient glow */}
+                <div className="absolute -top-[150px] -right-[150px] w-[400px] h-[400px] bg-[#dbcca5]/10 rounded-full blur-[120px] opacity-40 pointer-events-none" />
+
+                <AnimatePresence mode="wait">
+                {submitSuccess ? (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex flex-col items-center justify-center py-16 text-center relative z-10"
+                  >
+                    <div className="w-16 h-16 bg-[#dbcca5]/10 border border-[#dbcca5]/30 rounded-full flex items-center justify-center mb-6">
+                      <CheckCircle2 className="w-8 h-8 text-[#dbcca5]" />
+                    </div>
+                    <h4 className="text-2xl font-display font-bold text-white mb-3">Message envoye</h4>
+                    <p className="text-muted-foreground mb-8 max-w-md">
+                      Merci pour votre message. Notre equipe vous recontactera dans les plus brefs delais.
+                    </p>
+                    <motion.button
+                      type="button"
+                      onClick={() => setSubmitSuccess(false)}
+                      className="px-6 py-3 bg-white/5 border border-white/10 text-white text-sm uppercase tracking-[1px] font-medium rounded-xl hover:bg-white/10 transition-colors"
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      Envoyer un autre message
+                    </motion.button>
+                  </motion.div>
+                ) : (
+                <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                  {submitError && (
+                    <div className="p-4 border border-red-500/20 bg-red-500/5 rounded-xl text-sm text-red-400">
+                      {submitError}
+                    </div>
+                  )}
+
                   {/* Name */}
                   <div>
                     <label
                       htmlFor="contact-name"
-                      className="text-sm text-muted-foreground uppercase tracking-premium mb-2 block"
+                      className={labelClasses}
                     >
-                      <span className="inline-flex items-center gap-2">
-                        <User size={14} className="text-white/40" />
-                        Nom complet
-                      </span>
+                      <User size={13} className="text-[#dbcca5]/80" />
+                      Nom complet
                     </label>
                     <input
                       id="contact-name"
@@ -264,12 +428,10 @@ const Contact = () => {
                     <div>
                       <label
                         htmlFor="contact-email"
-                        className="text-sm text-muted-foreground uppercase tracking-premium mb-2 block"
+                        className={labelClasses}
                       >
-                        <span className="inline-flex items-center gap-2">
-                          <Mail size={14} className="text-white/40" />
-                          Email
-                        </span>
+                        <Mail size={13} className="text-[#dbcca5]/80" />
+                        Email
                       </label>
                       <input
                         id="contact-email"
@@ -286,12 +448,10 @@ const Contact = () => {
                     <div>
                       <label
                         htmlFor="contact-phone"
-                        className="text-sm text-muted-foreground uppercase tracking-premium mb-2 block"
+                        className={labelClasses}
                       >
-                        <span className="inline-flex items-center gap-2">
-                          <Phone size={14} className="text-white/40" />
-                          Téléphone
-                        </span>
+                        <Phone size={13} className="text-[#dbcca5]/80" />
+                        Téléphone
                       </label>
                       <input
                         id="contact-phone"
@@ -309,12 +469,10 @@ const Contact = () => {
                   <div>
                     <label
                       htmlFor="contact-subject"
-                      className="text-sm text-muted-foreground uppercase tracking-premium mb-2 block"
+                      className={labelClasses}
                     >
-                      <span className="inline-flex items-center gap-2">
-                        <MessageSquare size={14} className="text-white/40" />
-                        Sujet
-                      </span>
+                      <MessageSquare size={13} className="text-[#dbcca5]/80" />
+                      Sujet
                     </label>
                     <select
                       id="contact-subject"
@@ -339,16 +497,136 @@ const Contact = () => {
                     </select>
                   </div>
 
+                  {/* B2B conditional fields */}
+                  <AnimatePresence>
+                    {isB2B && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-6 overflow-hidden"
+                      >
+                        <div>
+                          <label htmlFor="contact-company" className={labelClasses}>
+                            <User size={13} className="text-[#dbcca5]/80" />
+                            Entreprise
+                          </label>
+                          <input
+                            id="contact-company"
+                            type="text"
+                            name="company"
+                            value={form.company}
+                            onChange={handleChange}
+                            placeholder="Nom de votre entreprise"
+                            className={inputClasses}
+                          />
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-6">
+                          <div>
+                            <label htmlFor="contact-positions" className={labelClasses}>
+                              <MessageSquare size={13} className="text-[#dbcca5]/80" />
+                              Nombre de postes
+                            </label>
+                            <select
+                              id="contact-positions"
+                              name="positions"
+                              value={form.positions}
+                              onChange={handleChange}
+                              className={`${inputClasses} appearance-none`}
+                            >
+                              <option value="" className="bg-[#121212] text-white">Non précisé</option>
+                              <option value="1" className="bg-[#121212] text-white">1 poste</option>
+                              <option value="2-5" className="bg-[#121212] text-white">2-5 postes</option>
+                              <option value="5-10" className="bg-[#121212] text-white">5-10 postes</option>
+                              <option value="10+" className="bg-[#121212] text-white">10+ postes</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label htmlFor="contact-timeline" className={labelClasses}>
+                              <Clock size={13} className="text-[#dbcca5]/80" />
+                              Délai souhaité
+                            </label>
+                            <select
+                              id="contact-timeline"
+                              name="timeline"
+                              value={form.timeline}
+                              onChange={handleChange}
+                              className={`${inputClasses} appearance-none`}
+                            >
+                              <option value="" className="bg-[#121212] text-white">Non précisé</option>
+                              <option value="urgent" className="bg-[#121212] text-white">Urgent (- de 2 semaines)</option>
+                              <option value="1-month" className="bg-[#121212] text-white">Sous 1 mois</option>
+                              <option value="3-months" className="bg-[#121212] text-white">Sous 3 mois</option>
+                              <option value="flexible" className="bg-[#121212] text-white">Flexible</option>
+                            </select>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* B2C conditional fields */}
+                  <AnimatePresence>
+                    {isB2C && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-6 overflow-hidden"
+                      >
+                        <div className="grid sm:grid-cols-2 gap-6">
+                          <div>
+                            <label htmlFor="contact-sector" className={labelClasses}>
+                              <MessageSquare size={13} className="text-[#dbcca5]/80" />
+                              Secteur préféré
+                            </label>
+                            <select
+                              id="contact-sector"
+                              name="preferredSector"
+                              value={form.preferredSector}
+                              onChange={handleChange}
+                              className={`${inputClasses} appearance-none`}
+                            >
+                              <option value="" className="bg-[#121212] text-white">Tous secteurs</option>
+                              <option value="Telecoms" className="bg-[#121212] text-white">Télécoms</option>
+                              <option value="IT" className="bg-[#121212] text-white">IT / Digital</option>
+                              <option value="Cyber" className="bg-[#121212] text-white">Cybersécurité</option>
+                              <option value="Energie" className="bg-[#121212] text-white">Énergie</option>
+                              <option value="Industrie" className="bg-[#121212] text-white">Industrie</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label htmlFor="contact-availability" className={labelClasses}>
+                              <Clock size={13} className="text-[#dbcca5]/80" />
+                              Disponibilité
+                            </label>
+                            <select
+                              id="contact-availability"
+                              name="availability"
+                              value={form.availability}
+                              onChange={handleChange}
+                              className={`${inputClasses} appearance-none`}
+                            >
+                              <option value="" className="bg-[#121212] text-white">Non précisé</option>
+                              <option value="immediate" className="bg-[#121212] text-white">Immédiate</option>
+                              <option value="1-month" className="bg-[#121212] text-white">Sous 1 mois</option>
+                              <option value="3-months" className="bg-[#121212] text-white">Sous 3 mois</option>
+                              <option value="listening" className="bg-[#121212] text-white">En veille</option>
+                            </select>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   {/* Message */}
                   <div>
                     <label
                       htmlFor="contact-message"
-                      className="text-sm text-muted-foreground uppercase tracking-premium mb-2 block"
+                      className={labelClasses}
                     >
-                      <span className="inline-flex items-center gap-2">
-                        <MessageSquare size={14} className="text-white/40" />
-                        Message
-                      </span>
+                      <MessageSquare size={13} className="text-[#dbcca5]/80" />
+                      Message
                     </label>
                     <textarea
                       id="contact-message"
@@ -398,38 +676,45 @@ const Contact = () => {
                     />
 
                     {/* Buttons row */}
-                    <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex flex-col sm:flex-row gap-4 pt-6 mt-6 border-t border-white/5">
                       <motion.button
                         type="submit"
-                        className="btn-premium btn-premium-primary inline-flex items-center gap-2 text-sm w-full sm:w-auto justify-center"
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.98 }}
+                        disabled={isSubmitting}
+                        className="group relative flex-1 inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#dbcca5] text-[#0a0a0b] text-[13px] uppercase tracking-[2px] font-semibold rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(219,204,165,0.15)] disabled:opacity-60"
+                        whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
+                        whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
                         aria-label="Envoyer le message"
                       >
-                        <Send size={16} />
-                        Envoyer le message
+                        <span className="relative z-10 flex items-center gap-2">
+                          {isSubmitting ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
+                          {isSubmitting ? 'Envoi en cours...' : 'Finaliser l\'envoi'}
+                        </span>
+                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                       </motion.button>
 
                       <motion.button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="btn-premium btn-premium-secondary inline-flex items-center gap-2 text-sm w-full sm:w-auto justify-center"
-                        whileHover={{ scale: 1.03 }}
+                        className="group flex-shrink-0 inline-flex items-center justify-center gap-2 px-6 py-4 bg-white/5 border border-white/10 text-white text-[13px] uppercase tracking-[1px] font-medium rounded-xl hover:bg-white/10 hover:border-[#dbcca5]/50 transition-colors"
+                        whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.98 }}
                         aria-label="Joindre un fichier"
                       >
-                        <Paperclip size={16} />
-                        {cvFile ? 'Changer le fichier' : 'Joindre un CV'}
+                        <Paperclip size={15} className="group-hover:text-[#dbcca5] transition-colors" />
+                        {cvFile ? 'Remplacer CV' : 'Joindre CV'}
                       </motion.button>
                     </div>
 
-                    <p className="text-xs text-white/30">
-                      PDF, DOCX - 5 Mo max
+                    <p className="text-[11px] text-white/30 text-center uppercase tracking-[1px] mt-4">
+                      Formats acceptés: PDF, DOCX (Max: 5 Mo)
                     </p>
                   </div>
                 </form>
+                )}
+                </AnimatePresence>
               </SpotlightCard>
             </AnimatedSection>
+
           </div>
         </section>
 

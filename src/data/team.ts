@@ -18,7 +18,7 @@ export const team: TeamMember[] = [
     role: 'PDG & Fondateur',
     bio: 'Passionné par les télécoms depuis 2011, avec une expérience confirmée en missions de consulting auprès de PME et de grands comptes.',
     image: '/images/steven.jpg',
-    linkedin: 'https://www.linkedin.com/in/steven-breuil-824330110',
+    linkedin: 'https://www.linkedin.com/in/steven-breuil-824330110/',
     email: 'steven.breuil@acreedconsulting.com',
   },
   {
@@ -26,15 +26,15 @@ export const team: TeamMember[] = [
     role: 'Business Manager',
     bio: '',
     image: '/images/maxime.jpg',
-    linkedin: 'https://www.linkedin.com/in/PLACEHOLDER',
-    email: 'maxime@acreedconsulting.com',
+    linkedin: 'https://www.linkedin.com/in/maxime-riffard-6011a4289/',
+    email: 'maxime.riffard@acreedconsulting.com',
   },
   {
     name: 'Tristan',
     role: 'Business Developer',
     bio: '',
     image: '/images/tristan.jpg',
-    linkedin: 'https://www.linkedin.com/in/PLACEHOLDER',
-    email: 'tristan@acreedconsulting.com',
+    linkedin: 'https://www.linkedin.com/in/tristan-dufraisseix-3a713893/',
+    email: 'tristan.dufraisseix@acreedconsulting.com',
   },
 ];

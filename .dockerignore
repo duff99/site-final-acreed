@@ -1,0 +1,38 @@
+# Dependencies
+node_modules
+server/node_modules
+
+# Build output
+dist
+server/dist
+
+# Git
+.git
+.gitignore
+
+# Environment files (secrets)
+.env
+server/.env
+
+# Database
+server/data/*.db
+
+# IDE / Editor
+.vscode
+.idea
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dev/test files
+Test_header/
+Video landing page/
+maj-design/
+*.md
+!README.md
+
+# Logs
+*.log
+npm-debug.log*

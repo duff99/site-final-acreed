@@ -139,6 +139,16 @@
     border: 1px solid hsla(0, 0%, 100%, 0.08);
   }
 
+  /* Admin Theme Toggle (Inverted Colors) */
+  .admin-theme-light {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
+  .admin-theme-light img,
+  .admin-theme-light video {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
   /* Section Divider */
   .section-divider {
     @apply h-px w-full;
@@ -468,5 +478,17 @@
   .btn-nav-aura:hover {
     background-color: rgba(255, 255, 255, 0.1);
     color: #ffffff;
+  }
+
+  /* Hero scroll indicator */
+  @keyframes dotPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+
+  @keyframes scrollDown {
+    0% { top: -100%; }
+    50% { top: 100%; }
+    100% { top: 100%; }
   }
 }

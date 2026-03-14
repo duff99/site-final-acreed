@@ -1,18 +1,23 @@
 FROM node:20-alpine
 WORKDIR /app
 
-# Copy shared types
-COPY shared/ ../shared/
-
-# Install server dependencies
+# Copy and install dependencies (tsx needed at runtime)
 COPY server/package*.json ./
-RUN npm ci --production
+RUN npm ci
+
+# Copy shared schemas (relative imports expect ../../../shared/ from src/routes/)
+# From /app/src/routes/, '../../../shared/' resolves to /shared/
+COPY shared/ /shared/
 
 # Copy server source
-COPY server/ .
+COPY server/src/ ./src/
+COPY server/tsconfig.json ./
 
 # Create data directory for SQLite
 RUN mkdir -p /app/data
+
+# Allow shared/ to resolve zod from /app/node_modules
+ENV NODE_PATH=/app/node_modules
 
 EXPOSE 3001
 CMD ["npx", "tsx", "src/index.ts"]

@@ -121,7 +121,6 @@ const SpontaneousApplicationModal = ({
     setIsSubmitting(true);
     // Simulation d'appel API
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log('Candidature soumise:', { ...data, cv: cvFile?.name });
     toast({
       title: 'Candidature envoyée !',
       description: 'Nous reviendrons vers vous rapidement.',

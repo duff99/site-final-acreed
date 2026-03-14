@@ -18,7 +18,7 @@ const JobsSection = () => {
             Opportunités
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6">
-            Offres d'emploi
+            Offres<span className="text-gradient"> d'emploi</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
             Rejoignez des projets d'exception avec les leaders du secteur.
@@ -34,9 +34,9 @@ const JobsSection = () => {
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="job-tag">{job.type}</span>
+                        <span className="text-xs px-3 py-1 rounded-md bg-[#dbcca5]/10 text-[#dbcca5] border border-[#dbcca5]/20">{job.type}</span>
                         <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <MapPin size={14} />
+                          <MapPin size={14} className="text-[#dbcca5]/60" />
                           {job.location}
                         </span>
                       </div>
@@ -47,8 +47,8 @@ const JobsSection = () => {
                         {job.description}
                       </p>
                     </div>
-                    <span className="flex items-center gap-2 px-6 py-3 text-sm font-medium border border-white/10 rounded-xl hover:bg-white/5 transition-all">
-                      Voir le detail
+                    <span className="flex items-center gap-2 px-6 py-3 text-sm font-medium border border-[#dbcca5]/20 rounded-xl text-[#dbcca5]/80 hover:bg-[#dbcca5]/5 hover:border-[#dbcca5]/40 transition-all">
+                      Voir le détail
                       <ArrowRight size={16} />
                     </span>
                   </div>
@@ -62,7 +62,7 @@ const JobsSection = () => {
         <AnimatedSection delay={0.4} className="mt-12 text-center">
           <Link
             to="/offres"
-            className="inline-flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
+            className="inline-flex items-center gap-3 text-[#dbcca5]/70 hover:text-[#dbcca5] transition-colors group"
           >
             <motion.span className="text-lg" whileHover={{ x: 4 }}>
               Voir toutes les offres

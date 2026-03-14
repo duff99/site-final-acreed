@@ -8,6 +8,8 @@ import type {
   adminUserSchema,
   createAdminSchema,
   updateAdminSchema,
+  createContactSchema,
+  createApplicationSchema,
 } from './schemas';
 
 export type Job = z.infer<typeof jobSchema>;
@@ -18,6 +20,9 @@ export type AdminRole = z.infer<typeof adminRoleSchema>;
 export type AdminUser = z.infer<typeof adminUserSchema>;
 export type CreateAdminInput = z.infer<typeof createAdminSchema>;
 export type UpdateAdminInput = z.infer<typeof updateAdminSchema>;
+
+export type CreateContactInput = z.infer<typeof createContactSchema>;
+export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;
 
 export interface AuthResponse {
   accessToken: string;

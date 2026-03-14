@@ -146,63 +146,66 @@
     transform: rotate(-15deg);
 }
 
-/* --- CARTE GLASSMORPHISM --- */
+/* --- CARTE GLASSMORPHISM (même effet que les playing cards Valeurs & Atouts) --- */
 .glass-card {
-    background: rgba(20, 20, 20, 0);
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%),
+        rgba(15, 15, 15, 0);
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
     padding: 32px;
     width: 440px;
     max-width: 100%;
     transform: translateY(30px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
     transition:
         transform 1s ease-out 0.3s,
         background 1.5s ease-out 0.3s,
         backdrop-filter 1.5s ease-out 0.3s,
-        -webkit-backdrop-filter 1.5s ease-out 0.3s;
+        -webkit-backdrop-filter 1.5s ease-out 0.3s,
+        border-color 0.6s ease,
+        box-shadow 0.6s ease;
 }
 
 .panel:hover .glass-card {
     transform: translateY(0);
-    background: rgba(20, 20, 20, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background:
+        linear-gradient(135deg, rgba(15, 15, 15, 0.8) 0%, rgba(219, 204, 165, 0.06) 100%),
+        rgba(15, 15, 15, 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-color: rgba(219, 204, 165, 0.25);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(219, 204, 165, 0.08), inset 0 0 0 1px rgba(219, 204, 165, 0.1);
 }
 
-.card-icon {
+.glass-card .service-icon {
     font-size: 28px;
     margin-bottom: 16px;
-    color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.1);
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    display: inline-block;
+    transition: color 0.5s ease, filter 0.5s ease;
 }
 
-/* Animation des icônes à l'intérieur de la carte */
-.card-icon i {
+.glass-card .service-icon i {
     display: inline-block;
 }
 
-@keyframes iconPulse {
-
-    0%,
-    100% {
-        transform: translateY(0) scale(1);
-    }
-
-    50% {
-        transform: translateY(-3px) scale(1.1);
-    }
+@keyframes serviceIconFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
 }
 
-.panel:hover .card-icon i {
-    animation: iconPulse 2.5s ease-in-out infinite 0.5s;
+.panel:hover .glass-card .service-icon {
+    color: #dbcca5;
+    filter: drop-shadow(0 0 12px rgba(219, 204, 165, 0.5));
+}
+
+.panel:hover .glass-card .service-icon i {
+    animation: serviceIconFloat 1.8s ease-in-out infinite 0.5s;
 }
 
 .glass-card-title {

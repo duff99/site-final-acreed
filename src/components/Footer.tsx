@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Mail, Linkedin } from 'lucide-react';
 import './Footer.css';
 import AnimatedSection from './AnimatedSection';
@@ -42,19 +42,18 @@ const Footer = () => {
 
         <AnimatedSection delay={0.1} className="w-full">
           <nav className="footer-nav">
-            <a href="mailto:contact@acreedconsulting.com">
+            <a href="mailto:recrutement@acreedconsulting.com">
               <Mail size={16} /> Contact
             </a>
             <a
-              href="https://www.linkedin.com/company/acreed-consulting"
+              href="https://www.linkedin.com/company/acreedconsutling/"
               target="_blank"
               rel="noopener noreferrer"
             >
               <Linkedin size={16} /> LinkedIn
             </a>
-            <a href="#">Mentions Légales</a>
-            <a href="#">Confidentialité</a>
-            <a href="#">CGV</a>
+            <Link to="/mentions-legales">Mentions Légales</Link>
+            <Link to="/confidentialite">Confidentialité</Link>
           </nav>
         </AnimatedSection>
 

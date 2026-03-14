@@ -11,11 +11,14 @@ import {
   CheckCircle2,
   Wifi,
   Send,
+  Search,
 } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import JobJsonLd from '@/components/JobJsonLd';
 import AnimatedSection from '@/components/AnimatedSection';
 import SpotlightCard from '@/components/SpotlightCard';
+import ApplicationModal from '@/components/ApplicationModal';
 import { useJobs } from '@/hooks/use-jobs';
 import type { Job } from '@shared/types';
 
@@ -23,8 +26,28 @@ import type { Job } from '@shared/types';
 // Constants
 // ---------------------------------------------------------------------------
 
-const SECTORS = ['Tous', 'Télécoms', 'IT & Digital', 'Cybersécurité'] as const;
+const SECTORS = ['Tous', 'Télécoms', 'IT & Digital', 'Cybersécurité', 'Énergie', 'Industrie'] as const;
 type Sector = (typeof SECTORS)[number];
+
+/** Maps UI filter labels to the DB sector values (case-insensitive match) */
+const sectorMatchesFilter = (jobSector: string, filter: Sector): boolean => {
+  if (filter === 'Tous') return true;
+  const normalised = jobSector.toLowerCase();
+  switch (filter) {
+    case 'Télécoms':
+      return normalised.includes('telecom') || normalised.includes('télé');
+    case 'IT & Digital':
+      return normalised.includes('it') || normalised.includes('digital');
+    case 'Cybersécurité':
+      return normalised.includes('cyber');
+    case 'Énergie':
+      return normalised.includes('energie') || normalised.includes('énergie');
+    case 'Industrie':
+      return normalised.includes('industrie');
+    default:
+      return false;
+  }
+};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -39,11 +62,6 @@ const formatDate = (iso: string): string => {
 // ---------------------------------------------------------------------------
 // Animation Variants
 // ---------------------------------------------------------------------------
-
-const filterVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-};
 
 const cardListVariants = {
   hidden: {},
@@ -118,12 +136,8 @@ const SkillTags = ({ skills }: { skills: string[] }) => (
 );
 
 /** A single job card */
-const JobCard = ({ job, index }: { job: Job; index: number }) => {
-  const mailSubject = encodeURIComponent(`Candidature : ${job.title}`);
-  const mailBody = encodeURIComponent(
-    `Bonjour,\n\nJe souhaite postuler à l'offre "${job.title}" (Ref: ${job.id}).\n\nCordialement,`
-  );
-  const mailtoHref = `mailto:contact@acreedconsulting.com?subject=${mailSubject}&body=${mailBody}`;
+const JobCard = ({ job }: { job: Job }) => {
+  const [applyOpen, setApplyOpen] = useState(false);
 
   return (
     <motion.div
@@ -133,6 +147,7 @@ const JobCard = ({ job, index }: { job: Job; index: number }) => {
       className="scroll-mt-28"
     >
       <SpotlightCard className="p-8 md:p-10">
+        <JobJsonLd job={job} />
         {/* ---- Header meta row ---- */}
         <div className="flex flex-wrap items-center gap-3 mb-6">
           <span className="job-tag font-medium">{job.type}</span>
@@ -184,8 +199,8 @@ const JobCard = ({ job, index }: { job: Job; index: number }) => {
 
         {/* ---- Action row ---- */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-6 border-t border-white/10">
-          <motion.a
-            href={mailtoHref}
+          <motion.button
+            onClick={() => setApplyOpen(true)}
             className="btn-premium btn-premium-primary inline-flex items-center gap-2 text-sm"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
@@ -193,12 +208,19 @@ const JobCard = ({ job, index }: { job: Job; index: number }) => {
           >
             <Send size={16} />
             Postuler
-          </motion.a>
+          </motion.button>
           <span className="text-xs text-white/30">
             Ref : {job.id}
           </span>
         </div>
       </SpotlightCard>
+
+      <ApplicationModal
+        open={applyOpen}
+        onOpenChange={setApplyOpen}
+        jobId={job.id}
+        jobTitle={job.title}
+      />
     </motion.div>
   );
 };
@@ -209,6 +231,7 @@ const JobCard = ({ job, index }: { job: Job; index: number }) => {
 
 const Jobs = () => {
   const [activeSector, setActiveSector] = useState<Sector>('Tous');
+  const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
   const { data: jobs = [] } = useJobs();
 
@@ -227,10 +250,18 @@ const Jobs = () => {
     }
   }, [location.hash]);
 
-  const filteredJobs =
-    activeSector === 'Tous'
-      ? jobs
-      : jobs.filter((j) => j.sector === activeSector);
+  const filteredJobs = jobs.filter((j) => {
+    if (!sectorMatchesFilter(j.sector, activeSector)) return false;
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      j.title.toLowerCase().includes(q) ||
+      j.fullDescription.toLowerCase().includes(q) ||
+      j.skills.some((s) => s.toLowerCase().includes(q)) ||
+      j.location.toLowerCase().includes(q) ||
+      j.type.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -239,11 +270,11 @@ const Jobs = () => {
       <Navigation />
 
       {/* Main Content */}
-      <main className="pt-32">
+      <main className="pt-24 md:pt-28">
         {/* -------------------------------------------------------------- */}
         {/* HERO COMPACT                                                    */}
         {/* -------------------------------------------------------------- */}
-        <section className="relative py-20 md:py-28 overflow-hidden">
+        <section className="relative pt-8 pb-20 md:pt-12 md:pb-28 overflow-hidden">
           {/* Subtle radial glow behind heading */}
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none"
@@ -258,7 +289,7 @@ const Jobs = () => {
             <AnimatedSection>
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-12 group"
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 group"
                 aria-label="Retour à l'accueil"
               >
                 <ArrowLeft
@@ -293,10 +324,25 @@ const Jobs = () => {
         </section>
 
         {/* -------------------------------------------------------------- */}
-        {/* FILTER BAR                                                      */}
+        {/* SEARCH + FILTER BAR                                             */}
         {/* -------------------------------------------------------------- */}
         <section className="pb-16">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-6">
+            {/* Search bar */}
+            <AnimatedSection delay={0.15}>
+              <div className="relative max-w-md">
+                <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Rechercher par titre, compétence, ville..."
+                  className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm text-foreground placeholder:text-white/30 focus:outline-none focus:border-white/25 focus:bg-white/[0.07] transition-colors"
+                />
+              </div>
+            </AnimatedSection>
+
+            {/* Sector filters */}
             <AnimatedSection delay={0.2}>
               <div className="flex flex-wrap gap-3">
                 {SECTORS.map((sector) => {
@@ -307,10 +353,9 @@ const Jobs = () => {
                       onClick={() => setActiveSector(sector)}
                       className={`
                         relative px-5 py-2.5 rounded-xl text-sm font-medium transition-colors duration-300
-                        ${
-                          isActive
-                            ? 'bg-white text-background'
-                            : 'border border-white/10 text-muted-foreground hover:text-foreground hover:border-white/20 hover:bg-white/5'
+                        ${isActive
+                          ? 'bg-white text-background'
+                          : 'border border-white/10 text-muted-foreground hover:text-foreground hover:border-white/20 hover:bg-white/5'
                         }
                       `}
                       whileHover={{ scale: 1.04 }}
@@ -342,8 +387,8 @@ const Jobs = () => {
                 exit="hidden"
               >
                 {filteredJobs.length > 0 ? (
-                  filteredJobs.map((job, index) => (
-                    <JobCard key={job.id} job={job} index={index} />
+                  filteredJobs.map((job) => (
+                    <JobCard key={job.id} job={job} />
                   ))
                 ) : (
                   <motion.div
@@ -402,7 +447,7 @@ const Jobs = () => {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <motion.a
-                  href="mailto:contact@acreedconsulting.com?subject=Candidature%20spontan%C3%A9e"
+                  href="mailto:recrutement@acreedconsulting.com?subject=Candidature%20spontan%C3%A9e"
                   className="btn-premium btn-premium-primary inline-flex items-center gap-2"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}

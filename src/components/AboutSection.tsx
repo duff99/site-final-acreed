@@ -1,13 +1,15 @@
+import { Zap, BadgeEuro, Radio, Handshake, Globe } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
-import { Zap, BadgeEuro, Radio, Eye } from 'lucide-react';
 import './AboutSection.css';
 
 const AboutSection = () => {
-  const values = [
-    { icon: Zap, title: "Rapidité d'Intervention", description: 'Efficacité opérationnelle avec des déploiements rapides et adaptés aux exigences de vos projets.', customClass: 'icon-flicker' },
-    { icon: BadgeEuro, title: 'Politique Tarifaire', description: 'Des tarifs inférieurs à la moyenne du marché sans le moindre compromis sur la qualité de service.', customClass: 'icon-bounce' },
-    { icon: Radio, title: 'Expertise Télécoms', description: "Un savoir-faire pointu reconnu, forgé par l'expertise terrain du fondateur dans le secteur.", customClass: 'icon-pulse' },
-    { icon: Eye, title: 'Confiance & Transparence', description: 'Nous construisons nos relations sur une base solide de franchise, d\'honnêteté et de transparence.', customClass: 'icon-glow' },
+  const values: { icon: LucideIcon; title: string; description: string }[] = [
+    { icon: Zap, title: "Rapidité d'Intervention", description: 'Efficacité opérationnelle avec des déploiements rapides et adaptés aux exigences de vos projets.' },
+    { icon: BadgeEuro, title: 'Politique Tarifaire', description: 'Des tarifs inférieurs à la moyenne du marché sans le moindre compromis sur la qualité de service.' },
+    { icon: Radio, title: 'Expertise Télécoms', description: 'Un savoir-faire pointu reconnu, forgé par l\'expertise terrain du fondateur dans le secteur.' },
+    { icon: Handshake, title: 'Confiance & Transparence', description: 'Nous construisons nos relations sur une base solide de franchise, d\'honnêteté et de transparence.' },
+    { icon: Globe, title: 'Ouverture Multisectorielle', description: 'Nous transposons notre modèle d\'excellence avec la même rigueur vers l\'IT, la Cyber et l\'Industrie.' },
   ];
 
   return (
@@ -27,12 +29,13 @@ const AboutSection = () => {
         </AnimatedSection>
 
         {/* Cards Hand */}
-        <AnimatedSection delay={0.2} className="w-full relative z-10 flex justify-center">
+        <AnimatedSection delay={0.2} className="w-full relative z-10 flex justify-center mt-10">
           <div className="cards-hand">
             {values.map((value, index) => (
               <div key={index} className="playing-card group">
+                <div className="card-glass-shine" />
                 <div className="card-content-wrapper">
-                  <value.icon className={`card-icon w-8 h-8 text-white/80 group-hover:text-[#D3B982] ${value.customClass}`} />
+                  <value.icon className="card-icon" size={40} strokeWidth={1.5} />
                   <h3 className="card-title">{value.title}</h3>
                   <div className="card-divider" />
                   <p className="card-desc">{value.description}</p>

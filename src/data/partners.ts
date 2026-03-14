@@ -9,9 +9,9 @@ export const partnerSchema = z.object({
 export type Partner = z.infer<typeof partnerSchema>;
 
 export const partners: Partner[] = [
-  { name: 'Orange', category: 'telecom', logo: '/images/partners/orange.png' },
+  // { name: 'Orange', category: 'telecom', logo: '/images/partners/orange.png' },
   { name: 'SFR', category: 'telecom', logo: '/images/partners/sfr.png' },
-  { name: 'Free Pro', category: 'telecom', logo: '/images/partners/free.png' },
+  // { name: 'Free Pro', category: 'telecom', logo: '/images/partners/free.png' },
   { name: 'SPIE', category: 'esn', logo: '/images/partners/spie.png' },
   { name: 'Axians', category: 'esn', logo: '/images/partners/axians.png' },
   { name: 'Circet', category: 'esn', logo: '/images/partners/circet.png' },

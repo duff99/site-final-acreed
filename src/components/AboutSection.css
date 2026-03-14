@@ -1,162 +1,126 @@
+/* Cards Hand Container */
 .cards-hand {
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     z-index: 1;
-    padding-top: 40px;
-    padding-left: 80px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-left: 120px;
 }
 
 .playing-card {
-    width: 300px;
-    height: 420px;
+    width: 290px;
+    height: 440px;
     background:
-        linear-gradient(rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02)),
-        #0A0A0A;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+        linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%),
+        rgba(15, 15, 15, 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 24px;
     padding: 45px 30px;
     cursor: pointer;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
     transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
     transform-origin: bottom center;
 }
 
 .playing-card:not(:first-child) {
-    margin-left: -100px;
+    margin-left: -130px;
 }
 
-/* Rotations d'éventail */
+/* Rotations d'éventail pour 5 cartes */
 .playing-card:nth-child(1) {
-    transform: rotate(-12deg) translateY(20px);
+    transform: rotate(-16deg) translateY(40px) translateX(-20px);
     z-index: 1;
 }
 
 .playing-card:nth-child(2) {
-    transform: rotate(-4deg) translateY(0px);
+    transform: rotate(-8deg) translateY(15px) translateX(-10px);
     z-index: 2;
 }
 
 .playing-card:nth-child(3) {
-    transform: rotate(4deg) translateY(0px);
+    transform: rotate(0deg) translateY(0px);
     z-index: 3;
 }
 
 .playing-card:nth-child(4) {
-    transform: rotate(12deg) translateY(20px);
+    transform: rotate(8deg) translateY(15px) translateX(10px);
     z-index: 4;
 }
 
+.playing-card:nth-child(5) {
+    transform: rotate(16deg) translateY(40px) translateX(20px);
+    z-index: 5;
+}
+
+/* Zone de hit étendue pour éviter le tremblement entre cartes adjacentes */
+.playing-card::after {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.playing-card:hover::after {
+    pointer-events: auto;
+}
+
 .playing-card:hover {
-    transform: translateY(-20px) scale(1.05);
-    z-index: 10;
-    border-color: #dbcca5;
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(219, 204, 165, 0.25);
-    background: linear-gradient(135deg, #0A0A0A 0%, rgba(219, 204, 165, 0.08) 100%);
+    transform: translateY(-40px) scale(1.05) rotate(0deg) !important;
+    z-index: 15 !important;
+    border-color: rgba(219, 204, 165, 0.4);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), 0 0 60px rgba(219, 204, 165, 0.15), inset 0 0 0 1px rgba(219, 204, 165, 0.2);
+    background: linear-gradient(135deg, rgba(15, 15, 15, 0.8) 0%, rgba(219, 204, 165, 0.08) 100%);
 }
 
 .card-content-wrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    transform: translateY(60px);
     transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.playing-card:hover .card-content-wrapper {
-    transform: translateY(0);
+    z-index: 2;
+    height: 100%;
 }
 
 .card-icon {
-    margin-bottom: 24px;
-    transition: all 0.4s ease;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 28px;
+    flex-shrink: 0;
+    transition: color 0.5s ease, transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), filter 0.5s ease;
+}
+
+@keyframes icon-float {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-8px); }
+    100% { transform: translateY(0); }
 }
 
 .playing-card:hover .card-icon {
     color: #dbcca5;
-    transform: scale(1.2);
-    filter: drop-shadow(0 0 12px rgba(219, 204, 165, 0.7));
-}
-
-/* Animations spécifiques d'icônes au hover, adaptées pour les lucide-react */
-.playing-card:hover .icon-flicker {
-    animation: flicker 0.8s infinite;
-}
-
-.playing-card:hover .icon-bounce {
-    animation: coinBounce 1.2s infinite ease-in-out;
-}
-
-.playing-card:hover .icon-pulse {
-    animation: pulseRadio 1.5s infinite;
-}
-
-.playing-card:hover .icon-glow {
-    animation: eyeGlow 1s infinite alternate ease-in-out;
-}
-
-@keyframes flicker {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.6;
-    }
-}
-
-@keyframes coinBounce {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-5px);
-    }
-}
-
-@keyframes pulseRadio {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.1);
-        opacity: 0.8;
-    }
-}
-
-@keyframes eyeGlow {
-    0% {
-        opacity: 0.7;
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1.1);
-    }
+    filter: drop-shadow(0 0 14px rgba(219, 204, 165, 0.5));
+    animation: icon-float 1.8s ease-in-out infinite;
 }
 
 .card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
+    font-family: var(--font-display);
+    font-size: 24px;
     font-weight: 600;
-    line-height: 1.2;
-    max-width: 140px;
+    line-height: 1.25;
+    max-width: 155px;
     color: white;
 }
+
 
 .card-divider {
     width: 0;
@@ -173,21 +137,19 @@
 }
 
 .card-desc {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.65);
     line-height: 1.6;
-    margin-top: 25px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(20px);
+    margin-top: 15px;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    font-weight: 300;
     transition: all 0.5s ease;
 }
 
 .playing-card:hover .card-desc {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    transition-delay: 0.1s;
+    color: rgba(255, 255, 255, 0.95);
 }
 
 /* Mobile */
@@ -195,26 +157,26 @@
     .cards-hand {
         flex-direction: column;
         padding-left: 0;
+        padding-top: 20px;
     }
 
     .playing-card:not(:first-child) {
         margin-left: 0;
-        margin-top: -50px;
+        margin-top: -60px;
     }
 
     .playing-card {
         width: 100%;
         max-width: 320px;
         transform: none !important;
+        margin-bottom: 20px;
     }
 
     .card-content-wrapper {
         transform: none;
     }
 
-    .card-desc {
-        opacity: 1;
-        visibility: visible;
-        transform: none;
+    .card-glass-shine {
+        display: none;
     }
 }

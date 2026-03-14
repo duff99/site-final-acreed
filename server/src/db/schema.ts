@@ -20,6 +20,32 @@ export const jobs = sqliteTable('jobs', {
   isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
 });
 
+export const contactMessages = sqliteTable('contact_messages', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone').default(''),
+  subject: text('subject').notNull(),
+  message: text('message').notNull(),
+  cvFilename: text('cv_filename'),
+  isRead: integer('is_read', { mode: 'boolean' }).notNull().default(false),
+  createdAt: text('created_at').notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const applications = sqliteTable('applications', {
+  id: text('id').primaryKey(),
+  jobId: text('job_id').notNull(),
+  jobTitle: text('job_title').notNull(),
+  firstName: text('first_name').notNull(),
+  lastName: text('last_name').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone').default(''),
+  cvUrl: text('cv_url').default(''),
+  message: text('message').default(''),
+  status: text('status').notNull().default('new'),
+  createdAt: text('created_at').notNull().$defaultFn(() => new Date().toISOString()),
+});
+
 export const admins = sqliteTable('admins', {
   id: text('id').primaryKey(),
   email: text('email').notNull().unique(),

@@ -17,6 +17,11 @@ const Index = () => {
   const { hash } = useLocation();
 
   useEffect(() => {
+    // Disable browser scroll restoration — always start at top on refresh
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
     if (hash) {
       // Small delay to let the page render before scrolling
       setTimeout(() => {
@@ -25,6 +30,8 @@ const Index = () => {
           el.scrollIntoView({ behavior: 'smooth' });
         }
       }, 100);
+    } else {
+      window.scrollTo(0, 0);
     }
   }, [hash]);
   return (
@@ -37,7 +44,9 @@ const Index = () => {
         {/* Hero with Video */}
         <HeroSection />
 
-        <SectionDividerPremium />
+        <div className="-mt-5 md:-mt-7 relative z-20">
+          <SectionDividerPremium />
+        </div>
 
         {/* Expertise */}
         <ServicesSection />

@@ -5,9 +5,10 @@ interface SpotlightCardProps {
   children: React.ReactNode;
   className?: string;
   delay?: number;
+  disableHoverMove?: boolean;
 }
 
-const SpotlightCard = ({ children, className = '', delay = 0 }: SpotlightCardProps) => {
+const SpotlightCard = ({ children, className = '', delay = 0, disableHoverMove = false }: SpotlightCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
@@ -28,7 +29,7 @@ const SpotlightCard = ({ children, className = '', delay = 0 }: SpotlightCardPro
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ y: -8 }}
+      whileHover={disableHoverMove ? undefined : { y: -8 }}
       transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
       style={{
         background: isHovered

@@ -106,13 +106,13 @@ const Navigation = () => {
                 <button
                   key={link.href}
                   onClick={() => scrollToSection(link.href)}
-                  className="relative px-2 py-3 text-sm font-medium text-[#9c9c9d] hover:text-white transition-colors duration-200 whitespace-nowrap"
+                  className={`relative px-3 py-3 text-[15px] font-medium transition-colors duration-200 whitespace-nowrap ${activeSection === link.href ? 'text-[#dbcca5]' : 'text-[#9c9c9d] hover:text-white'}`}
                 >
                   {link.label}
                   {activeSection === link.href && (
                     <motion.div
                       layoutId="nav-indicator"
-                      className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white"
+                      className="absolute bottom-1 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full bg-[#dbcca5] shadow-[0_0_8px_rgba(219,204,165,0.6)]"
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                     />
                   )}

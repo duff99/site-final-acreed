@@ -34,7 +34,7 @@ const ServicesSection = () => {
                   <div className="circle-badge">Infrastructure Réseau</div>
                 </div>
                 <div className="glass-card">
-                  <div className="card-icon"><i className="ph ph-broadcast"></i></div>
+                  <div className="service-icon"><i className="ph ph-broadcast"></i></div>
                   <h3 className="glass-card-title">Télécoms</h3>
                   <p>Déploiement, ingénierie réseau, optimisation d'infrastructures : nos consultants accompagnent
                     opérateurs et équipementiers sur leurs projets les plus exigeants.</p>
@@ -54,7 +54,7 @@ const ServicesSection = () => {
                   <div className="circle-badge">Transformation Digitale</div>
                 </div>
                 <div className="glass-card">
-                  <div className="card-icon"><i className="ph ph-code"></i></div>
+                  <div className="service-icon"><i className="ph ph-code"></i></div>
                   <h3 className="glass-card-title">IT / Digital</h3>
                   <p>Intégrés directement au sein de vos équipes, nos experts pilotent vos projets de
                     transformation digitale, développement logiciel et modernisation SI.</p>
@@ -74,7 +74,7 @@ const ServicesSection = () => {
                   <div className="circle-badge">Sécurité des SI</div>
                 </div>
                 <div className="glass-card">
-                  <div className="card-icon"><i className="ph ph-shield-check"></i></div>
+                  <div className="service-icon"><i className="ph ph-shield-check"></i></div>
                   <h3 className="glass-card-title">Cybersécurité</h3>
                   <p>Audit, gouvernance, conformité, réponse aux incidents — des profils spécialisés pour
                     renforcer durablement la sécurité de vos infrastructures critiques.</p>
@@ -94,7 +94,7 @@ const ServicesSection = () => {
                   <div className="circle-badge">Transition Énergétique</div>
                 </div>
                 <div className="glass-card">
-                  <div className="card-icon"><i className="ph ph-lightning"></i></div>
+                  <div className="service-icon"><i className="ph ph-lightning"></i></div>
                   <h3 className="glass-card-title">Énergie Renouvelable</h3>
                   <p>Solaire, éolien, smart grids, efficacité énergétique : des ingénieurs-consultants engagés aux
                     côtés des acteurs de la transition.</p>
@@ -114,7 +114,7 @@ const ServicesSection = () => {
                   <div className="circle-badge">Performance Industrielle</div>
                 </div>
                 <div className="glass-card">
-                  <div className="card-icon"><i className="ph ph-factory"></i></div>
+                  <div className="service-icon"><i className="ph ph-factory"></i></div>
                   <h3 className="glass-card-title">Industrie</h3>
                   <p>En milieu industriel, nos équipes optimisent vos processus de production, votre supply chain
                     et accompagnent la conduite du changement.</p>

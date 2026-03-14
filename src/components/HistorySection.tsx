@@ -89,7 +89,7 @@ const HistorySection = () => {
           </div>
           <div className="chapter-visual">
             <div className="connector-dot"></div>
-            <a href="#offres" className="glass-stat-card highlight-link">
+            <a href="https://acreediasolutions.com/" target="_blank" rel="noopener noreferrer" className="glass-stat-card highlight-link">
               <div className="stat-icon"><Sparkles size={34} strokeWidth={1.5} className="svg-icon" /></div>
               <span className="stat-value whitespace-nowrap">Découvrir Acreed IA Solutions &rarr;</span>
             </a>

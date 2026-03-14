@@ -9,33 +9,58 @@ import jobsRouter from './routes/jobs.js';
 import adminJobsRouter from './routes/admin-jobs.js';
 import adminUsersRouter from './routes/admin-users.js';
 import authRouter from './routes/auth.js';
+import contactRouter from './routes/contact.js';
+import applicationsRouter from './routes/applications.js';
 import { requireAuth } from './middleware/auth.js';
 import { requireRole } from './middleware/authorize.js';
+
+// Block startup if JWT secret is unchanged in production
+if (process.env.NODE_ENV === 'production' && config.JWT_SECRET === 'CHANGE-ME-IN-PRODUCTION') {
+  throw new Error('CRITICAL: JWT_SECRET must be changed in production. Set a strong random secret via environment variable.');
+}
 
 const app = express();
 
 // Middleware
 app.use(helmet());
 app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 
-// Rate limiting for auth login only
+// Global API rate limiting (30 requests per minute per IP)
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  message: { message: 'Trop de requetes, reessayez plus tard' },
+});
+app.use('/api/', apiLimiter);
+
+// Strict rate limiting for auth endpoints (10 requests per 15 min)
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // max 10 requests per window
+  windowMs: 15 * 60 * 1000,
+  max: 10,
   message: { message: 'Trop de tentatives, reessayez plus tard' },
+});
+
+// Contact form rate limiting (5 submissions per 15 min per IP)
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { message: 'Trop de messages envoyes, reessayez plus tard' },
 });
 
 // Public routes
 app.use('/api/jobs', jobsRouter);
+app.use('/api/contact', contactLimiter, contactRouter);
+app.use('/api/applications', contactLimiter, applicationsRouter);
 
-// Auth routes (rate limiter on login only)
+// Auth routes (strict rate limiter on login + refresh)
 app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/refresh', authLimiter);
 app.use('/api/auth', authRouter);
 
 // Protected admin routes
-app.use('/api/admin/jobs', requireAuth, adminJobsRouter);
+app.use('/api/admin/jobs', requireAuth, requireRole('admin', 'editor'), adminJobsRouter);
 app.use('/api/admin/users', requireAuth, requireRole('admin'), adminUsersRouter);
 
 // Health check

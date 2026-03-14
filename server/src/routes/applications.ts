@@ -1,0 +1,42 @@
+import { Router } from 'express';
+import { db } from '../db/index.js';
+import { applications } from '../db/schema.js';
+import { createApplicationSchema } from '../../../shared/schemas.js';
+import { nanoid } from 'nanoid';
+
+const router = Router();
+
+// POST /api/applications — public job application submission
+router.post('/', async (req, res) => {
+  try {
+    const parsed = createApplicationSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res
+        .status(400)
+        .json({ message: 'Donnees invalides', errors: parsed.error.flatten().fieldErrors });
+    }
+
+    const id = nanoid(12);
+    const now = new Date().toISOString();
+
+    await db.insert(applications).values({
+      id,
+      jobId: parsed.data.jobId,
+      jobTitle: parsed.data.jobTitle,
+      firstName: parsed.data.firstName,
+      lastName: parsed.data.lastName,
+      email: parsed.data.email,
+      phone: parsed.data.phone || '',
+      cvUrl: parsed.data.cvUrl || '',
+      message: parsed.data.message || '',
+      createdAt: now,
+    });
+
+    res.status(201).json({ message: 'Candidature envoyee avec succes', id });
+  } catch (err) {
+    console.error('Error saving application:', err);
+    res.status(500).json({ message: 'Erreur interne du serveur' });
+  }
+});
+
+export default router;

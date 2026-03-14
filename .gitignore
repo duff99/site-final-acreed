@@ -23,3 +23,15 @@ dist-ssr
 *.sln
 *.sw?
 nul
+
+# Environment files (secrets)
+.env
+server/.env
+
+# Database files
+server/data/*.db
+
+# Dev/test files (not part of the site)
+Test_header/
+Video landing page/
+maj-design/

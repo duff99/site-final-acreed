@@ -1,9 +1,11 @@
-import type { Job, CreateJobInput, UpdateJobInput, LoginInput, AuthResponse, AdminUser, CreateAdminInput, UpdateAdminInput } from '@shared/types';
+import type { Job, CreateJobInput, UpdateJobInput, LoginInput, AuthResponse, AdminUser, CreateAdminInput, UpdateAdminInput, CreateApplicationInput } from '@shared/types';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 class ApiClient {
   private accessToken: string | null = null;
+  private refreshPromise: Promise<string | null> | null = null;
+  private static readonly REQUEST_TIMEOUT = 30_000; // 30 seconds
 
   setToken(token: string | null) {
     this.accessToken = token;
@@ -11,6 +13,40 @@ class ApiClient {
 
   getToken() {
     return this.accessToken;
+  }
+
+  private fetchWithTimeout(url: string, options: RequestInit = {}): Promise<Response> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), ApiClient.REQUEST_TIMEOUT);
+    return fetch(url, { ...options, signal: controller.signal }).finally(() =>
+      clearTimeout(timeout)
+    );
+  }
+
+  private async refreshAccessToken(): Promise<string | null> {
+    // Mutex: reuse in-flight refresh to avoid race conditions
+    if (this.refreshPromise) return this.refreshPromise;
+
+    this.refreshPromise = (async () => {
+      try {
+        const res = await this.fetchWithTimeout(`${API_BASE}/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        this.accessToken = data.accessToken;
+        return data.accessToken as string;
+      } catch {
+        return null;
+      }
+    })();
+
+    try {
+      return await this.refreshPromise;
+    } finally {
+      this.refreshPromise = null;
+    }
   }
 
   private async request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -23,23 +59,17 @@ class ApiClient {
       headers['Authorization'] = `Bearer ${this.accessToken}`;
     }
 
-    const res = await fetch(`${API_BASE}${path}`, {
+    const res = await this.fetchWithTimeout(`${API_BASE}${path}`, {
       ...options,
       headers,
       credentials: 'include',
     });
 
     if (res.status === 401 && this.accessToken) {
-      // Try to refresh the token
-      const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      if (refreshRes.ok) {
-        const data = await refreshRes.json();
-        this.accessToken = data.accessToken;
-        headers['Authorization'] = `Bearer ${data.accessToken}`;
-        const retry = await fetch(`${API_BASE}${path}`, {
+      const newToken = await this.refreshAccessToken();
+      if (newToken) {
+        headers['Authorization'] = `Bearer ${newToken}`;
+        const retry = await this.fetchWithTimeout(`${API_BASE}${path}`, {
           ...options,
           headers,
           credentials: 'include',
@@ -143,6 +173,14 @@ class ApiClient {
 
   getMe() {
     return this.request<AdminUser>('/auth/me');
+  }
+
+  // Public - Applications
+  submitApplication(data: CreateApplicationInput) {
+    return this.request<{ message: string; id: string }>('/applications', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   }
 }
 

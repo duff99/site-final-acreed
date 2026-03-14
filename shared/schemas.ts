@@ -64,3 +64,34 @@ export const updateAdminSchema = z.object({
   role: adminRoleSchema.optional(),
   isActive: z.boolean().optional(),
 });
+
+// ---------- Application schemas ----------
+
+export const createApplicationSchema = z.object({
+  jobId: z.string().min(1, 'Offre requise'),
+  jobTitle: z.string().min(1),
+  firstName: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères').max(50),
+  lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères').max(50),
+  email: z.string().email('Email invalide'),
+  phone: z.string().max(20).optional().default(''),
+  cvUrl: z.string().url('Lien invalide').optional().or(z.literal('')),
+  message: z.string().max(3000).optional().default(''),
+});
+
+// ---------- Contact schemas ----------
+
+export const contactSubjectSchema = z.enum([
+  'Recrutement',
+  'Consulting',
+  'Partenariat',
+  'Candidature spontanée',
+  'Autre',
+]);
+
+export const createContactSchema = z.object({
+  name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères').max(100),
+  email: z.string().email('Email invalide'),
+  phone: z.string().max(20).optional().default(''),
+  subject: contactSubjectSchema,
+  message: z.string().min(10, 'Le message doit contenir au moins 10 caractères').max(5000),
+});
