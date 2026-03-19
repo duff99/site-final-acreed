@@ -12,6 +12,7 @@
     height: 600px;
     border-radius: 20px;
     overflow: hidden;
+    border: 1px solid #2a2a2a;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     background-color: #111;
 }
@@ -22,8 +23,7 @@
     flex: 1;
     background-size: cover;
     background-position: center;
-    cursor: pointer;
-    filter: grayscale(100%);
+    filter: none;
     transition: flex 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 1s ease;
     overflow: hidden;
 }
@@ -37,23 +37,23 @@
     z-index: 1;
 }
 
-/* Hover : Couleur + Ouverture */
+/* Hover : Ouverture */
 .panel:hover {
     flex: 5;
-    filter: grayscale(0%);
+    filter: none;
 }
 
 .panel:hover::after {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.25);
 }
 
 /* Flou sur les autres au hover */
 .gallery-container:hover .panel:not(:hover) {
-    filter: grayscale(100%) blur(5px);
+    filter: blur(5px);
 }
 
 .panel:not(:last-child) {
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid #2a2a2a;
 }
 
 /* --- CONTENU FERMÉ --- */
@@ -153,9 +153,7 @@
         rgba(15, 15, 15, 0);
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
     padding: 32px;
     width: 440px;
@@ -190,7 +188,7 @@
     transition: color 0.5s ease, filter 0.5s ease;
 }
 
-.glass-card .service-icon i {
+.glass-card .service-icon svg {
     display: inline-block;
 }
 
@@ -204,7 +202,7 @@
     filter: drop-shadow(0 0 12px rgba(219, 204, 165, 0.5));
 }
 
-.panel:hover .glass-card .service-icon i {
+.panel:hover .glass-card .service-icon svg {
     animation: serviceIconFloat 1.8s ease-in-out infinite 0.5s;
 }
 
@@ -227,13 +225,81 @@
 @media (max-width: 900px) {
     .gallery-container {
         flex-direction: column;
-        height: 1200px;
-        /* Plus grand en mobile pour qu'on voit bien les panneaux empilés */
+        height: auto;
     }
 
     .panel {
         border-right: none !important;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        min-height: 80px;
+        transition: min-height 0.6s cubic-bezier(0.25, 1, 0.5, 1),
+                    flex 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+                    filter 0.5s ease,
+                    opacity 0.5s ease;
+    }
+
+    /* 1. Neutralize all desktop hover effects on mobile */
+    .panel:hover {
+        flex: 1;
+        filter: none;
+    }
+
+    .panel:hover::after {
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .panel:hover .collapsed-content {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .panel:hover .expanded-content {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .gallery-container:hover .panel:not(:hover) {
+        filter: none;
+    }
+
+    /* 2. Active panel state */
+    .panel.is-active {
+        min-height: 350px;
+        flex: 5;
+    }
+
+    .panel.is-active::after {
+        background: rgba(0, 0, 0, 0.25);
+    }
+
+    .panel.is-active .collapsed-content {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .panel.is-active .expanded-content {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .panel.is-active:hover {
+        flex: 5;
+    }
+
+    .panel.is-active:hover .collapsed-content {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .panel.is-active:hover .expanded-content {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* 3. Dim non-active panels */
+    .gallery-container.has-active .panel:not(.is-active) {
+        filter: blur(3px);
+        opacity: 0.5;
     }
 
     .vertical-text {
@@ -245,7 +311,8 @@
 
     .glass-card {
         padding: 20px;
-        /* Sur mobile, le texte du paragraphe doit être limité pour ne pas tout gâcher */
+        width: auto;
+        max-width: 100%;
     }
 
     .glass-card-title {
