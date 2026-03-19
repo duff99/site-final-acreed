@@ -173,7 +173,33 @@
         justify-content: center;
     }
 
+    /* Fix: remove 100vw override, keep desktop 400px — parent overflow:hidden clips it */
     .ambient-glow {
-        width: 100vw;
+        width: 400px;
+    }
+
+    .guide-line {
+        height: 40px;
+        margin: 25px 0;
+    }
+
+    .btn-aura::before {
+        width: 300px;
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cta-title {
+        font-size: 28px;
+        letter-spacing: -1px;
+    }
+
+    .cta-title em {
+        font-size: 44px;
+    }
+
+    .cta-desc {
+        font-size: 14px;
     }
 }
