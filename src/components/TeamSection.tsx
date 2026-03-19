@@ -1,7 +1,16 @@
+import { useState } from 'react';
 import AnimatedSection from './AnimatedSection';
+import { useIsMobile } from '@/hooks/use-mobile';
 import './TeamSection.css';
 
 const TeamSection = () => {
+  const [activePanel, setActivePanel] = useState<number | null>(null);
+  const isMobile = useIsMobile();
+  const handlePanelClick = (index: number) => {
+    if (!isMobile) return;
+    setActivePanel(prev => prev === index ? null : index);
+  };
+
   return (
     <section id="team" className="relative py-20 overflow-hidden scroll-mt-24">
       <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
@@ -21,9 +30,9 @@ const TeamSection = () => {
 
         {/* New Team Grid based on equipe.html */}
         <AnimatedSection delay={0.2}>
-          <div className="ecosystem-container">
+          <div className={`ecosystem-container${activePanel !== null ? ' has-active' : ''}`}>
             {/* Tristan */}
-            <div className="panel" style={{ backgroundImage: "url('/images/tristan.jpg')" }}>
+            <div className={`panel${isMobile && activePanel === 0 ? ' is-active' : ''}`} style={{ backgroundImage: "url('/images/tristan.jpg')" }} onClick={() => handlePanelClick(0)}>
               <div className="panel-content">
                 <div className="step-number">Business Developer</div>
                 <h3 className="title">Tristan</h3>
@@ -54,7 +63,7 @@ const TeamSection = () => {
             </div>
 
             {/* Steven */}
-            <div className="panel" style={{ backgroundImage: "url('/images/steven.jpg')" }}>
+            <div className={`panel${isMobile && activePanel === 1 ? ' is-active' : ''}`} style={{ backgroundImage: "url('/images/steven.jpg')" }} onClick={() => handlePanelClick(1)}>
               <div className="panel-content">
                 <div className="step-number">CEO & Founder</div>
                 <h3 className="title">Steven</h3>
@@ -85,7 +94,7 @@ const TeamSection = () => {
             </div>
 
             {/* Maxime */}
-            <div className="panel" style={{ backgroundImage: "url('/images/maxime.jpg')" }}>
+            <div className={`panel${isMobile && activePanel === 2 ? ' is-active' : ''}`} style={{ backgroundImage: "url('/images/maxime.jpg')" }} onClick={() => handlePanelClick(2)}>
               <div className="panel-content">
                 <div className="step-number">Business Manager</div>
                 <h3 className="title">Maxime</h3>
