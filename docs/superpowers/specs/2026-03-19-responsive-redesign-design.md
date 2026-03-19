@@ -14,10 +14,15 @@ The Acreed Consulting website is a premium monochrome marketing site with glassm
 
 ### Breakpoint Strategy
 
-Standardize on 3 mobile breakpoints while keeping existing 900px breakpoints intact:
+Primary breakpoints (used consistently across the redesign):
 - `480px` — very small phones (iPhone SE, small Androids)
 - `768px` — tablets / large phones (existing)
 - `900px` — keep for components already using it (ServicesSection, ExpertiseSection, AboutSection, HistorySection)
+
+Additional breakpoints used where needed:
+- `400px` — AboutSection cards (single column fallback)
+- `600px` — Footer (existing breakpoint, kept)
+- `1200px` — HeroSection (existing breakpoint, kept)
 
 ### Touch Interaction Pattern
 
@@ -39,7 +44,7 @@ All hover-expand components (ServicesSection accordion, TeamSection panels) will
 **Changes:**
 
 a) **Video recentering:**
-- Add responsive `object-position` on the video element: `center 30%` on mobile (< 768px) to move the focal point toward the animated logo area. Keep `center center` on desktop.
+- Add responsive `object-position` on the video element: `center 30%` on mobile (< 768px) to shift the visible area upward, showing more of the upper portion where the animated logo appears. Keep `center center` on desktop. Note: the 30% value should be fine-tuned visually during implementation.
 
 b) **Gradient overlay reinforcement on mobile:**
 - Current gradient: `rgba(10,10,10,.5) 0%, rgba(10,10,10,.15) 40%, rgba(10,10,10,.6) 80%, rgba(10,10,10,1) 100%`
@@ -74,7 +79,7 @@ a) **Logo size:**
 b) **Mobile menu overlay upgrade:**
 - Replace `bg-background` with glassmorphism: `bg-background/95 backdrop-blur-xl`
 - Reduce link font size from `text-2xl` to `text-xl`
-- Add active section indicator: golden underline on current section link
+- Add active section indicator: accent-colored (`#dbcca5`, the existing site accent) underline on current section link
 - Add Acreed logo image at top of overlay menu (small, centered)
 
 c) **Safe area support:**
@@ -91,9 +96,10 @@ d) **Nav bar height on mobile:**
 
 a) **Tap-to-toggle interaction:**
 - Add `activePanel` state in `ServicesSection.tsx`
-- Detect mobile via `useIsMobile()` hook (already exists in the project)
+- Detect mobile via `useIsMobile(900)` — pass custom breakpoint to match the CSS 900px breakpoint (the default hook uses 768px which would create a dead zone between 768-900px where CSS shows mobile layout but JS tap-to-toggle is not active)
 - On mobile: clicking a `.panel` sets it as active. Clicking again resets to null (rest state).
 - Add `.is-active` class to the active panel
+- Remove `cursor: pointer` from `.panel` (violates CLAUDE.md convention — custom cursor handles this)
 - Desktop: unchanged (CSS `:hover` still works)
 
 b) **CSS changes for mobile (< 900px):**
@@ -118,6 +124,7 @@ c) **Blur on non-active panels:**
 a) **Tap-to-toggle interaction:**
 - Same pattern as ServicesSection: `activePanel` state, `.is-active` class on mobile
 - On mobile, tapping a panel opens it (shows description + tags), tapping again closes it
+- Remove `cursor: pointer` from `.panel` (violates CLAUDE.md convention)
 
 b) **CSS changes for mobile (< 768px):**
 - `.ecosystem-container .panel`: `min-height: 220px` (down from 300px)
@@ -140,6 +147,7 @@ a) **Fix broken mirror issue on mobile:**
 - Root cause: `.card-inner { transform: rotateY(180deg); transform-style: flat; }` on mobile causes the back face to render mirrored because the parent is rotated but `transform-style: flat` prevents children from being in 3D space
 - Fix: On mobile (< 900px), completely abandon the flip mechanism:
   - `.card-inner`: `transform: none; transform-style: flat;`
+  - `.card-wrapper:hover .card-inner`: `transform: none;` (prevent accidental flip on touch hover)
   - `.card-front`: `display: none;`
   - `.card-back`: `position: relative; transform: none; backface-visibility: visible;`
   - This ensures the back content renders normally, not mirrored
@@ -191,7 +199,9 @@ d) **Glass stat cards on mobile:**
 **Changes:**
 
 a) **Fix ambient-glow overflow:**
-- Replace `width: 100vw` with `width: 100%` at 768px breakpoint
+- The `.ambient-glow` is absolutely positioned inside `.button-wrapper` (a narrow flex container), so `width: 100%` would reference that narrow parent, not the viewport.
+- Instead: keep `width: 400px` at all sizes (the desktop value) — the parent `.ultimate-cta` already has `overflow: hidden` which clips it. Remove the `width: 100vw` mobile override entirely.
+- If the glow still needs to be wider on mobile, use `width: min(400px, 90vw)` to stay within bounds.
 
 b) **New 480px breakpoint:**
 - `.cta-title`: `font-size: 28px`
@@ -255,7 +265,7 @@ c) **Nav gap:**
 
 **Changes:**
 
-a) **Reduced motion accessibility:**
+a) **Reduced motion accessibility (CSS only):**
 ```css
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -265,6 +275,7 @@ a) **Reduced motion accessibility:**
   }
 }
 ```
+Note: This only affects CSS animations/transitions. Framer Motion animations are JS-driven and would need separate handling via `useReducedMotion()` hook — that is out of scope for this pass but noted as a future improvement.
 
 b) **Safe area meta tag:**
 - In `index.html`: ensure `<meta name="viewport">` includes `viewport-fit=cover`
@@ -295,3 +306,6 @@ The work is organized by component independence. Each section can be modified in
 - Custom cursor behavior on mobile (already hidden via touch detection)
 - Admin panel responsive (not mentioned by user)
 - New visual designs or features — strictly fixing existing responsive issues
+- JobsSection — no mobile issues identified during audit, works with existing responsive grid
+- SectionDividerPremium — simple decorative divider, no mobile issues
+- Framer Motion reduced-motion support (JS-level) — noted for future improvement
