@@ -66,8 +66,18 @@ const Navigation = () => {
     }
 
     if (!isHomePage) {
-      // On sub-pages, navigate back to home with the hash
-      navigate('/' + href);
+      // On sub-pages, navigate back to home then scroll to section
+      const sectionId = href.replace('#', '');
+      navigate('/');
+      // Wait for home page to render, then scroll
+      setTimeout(() => {
+        if (sectionId === 'top') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+        }
+        window.history.replaceState(null, '', '/');
+      }, 100);
       setIsMobileMenuOpen(false);
       return;
     }
@@ -79,15 +89,19 @@ const Navigation = () => {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }
+    // Keep URL clean — never show hash fragments
+    if (window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
     setIsMobileMenuOpen(false);
   };
 
   return (
     <>
       {/* Raycast-style fixed centered wrapper */}
-      <div className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4 pointer-events-none">
+      <div className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4 pointer-events-none" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
         <nav className="pointer-events-auto w-[96%] max-w-[1600px] glass-nav-raycast">
-          <div className="relative flex items-center h-[76px] px-8">
+          <div className="relative flex items-center h-[60px] lg:h-[76px] px-4 lg:px-8">
             {/* Logo — absolute left */}
             <button
               onClick={() => scrollToSection('#top')}
@@ -96,7 +110,7 @@ const Navigation = () => {
               <img
                 src="/images/favicon_navbar.jpg"
                 alt="Acreed Consulting"
-                className="h-12 w-auto rounded-md"
+                className="h-8 lg:h-12 w-auto rounded-md"
               />
             </button>
 
@@ -157,19 +171,31 @@ const Navigation = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-background pt-28"
+            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl pt-24"
           >
             <div className="flex flex-col items-center justify-center h-full gap-6">
+              <img
+                src="/images/favicon_navbar.jpg"
+                alt="Acreed"
+                className="h-10 w-auto rounded-md mb-8 opacity-60"
+              />
               {navLinks.map((link, index) => (
                 <motion.button
                   key={link.href}
                   onClick={() => scrollToSection(link.href)}
-                  className="text-2xl font-display text-foreground hover:text-muted-foreground transition-colors"
+                  className={`text-xl font-display transition-colors relative ${
+                    activeSection === link.href
+                      ? 'text-[#dbcca5]'
+                      : 'text-foreground hover:text-muted-foreground'
+                  }`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.08 }}
                 >
                   {link.label}
+                  {activeSection === link.href && (
+                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full bg-[#dbcca5]" />
+                  )}
                 </motion.button>
               ))}
               <motion.button
