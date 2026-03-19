@@ -284,33 +284,56 @@ a.glass-stat-card.highlight-link .stat-icon {
 
 /* --- RESPONSIVE --- */
 @media (max-width: 900px) {
+    .section-title {
+        font-size: 42px;
+    }
+
+    .chapters-container {
+        gap: 80px;
+    }
+
+    /* Left-aligned timeline rail */
     .timeline-track {
-        display: none;
+        left: 15px;
+        transform: none;
     }
 
     .chapter-row,
     .chapter-row:nth-child(even) {
         flex-direction: column;
-        align-items: center;
-        gap: 50px;
-        margin-bottom: 80px;
+        align-items: flex-start;
+        gap: 30px;
+        padding-left: 40px;
     }
 
     .chapter-content {
-        padding: 0 20px;
-        align-items: center !important;
-        text-align: center !important;
+        padding: 0;
+        align-items: flex-start !important;
+        text-align: left !important;
     }
 
     .chapter-text-block {
-        text-align: center;
+        text-align: left;
+        max-width: 100%;
+    }
+
+    .chapter-title {
+        font-size: 28px;
     }
 
     .chapter-visual {
         padding: 0;
+        width: 100%;
     }
 
     .connector-dot {
-        display: none;
+        display: block;
+        left: -31px !important;
+        right: auto !important;
+    }
+
+    .glass-stat-card {
+        max-width: 100%;
+        padding: 30px 20px;
     }
 }
