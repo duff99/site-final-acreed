@@ -22,8 +22,8 @@ const PartnersMarquee = () => {
       {/* Marquee Container */}
       <div className="relative">
         {/* Gradient masks for smooth fade effect */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10" />
+        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-background to-transparent z-10" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-background to-transparent z-10" />
 
         {/* Scrolling content */}
         <div className="marquee-container">
@@ -43,11 +43,11 @@ const PartnersMarquee = () => {
                 key={`${partner.name}-${index}`}
                 className="partner-logo group flex items-center justify-center px-4 md:px-6"
               >
-                <div className="bg-white rounded-xl px-6 py-4 md:px-8 md:py-5 opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500 group-hover:shadow-[0_0_25px_rgba(255,255,255,0.12)] group-hover:scale-105">
+                <div className="bg-white rounded-xl px-6 py-4 md:px-8 md:py-5 opacity-70 transition-all duration-500 group-hover:opacity-100 group-hover:shadow-[0_0_25px_rgba(255,255,255,0.12)] group-hover:scale-110">
                   <img
                     src={partner.logo}
                     alt={partner.name}
-                    className="h-14 md:h-20 w-auto min-w-[100px] md:min-w-[140px] max-w-[180px] md:max-w-[220px] object-contain"
+                    className="h-10 md:h-14 lg:h-20 w-auto min-w-[80px] md:min-w-[120px] lg:min-w-[140px] max-w-[150px] md:max-w-[180px] lg:max-w-[220px] object-contain"
                   />
                 </div>
               </div>
