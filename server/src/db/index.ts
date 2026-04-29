@@ -72,6 +72,20 @@ await db.run(sql`
 `);
 
 await db.run(sql`
+  CREATE TABLE IF NOT EXISTS refresh_tokens (
+    jti TEXT PRIMARY KEY,
+    admin_id TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    revoked_at TEXT,
+    created_at TEXT NOT NULL
+  )
+`);
+
+await db.run(sql`
+  CREATE INDEX IF NOT EXISTS idx_refresh_tokens_admin_id ON refresh_tokens (admin_id)
+`);
+
+await db.run(sql`
   CREATE TABLE IF NOT EXISTS admins (
     id TEXT PRIMARY KEY,
     email TEXT NOT NULL UNIQUE,

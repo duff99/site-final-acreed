@@ -60,3 +60,15 @@ export const admins = sqliteTable('admins', {
   updatedAt: text('updated_at').notNull().$defaultFn(() => new Date().toISOString()),
   createdBy: text('created_by'),
 });
+
+// One row per issued refresh token. The cookie carries the JWT (which contains
+// the jti); this table is the source of truth for whether the token is still
+// valid. Logout and rotation set revokedAt so a stolen cookie becomes useless
+// the moment it is used a second time (or after the legit user logs out).
+export const refreshTokens = sqliteTable('refresh_tokens', {
+  jti: text('jti').primaryKey(),
+  adminId: text('admin_id').notNull(),
+  expiresAt: text('expires_at').notNull(),
+  revokedAt: text('revoked_at'),
+  createdAt: text('created_at').notNull().$defaultFn(() => new Date().toISOString()),
+});

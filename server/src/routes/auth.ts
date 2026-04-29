@@ -1,20 +1,58 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { nanoid } from 'nanoid';
 import { db } from '../db/index.js';
-import { admins } from '../db/schema.js';
-import { eq } from 'drizzle-orm';
+import { admins, refreshTokens } from '../db/schema.js';
+import { and, eq, isNull } from 'drizzle-orm';
 import { config } from '../config.js';
 import { loginSchema } from '../../../shared/schemas.js';
 import { requireAuth, type AuthRequest } from '../middleware/auth.js';
 
 const router = Router();
 
-// Account-level lockout: after MAX_FAILED_ATTEMPTS bad passwords on one
-// account, lock that account (independent of IP rate limit) for
-// LOCKOUT_DURATION_MS. Reset on successful login.
+// Refresh token cookie + lifetime constants.
+const REFRESH_COOKIE_NAME = 'refreshToken';
+const REFRESH_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
+
+// Account lockout policy.
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
+
+const refreshCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
+  maxAge: REFRESH_TTL_SECONDS * 1000,
+};
+
+async function issueRefreshToken(adminId: string) {
+  const jti = nanoid(32);
+  const expiresAt = new Date(Date.now() + REFRESH_TTL_SECONDS * 1000).toISOString();
+
+  await db.insert(refreshTokens).values({
+    jti,
+    adminId,
+    expiresAt,
+    revokedAt: null,
+  });
+
+  const token = jwt.sign(
+    { sub: adminId, type: 'refresh', jti },
+    config.JWT_SECRET,
+    { expiresIn: REFRESH_TTL_SECONDS }
+  );
+
+  return token;
+}
+
+function signAccessToken(admin: { id: string; email: string; role: string }) {
+  return jwt.sign(
+    { sub: admin.id, email: admin.email, role: admin.role },
+    config.JWT_SECRET,
+    { expiresIn: config.JWT_ACCESS_TTL }
+  );
+}
 
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
@@ -59,18 +97,9 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Identifiants incorrects' });
     }
 
-    const accessToken = jwt.sign(
-      { sub: admin.id, email: admin.email, role: admin.role },
-      config.JWT_SECRET,
-      { expiresIn: config.JWT_ACCESS_TTL }
-    );
-    const refreshToken = jwt.sign(
-      { sub: admin.id, type: 'refresh' },
-      config.JWT_SECRET,
-      { expiresIn: config.JWT_REFRESH_TTL }
-    );
+    const accessToken = signAccessToken(admin);
+    const refreshToken = await issueRefreshToken(admin.id);
 
-    // Reset lockout counters and update lastLoginAt
     await db.update(admins)
       .set({
         lastLoginAt: new Date().toISOString(),
@@ -79,12 +108,7 @@ router.post('/login', async (req, res) => {
       })
       .where(eq(admins.id, admin.id));
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    res.cookie(REFRESH_COOKIE_NAME, refreshToken, refreshCookieOptions);
 
     res.json({
       accessToken,
@@ -96,43 +120,103 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// POST /api/auth/refresh
+// POST /api/auth/refresh — rotation: revoke the presented jti, issue a new one.
 router.post('/refresh', async (req, res) => {
   try {
-    const token = req.cookies?.refreshToken;
+    const token = req.cookies?.[REFRESH_COOKIE_NAME];
     if (!token) return res.status(401).json({ message: 'Aucun refresh token' });
 
-    const payload = jwt.verify(token, config.JWT_SECRET) as { sub: string; type?: string };
-    if (payload.type !== 'refresh') {
+    let payload: { sub: string; type?: string; jti?: string };
+    try {
+      payload = jwt.verify(token, config.JWT_SECRET) as typeof payload;
+    } catch {
       return res.status(401).json({ message: 'Token invalide' });
     }
-    const result = await db.select().from(admins).where(eq(admins.id, payload.sub));
-    const admin = result[0];
-    if (!admin) return res.status(401).json({ message: 'Utilisateur introuvable' });
 
+    if (payload.type !== 'refresh' || !payload.jti) {
+      return res.status(401).json({ message: 'Token invalide' });
+    }
+
+    // Look up the token in the DB. It must exist, not be revoked, not be
+    // expired. If we can't find it OR it's revoked, treat the cookie as
+    // compromised: revoke every refresh token for that admin (forces re-login
+    // everywhere). Belt-and-suspenders against token replay.
+    const found = await db
+      .select()
+      .from(refreshTokens)
+      .where(eq(refreshTokens.jti, payload.jti));
+    const stored = found[0];
+
+    if (!stored || stored.revokedAt) {
+      if (payload.sub) {
+        await db
+          .update(refreshTokens)
+          .set({ revokedAt: new Date().toISOString() })
+          .where(
+            and(eq(refreshTokens.adminId, payload.sub), isNull(refreshTokens.revokedAt))
+          );
+      }
+      res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
+      return res.status(401).json({ message: 'Token invalide' });
+    }
+
+    if (new Date(stored.expiresAt).getTime() < Date.now()) {
+      res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
+      return res.status(401).json({ message: 'Token expire' });
+    }
+
+    const adminRows = await db.select().from(admins).where(eq(admins.id, payload.sub));
+    const admin = adminRows[0];
+    if (!admin) {
+      res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
+      return res.status(401).json({ message: 'Utilisateur introuvable' });
+    }
     if (!admin.isActive) {
-      res.clearCookie('refreshToken');
+      await db
+        .update(refreshTokens)
+        .set({ revokedAt: new Date().toISOString() })
+        .where(eq(refreshTokens.jti, payload.jti));
+      res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
       return res.status(403).json({ message: 'Compte desactive' });
     }
 
-    const accessToken = jwt.sign(
-      { sub: admin.id, email: admin.email, role: admin.role },
-      config.JWT_SECRET,
-      { expiresIn: config.JWT_ACCESS_TTL }
-    );
+    // Rotation: revoke old, mint new.
+    await db
+      .update(refreshTokens)
+      .set({ revokedAt: new Date().toISOString() })
+      .where(eq(refreshTokens.jti, payload.jti));
 
+    const newRefresh = await issueRefreshToken(admin.id);
+    const accessToken = signAccessToken(admin);
+
+    res.cookie(REFRESH_COOKIE_NAME, newRefresh, refreshCookieOptions);
     res.json({
       accessToken,
       user: { id: admin.id, email: admin.email, name: admin.name, role: admin.role },
     });
-  } catch {
+  } catch (err) {
+    console.error('Refresh error:', err);
     return res.status(401).json({ message: 'Token invalide' });
   }
 });
 
-// POST /api/auth/logout
-router.post('/logout', (_req, res) => {
-  res.clearCookie('refreshToken');
+// POST /api/auth/logout — revoke the presented refresh token.
+router.post('/logout', async (req, res) => {
+  const token = req.cookies?.[REFRESH_COOKIE_NAME];
+  if (token) {
+    try {
+      const payload = jwt.verify(token, config.JWT_SECRET) as { jti?: string; type?: string };
+      if (payload.type === 'refresh' && payload.jti) {
+        await db
+          .update(refreshTokens)
+          .set({ revokedAt: new Date().toISOString() })
+          .where(eq(refreshTokens.jti, payload.jti));
+      }
+    } catch {
+      // Already invalid — nothing to revoke, just clear the cookie.
+    }
+  }
+  res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
   res.json({ message: 'Deconnecte' });
 });
 
