@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, Users, Mail, FileText, LogOut, ArrowLeft, ChevronUp, Shield, UserCheck } from 'lucide-react';
+import { LayoutDashboard, Briefcase, Users, Mail, FileText, LogOut, ArrowLeft, ChevronUp, Shield, UserCheck, KeyRound } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 
 function getRoleLabel(role?: string) {
@@ -102,9 +102,16 @@ export default function AdminLayout() {
             <div className="pt-3 space-y-1">
               <div className="text-xs text-white/40 px-2 mb-2 truncate">{user?.email}</div>
               <div className="h-px bg-white/[0.06]" />
+              <Link
+                to="/admin/profile"
+                className="w-full text-left px-2 py-1.5 text-sm text-white/60 hover:text-white rounded-lg hover:bg-white/[0.04] transition-colors duration-200 flex items-center gap-2 mt-1"
+              >
+                <KeyRound className="w-3.5 h-3.5" />
+                Changer le mot de passe
+              </Link>
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-2 py-1.5 text-sm text-white/60 hover:text-white rounded-lg hover:bg-white/[0.04] transition-colors duration-200 flex items-center gap-2 mt-1"
+                className="w-full text-left px-2 py-1.5 text-sm text-white/60 hover:text-white rounded-lg hover:bg-white/[0.04] transition-colors duration-200 flex items-center gap-2"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 Deconnexion

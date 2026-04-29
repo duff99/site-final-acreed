@@ -27,6 +27,7 @@ const AdminUserList = lazy(() => import("./pages/admin/AdminUserList"));
 const AdminUserForm = lazy(() => import("./pages/admin/AdminUserForm"));
 const AdminMessageList = lazy(() => import("./pages/admin/AdminMessageList"));
 const AdminApplicationList = lazy(() => import("./pages/admin/AdminApplicationList"));
+const AdminProfile = lazy(() => import("./pages/admin/AdminProfile"));
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
                   <Route path="users/:id/edit" element={<AdminUserForm />} />
                   <Route path="messages" element={<AdminMessageList />} />
                   <Route path="candidatures" element={<AdminApplicationList />} />
+                  <Route path="profile" element={<AdminProfile />} />
                 </Route>
               </Route>
 
