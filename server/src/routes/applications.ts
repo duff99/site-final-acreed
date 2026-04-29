@@ -3,6 +3,7 @@ import { db } from '../db/index.js';
 import { applications } from '../db/schema.js';
 import { createApplicationSchema } from '../../../shared/schemas.js';
 import { nanoid } from 'nanoid';
+import { notifyApplication } from '../lib/notifier.js';
 
 const router = Router();
 
@@ -31,6 +32,10 @@ router.post('/', async (req, res) => {
       message: parsed.data.message || '',
       createdAt: now,
     });
+
+    notifyApplication(parsed.data).catch((err) =>
+      console.error('[applications] notifier failed:', err)
+    );
 
     res.status(201).json({ message: 'Candidature envoyee avec succes', id });
   } catch (err) {

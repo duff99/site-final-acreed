@@ -8,6 +8,8 @@ import { config } from './config.js';
 import jobsRouter from './routes/jobs.js';
 import adminJobsRouter from './routes/admin-jobs.js';
 import adminUsersRouter from './routes/admin-users.js';
+import adminContactRouter from './routes/admin-contact.js';
+import adminApplicationsRouter from './routes/admin-applications.js';
 import authRouter from './routes/auth.js';
 import contactRouter from './routes/contact.js';
 import applicationsRouter from './routes/applications.js';
@@ -65,6 +67,8 @@ app.use('/api/auth', authRouter);
 // Protected admin routes
 app.use('/api/admin/jobs', requireAuth, requireRole('admin', 'editor'), adminJobsRouter);
 app.use('/api/admin/users', requireAuth, requireRole('admin'), adminUsersRouter);
+app.use('/api/admin/contact-messages', requireAuth, requireRole('admin', 'editor'), adminContactRouter);
+app.use('/api/admin/applications', requireAuth, requireRole('admin', 'editor'), adminApplicationsRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));

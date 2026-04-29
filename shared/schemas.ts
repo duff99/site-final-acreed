@@ -101,3 +101,41 @@ export const createContactSchema = z.object({
     errorMap: () => ({ message: 'Le consentement au traitement des données est requis' }),
   }),
 });
+
+export const contactMessageSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+  phone: z.string().nullable(),
+  subject: z.string(),
+  message: z.string(),
+  cvFilename: z.string().nullable(),
+  isRead: z.boolean(),
+  createdAt: z.string(),
+});
+
+export const updateContactMessageSchema = z.object({
+  isRead: z.boolean(),
+});
+
+// ---------- Admin Application schemas ----------
+
+export const applicationStatusSchema = z.enum(['new', 'reviewing', 'contacted', 'rejected', 'archived']);
+
+export const applicationSchema = z.object({
+  id: z.string(),
+  jobId: z.string(),
+  jobTitle: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  phone: z.string().nullable(),
+  cvUrl: z.string().nullable(),
+  message: z.string().nullable(),
+  status: applicationStatusSchema,
+  createdAt: z.string(),
+});
+
+export const updateApplicationSchema = z.object({
+  status: applicationStatusSchema,
+});

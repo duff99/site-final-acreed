@@ -3,6 +3,7 @@ import { db } from '../db/index.js';
 import { contactMessages } from '../db/schema.js';
 import { createContactSchema } from '../../../shared/schemas.js';
 import { nanoid } from 'nanoid';
+import { notifyContact } from '../lib/notifier.js';
 
 const router = Router();
 
@@ -24,6 +25,11 @@ router.post('/', async (req, res) => {
       ...parsed.data,
       createdAt: now,
     });
+
+    // Fire-and-forget — never block response on email delivery
+    notifyContact(parsed.data).catch((err) =>
+      console.error('[contact] notifier failed:', err)
+    );
 
     res.status(201).json({ message: 'Message envoye avec succes', id });
   } catch (err) {

@@ -155,6 +155,14 @@ Monochrome black/white/gray only — no colors. All theming via CSS custom prope
 | `ADMIN_PASSWORD` | — | Required for seed |
 | `ADMIN_NAME` | `Admin` | Optional |
 | `CORS_ORIGIN` | `http://localhost:8081` | Set to frontend URL in prod |
+| `SMTP_HOST` | — | SMTP server (e.g. `smtp.office365.com` for Microsoft 365). If unset, email notifications are skipped (logged) but DB writes still succeed. |
+| `SMTP_PORT` | `587` | `587` for STARTTLS (M365), `465` for implicit TLS |
+| `SMTP_SECURE` | `false` | `true` only on port 465. Leave `false` for M365/587. |
+| `SMTP_USER` | — | Mailbox login (full email, e.g. `no-reply@acreedconsulting.com`) |
+| `SMTP_PASS` | — | App password (M365 requires Authenticated SMTP enabled on the mailbox + an app password if MFA is on) |
+| `NOTIFY_EMAIL_CONTACT` | `contact@acreedconsulting.com` | Recipient for general `/contact` messages (Recrutement, Consulting, Partenariat, Autre) |
+| `NOTIFY_EMAIL_RECRUITMENT` | `recrutement@acreedconsulting.com` | Recipient for job applications and "Candidature spontanée" |
+| `NOTIFY_EMAIL_FROM` | falls back to `SMTP_USER` | Sender header (must be a real mailbox in your tenant) |
 
 ### Frontend
 

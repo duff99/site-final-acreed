@@ -25,6 +25,14 @@ services:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - ADMIN_NAME=${ADMIN_NAME:-Admin}
       - CORS_ORIGIN=https://site.acreedconsulting.com
+      - SMTP_HOST=${SMTP_HOST:-smtp.office365.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_SECURE=${SMTP_SECURE:-false}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - NOTIFY_EMAIL_FROM=${NOTIFY_EMAIL_FROM}
+      - NOTIFY_EMAIL_CONTACT=${NOTIFY_EMAIL_CONTACT:-contact@acreedconsulting.com}
+      - NOTIFY_EMAIL_RECRUITMENT=${NOTIFY_EMAIL_RECRUITMENT:-recrutement@acreedconsulting.com}
     restart: unless-stopped
 
 volumes:
