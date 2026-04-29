@@ -5,8 +5,8 @@ export interface NavLink {
 
 export const navLinks: NavLink[] = [
   { href: '#top', label: 'Accueil' },
-  { href: '#services', label: 'Expertise' },
-  { href: '#expertise', label: 'Services' },
+  { href: '#services', label: 'Services' },
+  { href: '#expertise', label: 'Expertise' },
   { href: '#jobs', label: 'Nos Offres' },
   { href: '#about', label: 'Crédo' },
   { href: '#team', label: "L'Équipe" },
