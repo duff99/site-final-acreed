@@ -63,7 +63,8 @@
     justify-content: center;
 }
 
-.footer-nav a {
+.footer-nav a,
+.footer-nav button {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -75,18 +76,29 @@
     transition: all 0.3s ease;
 }
 
-.footer-nav a .lucide {
+.footer-nav a .lucide,
+.footer-nav button .lucide {
     color: rgba(255, 255, 255, 0.3);
     transition: color 0.3s ease;
 }
 
-.footer-nav a:hover {
+.footer-nav a:hover,
+.footer-nav button:hover {
     color: #ffffff;
     transform: translateY(-2px);
 }
 
-.footer-nav a:hover .lucide {
+.footer-nav a:hover .lucide,
+.footer-nav button:hover .lucide {
     color: #dbcca5;
+}
+
+.footer-nav button {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    cursor: pointer;
 }
 
 /* --- LÉGAL & COPYRIGHT --- */

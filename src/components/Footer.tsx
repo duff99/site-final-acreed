@@ -1,12 +1,14 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { Mail, Linkedin } from 'lucide-react';
+import { Mail, Linkedin, Cookie } from 'lucide-react';
 import './Footer.css';
 import AnimatedSection from './AnimatedSection';
+import { useCookieConsent } from '@/hooks/use-cookie-consent';
 
 const Footer = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  const { reopen } = useCookieConsent();
 
   const goHome = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -54,6 +56,16 @@ const Footer = () => {
             </a>
             <Link to="/mentions-legales">Mentions Légales</Link>
             <Link to="/confidentialite">Confidentialité</Link>
+            <Link to="/politique-cookies">Cookies</Link>
+            <Link to="/cgu">CGU</Link>
+            <button
+              type="button"
+              onClick={reopen}
+              className="inline-flex items-center gap-1.5"
+              aria-label="Modifier mes préférences cookies"
+            >
+              <Cookie size={16} /> Préférences
+            </button>
           </nav>
 
           <div className="footer-legal">

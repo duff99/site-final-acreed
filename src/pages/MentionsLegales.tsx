@@ -1,19 +1,21 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import SkipToContent from '@/components/SkipToContent';
 import SEO from '@/components/SEO';
+import SkipToContent from '@/components/SkipToContent';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 
+const lastUpdate = '29 avril 2026';
+
 const MentionsLegales = () => (
   <div className="min-h-screen bg-background text-foreground">
-    <SkipToContent />
     <SEO
       title="Mentions légales"
-      description="Mentions légales du site Acreed Consulting : éditeur, hébergement, propriété intellectuelle."
+      description="Mentions légales du site Acreed Consulting : éditeur, hébergement, propriété intellectuelle, responsabilité et juridiction."
       canonicalPath="/mentions-legales"
     />
+    <SkipToContent />
     <Navigation />
     <main id="main-content" tabIndex={-1} className="pt-24 md:pt-28">
       <section className="relative py-16 md:py-24">
@@ -29,74 +31,173 @@ const MentionsLegales = () => (
           </AnimatedSection>
 
           <AnimatedSection delay={0.1}>
-            <h1 className="text-4xl md:text-5xl font-display font-bold mb-12 text-gradient">
+            <span className="text-xs uppercase tracking-[3px] text-[#dbcca5]/80 mb-3 block">
+              Informations légales
+            </span>
+            <h1 className="text-4xl md:text-5xl font-display font-bold mb-3 text-gradient">
               Mentions Légales
             </h1>
+            <p className="text-sm text-white/40 mb-12">Dernière mise à jour : {lastUpdate}</p>
           </AnimatedSection>
 
           <AnimatedSection delay={0.2}>
             <div className="space-y-10 text-muted-foreground leading-relaxed">
-              <section className="space-y-3">
-                <h2 className="text-lg font-semibold text-foreground">Éditeur du site</h2>
+
+              <Section title="1. Éditeur du site">
                 <p>
-                  Acreed Consulting<br />
-                  Société par actions simplifiée (SAS)<br />
-                  Siège social : Le Puy-en-Velay, France<br />
-                  Email : recrutement@acreedconsulting.com
+                  Le site <strong className="text-white/90">acreedconsulting.com</strong> est édité par :
                 </p>
-              </section>
+                <KeyValueList
+                  items={[
+                    ['Raison sociale', 'ACREED CONSULTING'],
+                    ['Forme juridique', 'Société par actions simplifiée (SAS)'],
+                    ['Capital social', '[À COMPLÉTER] €'],
+                    ['Siège social', '[À COMPLÉTER — adresse complète], France'],
+                    ['SIREN', '[À COMPLÉTER]'],
+                    ['SIRET', '[À COMPLÉTER]'],
+                    ['RCS', '[À COMPLÉTER — ville d\'immatriculation + numéro]'],
+                    ['Numéro TVA intracommunautaire', '[À COMPLÉTER]'],
+                    ['Code APE / NAF', '[À COMPLÉTER]'],
+                    ['Téléphone', '[À COMPLÉTER]'],
+                    ['Email', 'contact@acreedconsulting.com'],
+                  ]}
+                />
+              </Section>
 
-              <section className="space-y-3">
-                <h2 className="text-lg font-semibold text-foreground">Directeur de la publication</h2>
-                <p>Le représentant légal de la société Acreed Consulting.</p>
-              </section>
-
-              <section className="space-y-3">
-                <h2 className="text-lg font-semibold text-foreground">Hébergement</h2>
+              <Section title="2. Directeur de la publication">
                 <p>
-                  Le site est hébergé par un prestataire professionnel assurant la sécurité
-                  et la disponibilité des services.
+                  <strong className="text-white/90">[À COMPLÉTER — Nom Prénom]</strong>, en sa qualité de
+                  Président d'Acreed Consulting.
                 </p>
-              </section>
+                <p>Contact : contact@acreedconsulting.com</p>
+              </Section>
 
-              <section className="space-y-3">
-                <h2 className="text-lg font-semibold text-foreground">Propriété intellectuelle</h2>
+              <Section title="3. Hébergement">
+                <p>Le site est hébergé par&nbsp;:</p>
+                <KeyValueList
+                  items={[
+                    ['Hébergeur', 'Microsoft Azure (Microsoft Ireland Operations Limited)'],
+                    ['Adresse', 'One Microsoft Place, South County Business Park, Leopardstown, Dublin 18, D18 P521, Irlande'],
+                    ['Site web', 'https://azure.microsoft.com'],
+                  ]}
+                />
+                <p className="text-sm text-white/50">
+                  Les données sont stockées au sein de l'Espace économique européen (EEE).
+                </p>
+              </Section>
+
+              <Section title="4. Propriété intellectuelle">
                 <p>
-                  L'ensemble du contenu du site (textes, images, logos, graphismes, icônes, sons,
-                  logiciels) est la propriété exclusive d'Acreed Consulting ou de ses partenaires
-                  et est protégé par les lois françaises et internationales relatives à la propriété
+                  L'ensemble des éléments composant le site (textes, images, vidéos, logos,
+                  graphismes, icônes, sons, logiciels, bases de données, code source) sont la
+                  propriété exclusive d'Acreed Consulting ou de ses partenaires et sont protégés
+                  par le droit français et les conventions internationales relatives à la propriété
                   intellectuelle.
                 </p>
                 <p>
-                  Toute reproduction, représentation, modification, publication, adaptation de tout
-                  ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé,
-                  est interdite sans l'autorisation écrite préalable d'Acreed Consulting.
+                  Toute reproduction, représentation, modification, publication, adaptation,
+                  traduction ou réutilisation, totale ou partielle, des éléments du site, par quelque
+                  moyen ou procédé que ce soit, est interdite sans l'autorisation écrite préalable
+                  d'Acreed Consulting, sauf exceptions prévues à l'article L.122-5 du Code de la
+                  propriété intellectuelle.
                 </p>
-              </section>
-
-              <section className="space-y-3">
-                <h2 className="text-lg font-semibold text-foreground">Limitation de responsabilité</h2>
                 <p>
-                  Acreed Consulting s'efforce de fournir des informations aussi précises que
-                  possible. Toutefois, elle ne pourra être tenue responsable des omissions,
-                  des inexactitudes et des carences dans la mise à jour, qu'elles soient de
-                  son fait ou du fait de tiers partenaires.
+                  La marque <strong className="text-white/90">Acreed Consulting</strong>, ainsi que
+                  les logos figurant sur le site, sont des marques protégées. Toute reproduction sans
+                  autorisation préalable constitue une contrefaçon sanctionnée par les articles
+                  L.335-2 et suivants du Code de la propriété intellectuelle.
                 </p>
-              </section>
+              </Section>
 
-              <section className="space-y-3">
-                <h2 className="text-lg font-semibold text-foreground">Droit applicable</h2>
+              <Section title="5. Liens hypertextes">
                 <p>
-                  Les présentes mentions légales sont régies par le droit français.
-                  En cas de litige, les tribunaux français seront seuls compétents.
+                  Le site peut contenir des liens vers d'autres sites internet. Acreed Consulting ne
+                  peut être tenue responsable du contenu, des pratiques ou de la disponibilité de ces
+                  sites tiers, dont l'utilisation relève de la seule responsabilité de l'utilisateur.
                 </p>
-              </section>
+                <p>
+                  La création de liens vers acreedconsulting.com est autorisée à condition de ne pas
+                  porter atteinte à l'image de la société. Acreed Consulting se réserve le droit de
+                  demander la suppression d'un lien jugé non conforme.
+                </p>
+              </Section>
+
+              <Section title="6. Limitation de responsabilité">
+                <p>
+                  Acreed Consulting met tout en œuvre pour fournir des informations exactes et
+                  à jour. Elle ne peut toutefois garantir l'exactitude, la complétude ou
+                  l'actualité des informations diffusées sur le site.
+                </p>
+                <p>
+                  L'utilisateur reconnaît utiliser ces informations sous sa responsabilité
+                  exclusive. Acreed Consulting ne saurait être tenue responsable des dommages
+                  directs ou indirects résultant de l'utilisation du site, d'une indisponibilité
+                  temporaire, de la présence de virus ou encore de tout dysfonctionnement.
+                </p>
+              </Section>
+
+              <Section title="7. Protection des données personnelles">
+                <p>
+                  Les conditions de collecte et de traitement des données personnelles sont
+                  détaillées dans notre{' '}
+                  <Link to="/confidentialite" className="text-[#dbcca5] underline decoration-dotted underline-offset-2 hover:text-white">
+                    politique de confidentialité
+                  </Link>
+                  . L'utilisation de cookies est régie par notre{' '}
+                  <Link to="/politique-cookies" className="text-[#dbcca5] underline decoration-dotted underline-offset-2 hover:text-white">
+                    politique de cookies
+                  </Link>
+                  .
+                </p>
+              </Section>
+
+              <Section title="8. Droit applicable et juridiction">
+                <p>
+                  Les présentes mentions légales sont soumises au droit français. En cas de litige
+                  et à défaut de résolution amiable, les tribunaux français seront seuls compétents.
+                </p>
+              </Section>
+
+              <Section title="9. Contact">
+                <p>
+                  Pour toute question relative au site ou à ses mentions légales :{' '}
+                  <a
+                    href="mailto:contact@acreedconsulting.com"
+                    className="text-[#dbcca5] underline decoration-dotted underline-offset-2 hover:text-white"
+                  >
+                    contact@acreedconsulting.com
+                  </a>
+                  .
+                </p>
+              </Section>
             </div>
           </AnimatedSection>
         </div>
       </section>
     </main>
     <Footer />
+  </div>
+);
+
+const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <section className="space-y-3 scroll-mt-32">
+    <h2 className="text-lg md:text-xl font-semibold text-white/90 font-display tracking-tight">
+      {title}
+    </h2>
+    <div className="space-y-3 text-[15px] text-white/65 font-light">{children}</div>
+  </section>
+);
+
+const KeyValueList = ({ items }: { items: [string, string][] }) => (
+  <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+    <dl className="divide-y divide-white/[0.04]">
+      {items.map(([k, v]) => (
+        <div key={k} className="grid grid-cols-1 md:grid-cols-3 gap-1 md:gap-4 px-4 py-3">
+          <dt className="text-xs uppercase tracking-[1.5px] text-white/40">{k}</dt>
+          <dd className="md:col-span-2 text-[15px] text-white/80 font-light break-words">{v}</dd>
+        </div>
+      ))}
+    </dl>
   </div>
 );
 
