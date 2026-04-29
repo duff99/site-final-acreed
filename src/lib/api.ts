@@ -1,4 +1,18 @@
-import type { Job, CreateJobInput, UpdateJobInput, LoginInput, AuthResponse, AdminUser, CreateAdminInput, UpdateAdminInput, CreateApplicationInput } from '@shared/types';
+import type {
+  Job,
+  CreateJobInput,
+  UpdateJobInput,
+  LoginInput,
+  AuthResponse,
+  AdminUser,
+  CreateAdminInput,
+  UpdateAdminInput,
+  CreateApplicationInput,
+  ContactMessage,
+  UpdateContactMessageInput,
+  Application,
+  UpdateApplicationInput,
+} from '@shared/types';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
@@ -180,6 +194,50 @@ class ApiClient {
     return this.request<{ message: string; id: string }>('/applications', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  }
+
+  // Admin - Contact messages
+  getAdminContactMessages() {
+    return this.request<ContactMessage[]>('/admin/contact-messages');
+  }
+
+  getAdminContactMessage(id: string) {
+    return this.request<ContactMessage>(`/admin/contact-messages/${id}`);
+  }
+
+  updateAdminContactMessage(id: string, data: UpdateContactMessageInput) {
+    return this.request<ContactMessage>(`/admin/contact-messages/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  deleteAdminContactMessage(id: string) {
+    return this.request<{ message: string }>(`/admin/contact-messages/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Admin - Applications
+  getAdminApplications() {
+    return this.request<Application[]>('/admin/applications');
+  }
+
+  getAdminApplication(id: string) {
+    return this.request<Application>(`/admin/applications/${id}`);
+  }
+
+  updateAdminApplication(id: string, data: UpdateApplicationInput) {
+    return this.request<Application>(`/admin/applications/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  deleteAdminApplication(id: string) {
+    return this.request<{ message: string }>(`/admin/applications/${id}`, {
+      method: 'DELETE',
     });
   }
 }

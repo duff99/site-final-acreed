@@ -155,6 +155,9 @@ Monochrome black/white/gray only — no colors. All theming via CSS custom prope
 | `ADMIN_PASSWORD` | — | Required for seed |
 | `ADMIN_NAME` | `Admin` | Optional |
 | `CORS_ORIGIN` | `http://localhost:8081` | Set to frontend URL in prod |
+| `RESEND_API_KEY` | — | Optional. Enables email notifications on contact/application submissions via Resend API. If unset, notifications are skipped (logged) but submissions still succeed. |
+| `NOTIFY_EMAIL_TO` | `recrutement@acreedconsulting.com` | Recipient for contact + application notifications |
+| `NOTIFY_EMAIL_FROM` | `no-reply@acreedconsulting.com` | Verified sender (Resend domain) |
 
 ### Frontend
 

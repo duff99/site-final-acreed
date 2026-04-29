@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, Users, LogOut, ArrowLeft, ChevronUp, Shield, UserCheck } from 'lucide-react';
+import { LayoutDashboard, Briefcase, Users, Mail, FileText, LogOut, ArrowLeft, ChevronUp, Shield, UserCheck } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 
 function getRoleLabel(role?: string) {
@@ -25,6 +25,8 @@ export default function AdminLayout() {
   const navItems = [
     { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { label: 'Offres', href: '/admin/jobs', icon: Briefcase },
+    { label: 'Messages', href: '/admin/messages', icon: Mail },
+    { label: 'Candidatures', href: '/admin/candidatures', icon: FileText },
     ...(isAdmin ? [{ label: 'Utilisateurs', href: '/admin/users', icon: Users }] : []),
   ];
 
