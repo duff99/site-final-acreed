@@ -34,6 +34,12 @@ services:
       - NOTIFY_EMAIL_CONTACT=${NOTIFY_EMAIL_CONTACT:-contact@acreedconsulting.com}
       - NOTIFY_EMAIL_RECRUITMENT=${NOTIFY_EMAIL_RECRUITMENT:-recrutement@acreedconsulting.com}
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3001/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
 
 volumes:
   db-data:
