@@ -57,6 +57,8 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     name: '',
@@ -114,6 +116,11 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setConsentError(null);
+    if (!consent) {
+      setConsentError('Le consentement au traitement des données est requis');
+      return;
+    }
     setIsSubmitting(true);
     setSubmitError(null);
 
@@ -146,6 +153,7 @@ const Contact = () => {
           phone: form.phone,
           subject: form.subject,
           message: enrichedMessage,
+          consent: true,
         }),
       });
 
@@ -157,6 +165,7 @@ const Contact = () => {
       setSubmitSuccess(true);
       setForm({ name: '', email: '', phone: '', subject: '', message: '', company: '', positions: '', timeline: '', preferredSector: '', availability: '' });
       setCvFile(null);
+      setConsent(false);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {
@@ -638,6 +647,41 @@ const Contact = () => {
                       className={`${inputClasses} resize-none`}
                       required
                     />
+                  </div>
+
+                  {/* Consent (RGPD) */}
+                  <div className="flex items-start gap-3 rounded-lg border border-white/[0.08] p-3 bg-white/[0.02]">
+                    <input
+                      id="contact-consent"
+                      type="checkbox"
+                      checked={consent}
+                      onChange={(e) => {
+                        setConsent(e.target.checked);
+                        if (e.target.checked) setConsentError(null);
+                      }}
+                      className="mt-1 h-4 w-4 accent-[#dbcca5] cursor-pointer"
+                      aria-required="true"
+                    />
+                    <div className="flex-1">
+                      <label
+                        htmlFor="contact-consent"
+                        className="text-sm text-white/70 leading-snug font-light cursor-pointer"
+                      >
+                        J'accepte que mes données soient traitées pour répondre à ma demande,
+                        conformément à la{' '}
+                        <Link
+                          to="/confidentialite"
+                          target="_blank"
+                          className="text-[#dbcca5] underline hover:text-white"
+                        >
+                          politique de confidentialité
+                        </Link>
+                        .
+                      </label>
+                      {consentError && (
+                        <p className="text-xs text-red-400 mt-1">{consentError}</p>
+                      )}
+                    </div>
                   </div>
 
                   {/* File attachment + Submit */}
