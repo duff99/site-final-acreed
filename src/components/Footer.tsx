@@ -36,11 +36,9 @@ const Footer = () => {
                 />
               </button>
             </div>
-            <div className="footer-signature">L'exigence au service de votre trajectoire.</div>
+            <div className="footer-signature">Fantastique simplicité</div>
           </div>
-        </AnimatedSection>
 
-        <AnimatedSection delay={0.1} className="w-full">
           <nav className="footer-nav">
             <a href="mailto:recrutement@acreedconsulting.com">
               <Mail size={16} /> Contact
@@ -55,9 +53,7 @@ const Footer = () => {
             <Link to="/mentions-legales">Mentions Légales</Link>
             <Link to="/confidentialite">Confidentialité</Link>
           </nav>
-        </AnimatedSection>
 
-        <AnimatedSection delay={0.2} className="w-full">
           <div className="footer-legal">
             <span>&copy; {new Date().getFullYear()} Acreed Consulting. Tous droits réservés.</span>
             <span>Le Puy-en-Velay, France</span>

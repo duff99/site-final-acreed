@@ -546,7 +546,7 @@ const AcreedVisionPremium = () => {
                             </h2>
                         </div>
                         <img
-                            src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2000"
+                            src="/images/service-telecom.jpg"
                             className="absolute inset-0 w-full h-full object-cover grayscale opacity-20"
                             alt="Technology"
                         />

@@ -35,3 +35,6 @@ server/data/*.db
 Test_header/
 Video landing page/
 maj-design/
+
+# Working files (not part of the site)
+logo-test.jpg

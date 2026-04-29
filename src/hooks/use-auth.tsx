@@ -35,8 +35,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthResponse['user'] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // On mount, try to refresh token from httpOnly cookie
+  // On mount, try to refresh token from httpOnly cookie (only on admin pages)
   useEffect(() => {
+    const isAdminPage = window.location.pathname.startsWith('/admin');
+    if (!isAdminPage) {
+      setIsLoading(false);
+      return;
+    }
+
     const apiBase = import.meta.env.VITE_API_URL || '/api';
     fetch(`${apiBase}/auth/refresh`, {
       method: 'POST',

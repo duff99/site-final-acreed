@@ -23,7 +23,11 @@
       "Bash(tasklist:*)",
       "Bash(findstr:*)",
       "Bash(ping:*)",
-      "Bash(netstat:*)"
+      "Bash(netstat:*)",
+      "Bash(docker-compose down:*)",
+      "Bash(docker-compose build:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(grep -r \"min-width\\\\|max-width\\\\|width:\" /srv/prod/site-final-acreed/src/components/*.css)"
     ]
   }
 }

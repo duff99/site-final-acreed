@@ -1,44 +1,123 @@
-import { Zap, BadgeEuro, Radio, Handshake, Globe } from 'lucide-react';
+import { Eye, Lightbulb, Users, Zap, BadgeEuro, Handshake, Globe } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 import './AboutSection.css';
 
-const AboutSection = () => {
-  const values: { icon: LucideIcon; title: string; description: string }[] = [
-    { icon: Zap, title: "Rapidité d'Intervention", description: 'Efficacité opérationnelle avec des déploiements rapides et adaptés aux exigences de vos projets.' },
-    { icon: BadgeEuro, title: 'Politique Tarifaire', description: 'Des tarifs inférieurs à la moyenne du marché sans le moindre compromis sur la qualité de service.' },
-    { icon: Radio, title: 'Expertise Télécoms', description: 'Un savoir-faire pointu reconnu, forgé par l\'expertise terrain du fondateur dans le secteur.' },
-    { icon: Handshake, title: 'Confiance & Transparence', description: 'Nous construisons nos relations sur une base solide de franchise, d\'honnêteté et de transparence.' },
-    { icon: Globe, title: 'Ouverture Multisectorielle', description: 'Nous transposons notre modèle d\'excellence avec la même rigueur vers l\'IT, la Cyber et l\'Industrie.' },
-  ];
+const credoCards: { icon: LucideIcon; title: string; description: string }[] = [
+  {
+    icon: Eye,
+    title: 'Transparence Absolue',
+    description:
+      'Nous favorisons un dialogue franc et une totale clarté sur nos activités et objectifs. Face aux imprévus, notre approche orientée solutions nous permet de résoudre les problématiques avec agilité.',
+  },
+  {
+    icon: Lightbulb,
+    title: 'Expertise & Simplicité',
+    description:
+      "Trouver le profil parfait requiert une compréhension fine de nos métiers. Cependant, cette exigence s'accompagne d'une humilité constante et d'une organisation accessible et à l'écoute.",
+  },
+  {
+    icon: Users,
+    title: 'Fédérer le Collectif',
+    description:
+      'Solidarité, communication et entraide sont nos maîtres mots. Nous bâtissons un environnement bienveillant, fondé sur la proximité avec nos collaborateurs internes comme externes.',
+  },
+];
 
+const atoutCards: { suit: string; icon: LucideIcon; title: string; description: string }[] = [
+  {
+    suit: '♠',
+    icon: Zap,
+    title: "Rapidité d'Intervention",
+    description:
+      "Efficacité opérationnelle avec des déploiements rapides et adaptés aux exigences de vos projets.",
+  },
+  {
+    suit: '♥',
+    icon: BadgeEuro,
+    title: 'Politique Tarifaire',
+    description:
+      'Des tarifs inférieurs à la moyenne du marché sans le moindre compromis sur la qualité de service.',
+  },
+  {
+    suit: '♣',
+    icon: Handshake,
+    title: 'Confiance & Transparence',
+    description:
+      "Nous construisons nos relations sur une base solide de franchise, d'honnêteté et de transparence.",
+  },
+  {
+    suit: '♦',
+    icon: Globe,
+    title: 'Ouverture Multisectorielle',
+    description:
+      "Nous transposons notre modèle d'excellence avec la même rigueur vers l'IT, la Cyber et l'Industrie.",
+  },
+];
+
+const AboutSection = () => {
   return (
     <section id="about" className="relative py-20 overflow-hidden scroll-mt-24">
       <div className="relative max-w-7xl mx-auto px-6 lg:px-12 flex flex-col items-center">
-        {/* Header - centre */}
-        <AnimatedSection className="max-w-3xl mb-20 mx-auto text-center">
+        {/* ── Section Crédo ── */}
+        <AnimatedSection className="max-w-3xl mb-16 mx-auto text-center">
           <span className="text-sm text-muted-foreground uppercase tracking-premium mb-4 block">
             Notre Force
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6">
-            Valeurs <span className="italic font-normal text-white/90">&</span> Atouts
+            Notre <span className="italic font-normal text-white/90">Crédo</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            ACREED Consulting se distingue par sa rapidité, sa compétitivité et son expertise reconnue.
+            ACREED Consulting se distingue par ses valeurs fondatrices, alliant exigence
+            professionnelle et aventure humaine.
           </p>
         </AnimatedSection>
 
-        {/* Cards Hand */}
-        <AnimatedSection delay={0.2} className="w-full relative z-10 flex justify-center mt-10">
-          <div className="cards-hand">
-            {values.map((value, index) => (
-              <div key={index} className="playing-card group">
-                <div className="card-glass-shine" />
-                <div className="card-content-wrapper">
-                  <value.icon className="card-icon" size={40} strokeWidth={1.5} />
-                  <h3 className="card-title">{value.title}</h3>
-                  <div className="card-divider" />
-                  <p className="card-desc">{value.description}</p>
+        <AnimatedSection delay={0.2} className="w-full">
+          <div className="credo-cards-container">
+            {credoCards.map((card, i) => (
+              <div key={i} className="credo-card group">
+                <card.icon className="credo-icon" size={40} strokeWidth={1.5} />
+                <h3 className="credo-card-title">{card.title}</h3>
+                <p className="credo-card-desc">{card.description}</p>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
+
+        {/* ── Transition vers Atouts ── */}
+        <AnimatedSection className="w-full mt-20 mb-8">
+          <div className="transition-divider">
+            <span className="transition-text">Soutenu par 4 atouts majeurs</span>
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection delay={0.2} className="w-full relative z-10 flex justify-center">
+          <div className="hand-of-cards">
+            {atoutCards.map((card, i) => (
+              <div key={i} className="card-wrapper">
+                <div className="card-inner">
+                  {/* Face avant — As */}
+                  <div className="card-front">
+                    <div className="corner-value top-left">
+                      <div className="corner-letter">A</div>
+                      <div className="corner-suit">{card.suit}</div>
+                    </div>
+                    <div className="center-suit">{card.suit}</div>
+                    <div className="corner-value bottom-right">
+                      <div className="corner-letter">A</div>
+                      <div className="corner-suit">{card.suit}</div>
+                    </div>
+                  </div>
+                  {/* Face arrière — Contenu */}
+                  <div className="card-back">
+                    <div className="card-back-content">
+                      <card.icon className="card-back-icon" size={36} strokeWidth={1.5} />
+                      <h4 className="card-back-title">{card.title}</h4>
+                      <div className="card-back-divider" />
+                      <p className="card-back-desc">{card.description}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

@@ -21,6 +21,9 @@ if (process.env.NODE_ENV === 'production' && config.JWT_SECRET === 'CHANGE-ME-IN
 
 const app = express();
 
+// Trust reverse proxy (nginx) for correct IP detection
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(helmet());
 app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }));
