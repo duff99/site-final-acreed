@@ -32,6 +32,8 @@ const Footer = () => {
                 <img
                   src="/images/favicon_footer.png"
                   alt="Acreed Consulting"
+                  loading="lazy"
+                  decoding="async"
                   className="h-10 w-auto rounded-md"
                 />
               </button>

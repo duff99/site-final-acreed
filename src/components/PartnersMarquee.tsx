@@ -47,6 +47,8 @@ const PartnersMarquee = () => {
                   <img
                     src={partner.logo}
                     alt={partner.name}
+                    loading="lazy"
+                    decoding="async"
                     className="h-10 md:h-14 lg:h-20 w-auto min-w-[80px] md:min-w-[120px] lg:min-w-[140px] max-w-[150px] md:max-w-[180px] lg:max-w-[220px] object-contain"
                   />
                 </div>
