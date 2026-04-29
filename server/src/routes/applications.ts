@@ -9,6 +9,11 @@ const router = Router();
 // POST /api/applications — public job application submission
 router.post('/', async (req, res) => {
   try {
+    // Honeypot: see contact.ts. Hidden `website` field must stay empty.
+    if (typeof req.body?.website === 'string' && req.body.website.trim() !== '') {
+      return res.status(201).json({ message: 'Candidature envoyee avec succes', id: 'hp' });
+    }
+
     const parsed = createApplicationSchema.safeParse(req.body);
     if (!parsed.success) {
       return res

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
@@ -40,6 +40,7 @@ const ApplicationModal = ({
 }: ApplicationModalProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<CreateApplicationInput>({
     resolver: zodResolver(createApplicationSchema),
@@ -65,7 +66,10 @@ const ApplicationModal = ({
   const onSubmit = async (data: CreateApplicationInput) => {
     setIsSubmitting(true);
     try {
-      await apiClient.submitApplication(data);
+      await apiClient.submitApplication({
+        ...data,
+        website: honeypotRef.current?.value ?? '',
+      });
       toast({
         title: 'Candidature envoyee !',
         description: 'Nous reviendrons vers vous rapidement.',
@@ -114,6 +118,23 @@ const ApplicationModal = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Honeypot — bots fill it, the API drops those silently. */}
+            <div
+              aria-hidden="true"
+              style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}
+            >
+              <label htmlFor="application-website">Ne pas remplir</label>
+              <input
+                ref={honeypotRef}
+                id="application-website"
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                defaultValue=""
+              />
+            </div>
+
             {/* Prenom + Nom */}
             <div className="grid grid-cols-2 gap-4">
               <FormField

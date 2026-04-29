@@ -9,6 +9,13 @@ const router = Router();
 // POST /api/contact — public contact form submission
 router.post('/', async (req, res) => {
   try {
+    // Honeypot: legit form leaves the hidden `website` field empty. Bots that
+    // auto-fill every input populate it. Return success to avoid telling the
+    // bot the trap exists, but skip the DB write and the email notification.
+    if (typeof req.body?.website === 'string' && req.body.website.trim() !== '') {
+      return res.status(201).json({ message: 'Message envoye avec succes', id: 'hp' });
+    }
+
     const parsed = createContactSchema.safeParse(req.body);
     if (!parsed.success) {
       return res

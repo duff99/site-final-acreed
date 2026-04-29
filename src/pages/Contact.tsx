@@ -71,6 +71,10 @@ const Contact = () => {
     // B2C fields (Candidature spontanée)
     preferredSector: '',
     availability: '',
+    // Honeypot — must stay empty. Hidden from real users via aria + offscreen
+    // styling. Bots that auto-fill every input populate it; the API silently
+    // drops those submissions.
+    website: '',
   });
 
   const isB2B = form.subject === 'Recrutement' || form.subject === 'Consulting';
@@ -146,6 +150,7 @@ const Contact = () => {
           phone: form.phone,
           subject: form.subject,
           message: enrichedMessage,
+          website: form.website,
         }),
       });
 
@@ -155,7 +160,7 @@ const Contact = () => {
       }
 
       setSubmitSuccess(true);
-      setForm({ name: '', email: '', phone: '', subject: '', message: '', company: '', positions: '', timeline: '', preferredSector: '', availability: '' });
+      setForm({ name: '', email: '', phone: '', subject: '', message: '', company: '', positions: '', timeline: '', preferredSector: '', availability: '', website: '' });
       setCvFile(null);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Une erreur est survenue');
@@ -396,6 +401,23 @@ const Contact = () => {
                   </motion.div>
                 ) : (
                 <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                  {/* Honeypot — invisible to humans, irresistible to bots */}
+                  <div
+                    aria-hidden="true"
+                    style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}
+                  >
+                    <label htmlFor="contact-website">Ne pas remplir</label>
+                    <input
+                      id="contact-website"
+                      type="text"
+                      name="website"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={form.website}
+                      onChange={handleChange}
+                    />
+                  </div>
+
                   {submitError && (
                     <div className="p-4 border border-red-500/20 bg-red-500/5 rounded-xl text-sm text-red-400">
                       {submitError}

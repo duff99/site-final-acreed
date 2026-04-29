@@ -54,6 +54,8 @@ export const admins = sqliteTable('admins', {
   role: text('role').notNull().default('editor'),
   isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
   lastLoginAt: text('last_login_at'),
+  failedLoginAttempts: integer('failed_login_attempts').notNull().default(0),
+  lockedUntil: text('locked_until'),
   createdAt: text('created_at').notNull().$defaultFn(() => new Date().toISOString()),
   updatedAt: text('updated_at').notNull().$defaultFn(() => new Date().toISOString()),
   createdBy: text('created_by'),

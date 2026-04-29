@@ -10,6 +10,12 @@ import { requireAuth, type AuthRequest } from '../middleware/auth.js';
 
 const router = Router();
 
+// Account-level lockout: after MAX_FAILED_ATTEMPTS bad passwords on one
+// account, lock that account (independent of IP rate limit) for
+// LOCKOUT_DURATION_MS. Reset on successful login.
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
+
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
   try {
@@ -31,8 +37,27 @@ router.post('/login', async (req, res) => {
       return res.status(403).json({ message: 'Compte desactive' });
     }
 
+    if (admin.lockedUntil && new Date(admin.lockedUntil).getTime() > Date.now()) {
+      return res
+        .status(423)
+        .json({ message: 'Compte temporairement verrouille, reessayez plus tard' });
+    }
+
     const valid = await bcrypt.compare(parsed.data.password, admin.passwordHash);
-    if (!valid) return res.status(401).json({ message: 'Identifiants incorrects' });
+    if (!valid) {
+      const nextAttempts = (admin.failedLoginAttempts ?? 0) + 1;
+      const shouldLock = nextAttempts >= MAX_FAILED_ATTEMPTS;
+      await db
+        .update(admins)
+        .set({
+          failedLoginAttempts: shouldLock ? 0 : nextAttempts,
+          lockedUntil: shouldLock
+            ? new Date(Date.now() + LOCKOUT_DURATION_MS).toISOString()
+            : admin.lockedUntil ?? null,
+        })
+        .where(eq(admins.id, admin.id));
+      return res.status(401).json({ message: 'Identifiants incorrects' });
+    }
 
     const accessToken = jwt.sign(
       { sub: admin.id, email: admin.email, role: admin.role },
@@ -45,9 +70,13 @@ router.post('/login', async (req, res) => {
       { expiresIn: config.JWT_REFRESH_TTL }
     );
 
-    // Update lastLoginAt
+    // Reset lockout counters and update lastLoginAt
     await db.update(admins)
-      .set({ lastLoginAt: new Date().toISOString() })
+      .set({
+        lastLoginAt: new Date().toISOString(),
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+      })
       .where(eq(admins.id, admin.id));
 
     res.cookie('refreshToken', refreshToken, {
@@ -73,7 +102,10 @@ router.post('/refresh', async (req, res) => {
     const token = req.cookies?.refreshToken;
     if (!token) return res.status(401).json({ message: 'Aucun refresh token' });
 
-    const payload = jwt.verify(token, config.JWT_SECRET) as { sub: string };
+    const payload = jwt.verify(token, config.JWT_SECRET) as { sub: string; type?: string };
+    if (payload.type !== 'refresh') {
+      return res.status(401).json({ message: 'Token invalide' });
+    }
     const result = await db.select().from(admins).where(eq(admins.id, payload.sub));
     const admin = result[0];
     if (!admin) return res.status(401).json({ message: 'Utilisateur introuvable' });
