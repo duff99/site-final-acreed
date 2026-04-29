@@ -8,6 +8,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/use-auth";
+import { CookieConsentProvider } from "@/hooks/use-cookie-consent";
+import CookieBanner from "@/components/CookieBanner";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
@@ -18,6 +20,8 @@ const Jobs = lazy(() => import("./pages/Jobs"));
 const Contact = lazy(() => import("./pages/Contact"));
 const MentionsLegales = lazy(() => import("./pages/MentionsLegales"));
 const Confidentialite = lazy(() => import("./pages/Confidentialite"));
+const PolitiqueCookies = lazy(() => import("./pages/PolitiqueCookies"));
+const CGU = lazy(() => import("./pages/CGU"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -34,14 +38,16 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <ConditionalParticles />
-          <Suspense fallback={<RouteFallback />}>
-            <Routes>
+      <CookieConsentProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <ConditionalParticles />
+            <CookieBanner />
+            <Suspense fallback={<RouteFallback />}>
+              <Routes>
               {/* Public routes */}
               <Route path="/" element={<Index />} />
               <Route path="/vision" element={<AcreedVisionPremium />} />
@@ -49,6 +55,8 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               <Route path="/confidentialite" element={<Confidentialite />} />
+              <Route path="/politique-cookies" element={<PolitiqueCookies />} />
+              <Route path="/cgu" element={<CGU />} />
 
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
@@ -69,9 +77,10 @@ const App = () => (
 
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </TooltipProvider>
+            </Suspense>
+          </BrowserRouter>
+        </TooltipProvider>
+      </CookieConsentProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
