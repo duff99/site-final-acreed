@@ -5,16 +5,18 @@
  */
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const NOTIFY_EMAIL_TO = process.env.NOTIFY_EMAIL_TO || 'recrutement@acreedconsulting.com';
+const NOTIFY_EMAIL_CONTACT = process.env.NOTIFY_EMAIL_CONTACT || 'contact@acreedconsulting.com';
+const NOTIFY_EMAIL_RECRUITMENT = process.env.NOTIFY_EMAIL_RECRUITMENT || 'recrutement@acreedconsulting.com';
 const NOTIFY_EMAIL_FROM = process.env.NOTIFY_EMAIL_FROM || 'no-reply@acreedconsulting.com';
 
 interface SendArgs {
+  to: string;
   subject: string;
   html: string;
   replyTo?: string;
 }
 
-async function send({ subject, html, replyTo }: SendArgs): Promise<void> {
+async function send({ to, subject, html, replyTo }: SendArgs): Promise<void> {
   if (!RESEND_API_KEY) {
     console.warn('[notifier] RESEND_API_KEY unset — skipping email:', subject);
     return;
@@ -29,7 +31,7 @@ async function send({ subject, html, replyTo }: SendArgs): Promise<void> {
       },
       body: JSON.stringify({
         from: NOTIFY_EMAIL_FROM,
-        to: NOTIFY_EMAIL_TO,
+        to,
         subject,
         html,
         reply_to: replyTo,
@@ -75,7 +77,13 @@ export async function notifyContact(payload: {
     <hr/>
     <p style="color:#888;font-size:12px">Acreed Consulting — site.acreedconsulting.com</p>
   `;
+  // Spontaneous applications submitted via the contact form go to recruitment;
+  // everything else (Recrutement / Consulting / Partenariat / Autre) goes to contact.
+  const to =
+    safeSubject === 'Candidature spontanée' ? NOTIFY_EMAIL_RECRUITMENT : NOTIFY_EMAIL_CONTACT;
+
   await send({
+    to,
     subject: `[Acreed] Contact — ${safeSubject}`,
     html,
     replyTo: safeEmail || undefined,
@@ -106,6 +114,7 @@ export async function notifyApplication(payload: {
     <p style="color:#888;font-size:12px">Acreed Consulting — site.acreedconsulting.com</p>
   `;
   await send({
+    to: NOTIFY_EMAIL_RECRUITMENT,
     subject: `[Acreed] Candidature — ${jobTitle}`,
     html,
     replyTo: email || undefined,
