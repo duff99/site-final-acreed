@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -9,9 +9,6 @@ import {
   Send,
   User,
   MessageSquare,
-  Paperclip,
-  FileText,
-  X,
   Clock,
   CheckCircle2,
   MessageCircle,
@@ -39,20 +36,10 @@ const SUBJECT_OPTIONS = [
 // Contact Page
 // ---------------------------------------------------------------------------
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 Mo
-const ACCEPTED_TYPES = [
-  'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-];
-
 const Contact = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [cvFile, setCvFile] = useState<File | null>(null);
-  const [cvError, setCvError] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -82,36 +69,6 @@ const Contact = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const validateAndSetFile = (file: File) => {
-    setCvError(null);
-    if (!ACCEPTED_TYPES.includes(file.type)) {
-      setCvError('Format accepté : PDF ou DOCX uniquement');
-      return;
-    }
-    if (file.size > MAX_FILE_SIZE) {
-      setCvError('Le fichier ne doit pas dépasser 5 Mo');
-      return;
-    }
-    setCvFile(file);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) validateAndSetFile(file);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-  const removeFile = () => {
-    setCvFile(null);
-    setCvError(null);
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} o`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} Ko`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -164,7 +121,6 @@ const Contact = () => {
 
       setSubmitSuccess(true);
       setForm({ name: '', email: '', phone: '', subject: '', message: '', company: '', positions: '', timeline: '', preferredSector: '', availability: '' });
-      setCvFile(null);
       setConsent(false);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Une erreur est survenue');
@@ -684,74 +640,32 @@ const Contact = () => {
                     </div>
                   </div>
 
-                  {/* File attachment + Submit */}
-                  <div className="space-y-4">
-                    {/* Selected file display */}
-                    {cvFile && (
-                      <div className="flex items-center gap-3 border border-white/10 rounded-lg p-3 bg-white/5">
-                        <FileText className="h-5 w-5 text-white/60 flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-white truncate">{cvFile.name}</p>
-                          <p className="text-xs text-white/40">
-                            {formatFileSize(cvFile.size)}
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={removeFile}
-                          className="p-1 rounded hover:bg-white/10 transition-colors"
-                        >
-                          <X className="h-4 w-4 text-white/60" />
-                        </button>
-                      </div>
+                  {/* Submit */}
+                  <div className="pt-6 mt-6 border-t border-white/5">
+                    <motion.button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="group relative w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#dbcca5] text-[#0a0a0b] text-[13px] uppercase tracking-[2px] font-semibold rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(219,204,165,0.15)] disabled:opacity-60"
+                      whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
+                      whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+                      aria-label="Envoyer le message"
+                    >
+                      <span className="relative z-10 flex items-center gap-2">
+                        {isSubmitting ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
+                        {isSubmitting ? 'Envoi en cours...' : 'Finaliser l\'envoi'}
+                      </span>
+                      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                    </motion.button>
+
+                    {form.subject === 'Candidature spontanée' && (
+                      <p className="text-[11px] text-white/40 text-center mt-4 leading-relaxed">
+                        Pour postuler à une offre précise avec votre CV, rendez-vous sur la page{' '}
+                        <Link to="/offres" className="text-[#dbcca5] hover:underline">
+                          Nos offres
+                        </Link>
+                        .
+                      </p>
                     )}
-
-                    {cvError && (
-                      <p className="text-sm text-red-400">{cvError}</p>
-                    )}
-
-                    {/* Hidden file input */}
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept=".pdf,.docx"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-
-                    {/* Buttons row */}
-                    <div className="flex flex-col sm:flex-row gap-4 pt-6 mt-6 border-t border-white/5">
-                      <motion.button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="group relative flex-1 inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#dbcca5] text-[#0a0a0b] text-[13px] uppercase tracking-[2px] font-semibold rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(219,204,165,0.15)] disabled:opacity-60"
-                        whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
-                        whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
-                        aria-label="Envoyer le message"
-                      >
-                        <span className="relative z-10 flex items-center gap-2">
-                          {isSubmitting ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
-                          {isSubmitting ? 'Envoi en cours...' : 'Finaliser l\'envoi'}
-                        </span>
-                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                      </motion.button>
-
-                      <motion.button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="group flex-shrink-0 inline-flex items-center justify-center gap-2 px-6 py-4 bg-white/5 border border-white/10 text-white text-[13px] uppercase tracking-[1px] font-medium rounded-xl hover:bg-white/10 hover:border-[#dbcca5]/50 transition-colors"
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.98 }}
-                        aria-label="Joindre un fichier"
-                      >
-                        <Paperclip size={15} className="group-hover:text-[#dbcca5] transition-colors" />
-                        {cvFile ? 'Remplacer CV' : 'Joindre CV'}
-                      </motion.button>
-                    </div>
-
-                    <p className="text-[11px] text-white/30 text-center uppercase tracking-[1px] mt-4">
-                      Formats acceptés: PDF, DOCX (Max: 5 Mo)
-                    </p>
                   </div>
                 </form>
                 )}
