@@ -190,7 +190,7 @@ class ApiClient {
   }
 
   // Public - Applications
-  submitApplication(data: CreateApplicationInput) {
+  submitApplication(data: CreateApplicationInput & { website?: string }) {
     return this.request<{ message: string; id: string }>('/applications', {
       method: 'POST',
       body: JSON.stringify(data),
