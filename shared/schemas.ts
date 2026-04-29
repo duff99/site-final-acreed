@@ -76,6 +76,9 @@ export const createApplicationSchema = z.object({
   phone: z.string().max(20).optional().default(''),
   cvUrl: z.string().url('Lien invalide').optional().or(z.literal('')),
   message: z.string().max(3000).optional().default(''),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: 'Le consentement au traitement des données est requis' }),
+  }),
 });
 
 // ---------- Contact schemas ----------
@@ -94,4 +97,7 @@ export const createContactSchema = z.object({
   phone: z.string().max(20).optional().default(''),
   subject: contactSubjectSchema,
   message: z.string().min(10, 'Le message doit contenir au moins 10 caractères').max(5000),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: 'Le consentement au traitement des données est requis' }),
+  }),
 });

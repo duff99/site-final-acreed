@@ -20,6 +20,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { apiClient } from '@/lib/api';
 import { createApplicationSchema } from '@shared/schemas';
@@ -52,6 +54,7 @@ const ApplicationModal = ({
       phone: '',
       cvUrl: '',
       message: '',
+      consent: false as unknown as true,
     },
   });
 
@@ -236,6 +239,38 @@ const ApplicationModal = ({
                     />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Consent (RGPD) */}
+            <FormField
+              control={form.control}
+              name="consent"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start gap-3 rounded-md border border-white/[0.08] p-3 bg-white/[0.02]">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="mt-0.5 border-white/30 data-[state=checked]:bg-white data-[state=checked]:text-black"
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-snug">
+                    <FormLabel className="text-white/70 text-sm font-normal">
+                      J'accepte que mes données soient traitées dans le cadre de cette
+                      candidature, conformément à la{' '}
+                      <Link
+                        to="/confidentialite"
+                        target="_blank"
+                        className="text-[#dbcca5] underline hover:text-white"
+                      >
+                        politique de confidentialité
+                      </Link>
+                      .
+                    </FormLabel>
+                    <FormMessage />
+                  </div>
                 </FormItem>
               )}
             />
