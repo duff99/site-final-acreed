@@ -2,11 +2,11 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import AnimatedSection from './AnimatedSection';
 import SpotlightCard from './SpotlightCard';
-import { ArrowRight, MapPin } from 'lucide-react';
+import { ArrowRight, Loader2, MapPin } from 'lucide-react';
 import { useJobs } from '@/hooks/use-jobs';
 
 const JobsSection = () => {
-  const { data: jobs = [] } = useJobs();
+  const { data: jobs = [], isLoading } = useJobs();
   const displayedJobs = jobs.slice(0, 3);
 
   return (
@@ -27,6 +27,17 @@ const JobsSection = () => {
 
         {/* Jobs List */}
         <div className="space-y-4 max-w-4xl mx-auto">
+          {isLoading && displayedJobs.length === 0 && (
+            <div className="flex items-center justify-center py-12 text-muted-foreground">
+              <Loader2 className="w-5 h-5 animate-spin mr-3" />
+              <span className="text-sm">Chargement des offres…</span>
+            </div>
+          )}
+          {!isLoading && displayedJobs.length === 0 && (
+            <div className="text-center py-12 text-muted-foreground text-sm">
+              Aucune offre disponible pour le moment.
+            </div>
+          )}
           {displayedJobs.map((job, index) => (
             <AnimatedSection key={job.id} delay={index * 0.1}>
               <Link to={`/offres#${job.id}`} className="block">

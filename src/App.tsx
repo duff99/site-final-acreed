@@ -1,7 +1,9 @@
 import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import ParticleCanvas from "@/components/ParticleCanvas";
+import ConditionalParticles from "@/components/ConditionalParticles";
+import ScrollToTop from "@/components/ScrollToTop";
+import RouteFallback from "@/components/RouteFallback";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -32,9 +34,10 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <ParticleCanvas />
         <BrowserRouter>
-          <Suspense fallback={null}>
+          <ScrollToTop />
+          <ConditionalParticles />
+          <Suspense fallback={<RouteFallback />}>
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<Index />} />
