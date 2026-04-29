@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import SEO from '@/components/SEO';
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
 import PartnersMarquee from '@/components/PartnersMarquee';
@@ -36,6 +37,13 @@ const Index = () => {
   }, [hash]);
   return (
     <div className="min-h-screen text-foreground relative z-10">
+      <SEO
+        title="Acreed Consulting — Cabinet de Recrutement IT & Télécoms"
+        description="Cabinet de recrutement spécialisé Télécoms et IT. Consultants experts, présence nationale, accompagnement personnalisé pour PME et grands comptes."
+        canonicalPath="/"
+        bareTitle
+      />
+
       {/* Navigation */}
       <Navigation />
 

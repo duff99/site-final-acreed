@@ -17,6 +17,7 @@ import {
   MessageCircle,
   Loader2,
 } from 'lucide-react';
+import SEO from '@/components/SEO';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -172,6 +173,12 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title="Contact"
+        description="Une question, un besoin en recrutement, un projet ? Notre équipe est à votre écoute. Joignez Acreed Consulting par téléphone, email ou via le formulaire."
+        canonicalPath="/contact"
+      />
+
       {/* Navigation */}
       <Navigation />
 

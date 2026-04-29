@@ -1,11 +1,17 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import SEO from '@/components/SEO';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 
 const Confidentialite = () => (
   <div className="min-h-screen bg-background text-foreground">
+    <SEO
+      title="Politique de confidentialité"
+      description="Comment Acreed Consulting collecte, stocke et protège vos données personnelles. Vos droits RGPD et nos engagements."
+      canonicalPath="/confidentialite"
+    />
     <Navigation />
     <main className="pt-24 md:pt-28">
       <section className="relative py-16 md:py-24">
