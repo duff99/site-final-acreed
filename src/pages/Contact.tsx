@@ -14,6 +14,7 @@ import {
   MessageCircle,
   Loader2,
 } from 'lucide-react';
+import SkipToContent from '@/components/SkipToContent';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -142,11 +143,12 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SkipToContent />
       {/* Navigation */}
       <Navigation />
 
       {/* Main Content */}
-      <main className="pt-24 md:pt-28">
+      <main id="main-content" tabIndex={-1} className="pt-24 md:pt-28">
         {/* ---------------------------------------------------------------- */}
         {/* HERO HEADER                                                      */}
         {/* ---------------------------------------------------------------- */}

@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import SkipToContent from '@/components/SkipToContent';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 
 const MentionsLegales = () => (
   <div className="min-h-screen bg-background text-foreground">
+    <SkipToContent />
     <Navigation />
-    <main className="pt-24 md:pt-28">
+    <main id="main-content" tabIndex={-1} className="pt-24 md:pt-28">
       <section className="relative py-16 md:py-24">
         <div className="max-w-3xl mx-auto px-6 lg:px-12">
           <AnimatedSection>
