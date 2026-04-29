@@ -57,6 +57,9 @@ const Footer = () => {
           <div className="footer-legal">
             <span>&copy; {new Date().getFullYear()} Acreed Consulting. Tous droits réservés.</span>
             <span>Le Puy-en-Velay, France</span>
+            <Link to="/admin/login" className="footer-admin-link" aria-label="Espace pro">
+              Espace pro
+            </Link>
           </div>
         </AnimatedSection>
       </footer>
