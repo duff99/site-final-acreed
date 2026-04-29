@@ -1,13 +1,42 @@
 /**
- * Email notifier using Resend HTTP API (no SDK dependency).
- * Falls back to a no-op + console log when RESEND_API_KEY is unset,
+ * Email notifier using SMTP via nodemailer (Microsoft 365 friendly).
+ * Falls back to a no-op + console log when SMTP_HOST/USER/PASS is unset,
  * so the form submission flow never breaks even if mail is misconfigured.
+ *
+ * Default config targets Microsoft 365:
+ *   SMTP_HOST=smtp.office365.com
+ *   SMTP_PORT=587
+ *   SMTP_USER=no-reply@acreedconsulting.com
+ *   SMTP_PASS=<app-password>   # requires Authenticated SMTP enabled on the mailbox
  */
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
+import nodemailer, { type Transporter } from 'nodemailer';
+
+const SMTP_HOST = process.env.SMTP_HOST;
+const SMTP_PORT = Number(process.env.SMTP_PORT || '587');
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const SMTP_SECURE = process.env.SMTP_SECURE === 'true'; // false → STARTTLS on 587
 const NOTIFY_EMAIL_CONTACT = process.env.NOTIFY_EMAIL_CONTACT || 'contact@acreedconsulting.com';
-const NOTIFY_EMAIL_RECRUITMENT = process.env.NOTIFY_EMAIL_RECRUITMENT || 'recrutement@acreedconsulting.com';
-const NOTIFY_EMAIL_FROM = process.env.NOTIFY_EMAIL_FROM || 'no-reply@acreedconsulting.com';
+const NOTIFY_EMAIL_RECRUITMENT =
+  process.env.NOTIFY_EMAIL_RECRUITMENT || 'recrutement@acreedconsulting.com';
+const NOTIFY_EMAIL_FROM =
+  process.env.NOTIFY_EMAIL_FROM || SMTP_USER || 'no-reply@acreedconsulting.com';
+
+let transporter: Transporter | null = null;
+
+function getTransporter(): Transporter | null {
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) return null;
+  if (transporter) return transporter;
+  transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_SECURE,
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+    requireTLS: !SMTP_SECURE, // STARTTLS on 587
+  });
+  return transporter;
+}
 
 interface SendArgs {
   to: string;
@@ -17,33 +46,22 @@ interface SendArgs {
 }
 
 async function send({ to, subject, html, replyTo }: SendArgs): Promise<void> {
-  if (!RESEND_API_KEY) {
-    console.warn('[notifier] RESEND_API_KEY unset — skipping email:', subject);
+  const t = getTransporter();
+  if (!t) {
+    console.warn('[notifier] SMTP_HOST/USER/PASS unset — skipping email:', subject);
     return;
   }
 
   try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: NOTIFY_EMAIL_FROM,
-        to,
-        subject,
-        html,
-        reply_to: replyTo,
-      }),
+    await t.sendMail({
+      from: NOTIFY_EMAIL_FROM,
+      to,
+      subject,
+      html,
+      replyTo,
     });
-
-    if (!res.ok) {
-      const body = await res.text().catch(() => '');
-      console.error('[notifier] Resend error', res.status, body);
-    }
   } catch (err) {
-    console.error('[notifier] send failed:', err);
+    console.error('[notifier] sendMail failed:', err);
   }
 }
 
@@ -77,6 +95,7 @@ export async function notifyContact(payload: {
     <hr/>
     <p style="color:#888;font-size:12px">Acreed Consulting — site.acreedconsulting.com</p>
   `;
+
   // Spontaneous applications submitted via the contact form go to recruitment;
   // everything else (Recrutement / Consulting / Partenariat / Autre) goes to contact.
   const to =
