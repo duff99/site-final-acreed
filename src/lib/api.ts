@@ -8,6 +8,7 @@ import type {
   CreateAdminInput,
   UpdateAdminInput,
   CreateApplicationInput,
+  ChangePasswordInput,
   ContactMessage,
   UpdateContactMessageInput,
   Application,
@@ -125,6 +126,13 @@ class ApiClient {
 
   logout() {
     return this.request<{ message: string }>('/auth/logout', { method: 'POST' });
+  }
+
+  changePassword(data: ChangePasswordInput) {
+    return this.request<{ message: string }>('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   }
 
   // Admin CRUD

@@ -32,6 +32,23 @@ export const loginSchema = z.object({
   password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caracteres'),
 });
 
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Mot de passe actuel requis'),
+    newPassword: z
+      .string()
+      .min(8, 'Le nouveau mot de passe doit contenir au moins 8 caractères'),
+    confirmPassword: z.string().min(1, 'Confirmation requise'),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: 'Les mots de passe ne correspondent pas',
+    path: ['confirmPassword'],
+  })
+  .refine((d) => d.currentPassword !== d.newPassword, {
+    message: 'Le nouveau mot de passe doit être différent de l\'actuel',
+    path: ['newPassword'],
+  });
+
 // ---------- Admin Role ----------
 
 export const adminRoleSchema = z.enum(['admin', 'editor']);

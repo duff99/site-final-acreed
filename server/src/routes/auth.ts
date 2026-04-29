@@ -6,7 +6,7 @@ import { db } from '../db/index.js';
 import { admins, refreshTokens } from '../db/schema.js';
 import { and, eq, isNull } from 'drizzle-orm';
 import { config } from '../config.js';
-import { loginSchema } from '../../../shared/schemas.js';
+import { loginSchema, changePasswordSchema } from '../../../shared/schemas.js';
 import { requireAuth, type AuthRequest } from '../middleware/auth.js';
 
 const router = Router();
@@ -218,6 +218,58 @@ router.post('/logout', async (req, res) => {
   }
   res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
   res.json({ message: 'Deconnecte' });
+});
+
+// POST /api/auth/change-password — current user changes their own password.
+// Requires the current password as proof of session integrity, hashes the new
+// one with bcrypt, and revokes every other refresh token belonging to this
+// account so concurrent sessions on other devices are kicked out.
+router.post('/change-password', requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const parsed = changePasswordSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res
+        .status(400)
+        .json({ message: 'Donnees invalides', errors: parsed.error.flatten().fieldErrors });
+    }
+
+    const adminRows = await db.select().from(admins).where(eq(admins.id, req.admin!.id));
+    const admin = adminRows[0];
+    if (!admin) return res.status(404).json({ message: 'Utilisateur introuvable' });
+
+    const valid = await bcrypt.compare(parsed.data.currentPassword, admin.passwordHash);
+    if (!valid) return res.status(401).json({ message: 'Mot de passe actuel incorrect' });
+
+    const newHash = await bcrypt.hash(parsed.data.newPassword, 12);
+
+    await db
+      .update(admins)
+      .set({
+        passwordHash: newHash,
+        updatedAt: new Date().toISOString(),
+        // Reset lockout state — successful password change is a clean slate.
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+      })
+      .where(eq(admins.id, admin.id));
+
+    // Revoke ALL still-active refresh tokens for this admin, including the
+    // one tied to the current session. The cookie carrying the now-revoked
+    // jti is also cleared so the next /refresh on this browser fails clean
+    // and the user is redirected to /admin/login.
+    await db
+      .update(refreshTokens)
+      .set({ revokedAt: new Date().toISOString() })
+      .where(
+        and(eq(refreshTokens.adminId, admin.id), isNull(refreshTokens.revokedAt))
+      );
+
+    res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
+    res.json({ message: 'Mot de passe mis a jour. Reconnectez-vous.' });
+  } catch (err) {
+    console.error('Change password error:', err);
+    res.status(500).json({ message: 'Erreur interne du serveur' });
+  }
 });
 
 // GET /api/auth/me — current user profile

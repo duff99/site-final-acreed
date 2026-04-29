@@ -4,6 +4,7 @@ import type {
   createJobSchema,
   updateJobSchema,
   loginSchema,
+  changePasswordSchema,
   adminRoleSchema,
   adminUserSchema,
   createAdminSchema,
@@ -21,6 +22,7 @@ export type Job = z.infer<typeof jobSchema>;
 export type CreateJobInput = z.infer<typeof createJobSchema>;
 export type UpdateJobInput = z.infer<typeof updateJobSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export type AdminRole = z.infer<typeof adminRoleSchema>;
 export type AdminUser = z.infer<typeof adminUserSchema>;
 export type CreateAdminInput = z.infer<typeof createAdminSchema>;
