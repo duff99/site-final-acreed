@@ -51,13 +51,14 @@ const MentionsLegales = () => (
                   items={[
                     ['Raison sociale', 'ACREED CONSULTING'],
                     ['Forme juridique', 'Société par actions simplifiée (SAS)'],
-                    ['Capital social', '[À COMPLÉTER] €'],
-                    ['Siège social', '[À COMPLÉTER — adresse complète], France'],
-                    ['SIREN', '[À COMPLÉTER]'],
-                    ['SIRET', '[À COMPLÉTER]'],
-                    ['RCS', '[À COMPLÉTER — ville d\'immatriculation + numéro]'],
-                    ['Numéro TVA intracommunautaire', '[À COMPLÉTER]'],
-                    ['Code APE / NAF', '[À COMPLÉTER]'],
+                    ['Capital social', '30 000 €'],
+                    ['Siège social', '5 Lotissement La Chaud — Grazac, 43320 Saint-Vidal, France'],
+                    ['SIREN', '883 042 798'],
+                    ['SIRET (siège)', '883 042 798 00016'],
+                    ['RCS', 'Le Puy-en-Velay 883 042 798'],
+                    ['Numéro TVA intracommunautaire', 'FR12 883 042 798'],
+                    ['Code APE / NAF', '6202A — Conseil en systèmes et logiciels informatiques'],
+                    ['Date d\'immatriculation', '24 avril 2020'],
                     ['Téléphone', '[À COMPLÉTER]'],
                     ['Email', 'contact@acreedconsulting.com'],
                   ]}
@@ -66,8 +67,10 @@ const MentionsLegales = () => (
 
               <Section title="2. Directeur de la publication">
                 <p>
-                  <strong className="text-white/90">[À COMPLÉTER — Nom Prénom]</strong>, en sa qualité de
-                  Président d'Acreed Consulting.
+                  La présidence d'Acreed Consulting est assurée par la société{' '}
+                  <strong className="text-white/90">ACRONOS</strong> (SAS), depuis le 14 novembre 2024.
+                  Le directeur de la publication est le représentant légal d'ACRONOS en sa qualité
+                  de président d'Acreed Consulting.
                 </p>
                 <p>Contact : contact@acreedconsulting.com</p>
               </Section>

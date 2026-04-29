@@ -45,9 +45,9 @@ const Confidentialite = () => (
                 <p>Le responsable du traitement de vos données personnelles est :</p>
                 <KV
                   rows={[
-                    ['Société', 'Acreed Consulting (SAS)'],
-                    ['Siège social', '[À COMPLÉTER — adresse complète], France'],
-                    ['Représentant légal', '[À COMPLÉTER — Nom Prénom], Président'],
+                    ['Société', 'Acreed Consulting (SAS) — RCS Le Puy-en-Velay 883 042 798'],
+                    ['Siège social', '5 Lotissement La Chaud — Grazac, 43320 Saint-Vidal, France'],
+                    ['Représentant légal', 'ACRONOS, Président depuis le 14 novembre 2024'],
                     ['Email RGPD', 'contact@acreedconsulting.com'],
                     ['DPO', 'Aucun DPO désigné — contact RGPD via l\'email ci-dessus'],
                   ]}
