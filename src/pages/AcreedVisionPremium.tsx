@@ -19,6 +19,7 @@ import {
     BadgeEuro,
     Eye
 } from 'lucide-react';
+import SkipToContent from '@/components/SkipToContent';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -524,9 +525,10 @@ const ValuesSection = () => {
 const AcreedVisionPremium = () => {
     return (
         <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black">
+            <SkipToContent />
             <Navigation />
 
-            <main>
+            <main id="main-content" tabIndex={-1}>
                 <HeroSection />
 
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
