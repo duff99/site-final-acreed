@@ -47,7 +47,7 @@ const Confidentialite = () => (
                   rows={[
                     ['Société', 'Acreed Consulting (SAS) — RCS Le Puy-en-Velay 883 042 798'],
                     ['Siège social', '5 Lotissement La Chaud — Grazac, 43320 Saint-Vidal, France'],
-                    ['Représentant légal', 'ACRONOS, Président depuis le 14 novembre 2024'],
+                    ['Représentant légal', 'Steven Breuil, Président'],
                     ['Email RGPD', 'contact@acreedconsulting.com'],
                     ['DPO', 'Aucun DPO désigné — contact RGPD via l\'email ci-dessus'],
                   ]}

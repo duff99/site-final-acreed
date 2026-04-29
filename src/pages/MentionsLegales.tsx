@@ -67,10 +67,8 @@ const MentionsLegales = () => (
 
               <Section title="2. Directeur de la publication">
                 <p>
-                  La présidence d'Acreed Consulting est assurée par la société{' '}
-                  <strong className="text-white/90">ACRONOS</strong> (SAS), depuis le 14 novembre 2024.
-                  Le directeur de la publication est le représentant légal d'ACRONOS en sa qualité
-                  de président d'Acreed Consulting.
+                  <strong className="text-white/90">Steven Breuil</strong>, en sa qualité de
+                  Président d'Acreed Consulting.
                 </p>
                 <p>Contact : contact@acreedconsulting.com</p>
               </Section>
