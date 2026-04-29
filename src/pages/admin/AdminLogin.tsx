@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import SEO from '@/components/SEO';
 
 export default function AdminLogin() {
   const { login, isAuthenticated } = useAuth();
@@ -57,6 +58,7 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+      <SEO title="Connexion admin" description="Espace d'administration Acreed Consulting." noIndex />
       {/* Background radial glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,hsla(0,0%,100%,0.04),transparent_60%)]" />
 

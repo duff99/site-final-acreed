@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import SkipToContent from '@/components/SkipToContent';
+import SEO from '@/components/SEO';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -8,6 +9,11 @@ import AnimatedSection from '@/components/AnimatedSection';
 const MentionsLegales = () => (
   <div className="min-h-screen bg-background text-foreground">
     <SkipToContent />
+    <SEO
+      title="Mentions légales"
+      description="Mentions légales du site Acreed Consulting : éditeur, hébergement, propriété intellectuelle."
+      canonicalPath="/mentions-legales"
+    />
     <Navigation />
     <main id="main-content" tabIndex={-1} className="pt-24 md:pt-28">
       <section className="relative py-16 md:py-24">

@@ -20,6 +20,7 @@ import {
     Eye
 } from 'lucide-react';
 import SkipToContent from '@/components/SkipToContent';
+import SEO from '@/components/SEO';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -526,6 +527,11 @@ const AcreedVisionPremium = () => {
     return (
         <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black">
             <SkipToContent />
+            <SEO
+                title="Notre vision"
+                description="La vision Acreed Consulting : créer des ponts entre l'humain et la technologie. Notre philosophie, notre histoire, nos valeurs et l'équipe qui les porte."
+                canonicalPath="/vision"
+            />
             <Navigation />
 
             <main id="main-content" tabIndex={-1}>

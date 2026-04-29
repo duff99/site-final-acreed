@@ -14,6 +14,7 @@ import {
   Search,
 } from 'lucide-react';
 import SkipToContent from '@/components/SkipToContent';
+import SEO from '@/components/SEO';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import JobJsonLd from '@/components/JobJsonLd';
@@ -267,6 +268,11 @@ const Jobs = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SkipToContent />
+      <SEO
+        title="Offres d'emploi"
+        description="Découvrez nos opportunités de carrière en Télécoms, IT, Cybersécurité, Énergie et Digital. Postes en CDI, freelance et missions de conseil partout en France."
+        canonicalPath="/offres"
+      />
 
       {/* Navigation */}
       <Navigation />
