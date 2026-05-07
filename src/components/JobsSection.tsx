@@ -69,17 +69,15 @@ const JobsSection = () => {
           ))}
         </div>
 
-        {/* View All Link */}
-        <AnimatedSection delay={0.4} className="mt-12 text-center">
-          <Link
-            to="/offres"
-            className="inline-flex items-center gap-3 text-[#dbcca5]/70 hover:text-[#dbcca5] transition-colors group"
-          >
-            <motion.span className="text-lg" whileHover={{ x: 4 }}>
+        {/* View All — branded aura CTA (same as Contact section bottom-of-landing) */}
+        <AnimatedSection delay={0.4} className="mt-16 flex justify-center">
+          <div className="button-wrapper">
+            <div className="ambient-glow" />
+            <Link to="/offres" className="btn-aura" aria-label="Voir toutes nos offres d'emploi">
               Voir toutes les offres
-            </motion.span>
-            <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
-          </Link>
+              <ArrowRight size={18} className="btn-icon" />
+            </Link>
+          </div>
         </AnimatedSection>
       </div>
     </section>

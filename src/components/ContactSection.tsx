@@ -8,8 +8,8 @@ const ContactSection = () => {
     <section id="contact" className="ultimate-cta py-20 scroll-mt-24">
       <AnimatedSection className="cta-content w-full">
         <h2 className="cta-title">
-          Prêt à transformer
-          <em>votre carrière ?</em>
+          Donnons de l'élan
+          <em>à vos projets.</em>
         </h2>
 
         <p className="cta-desc">
