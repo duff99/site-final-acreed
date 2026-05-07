@@ -8,19 +8,19 @@ const credoCards: { icon: LucideIcon; title: string; description: string }[] = [
     icon: Eye,
     title: 'Transparence Absolue',
     description:
-      'Nous favorisons un dialogue franc et une totale clarté sur nos activités et objectifs. Face aux imprévus, notre approche orientée solutions nous permet de résoudre les problématiques avec agilité.',
+      "La confiance se construit dans le détail. Nous communiquons clairement sur nos engagements, nos délais et nos honoraires, sans zone d'ombre. Lorsqu'un imprévu survient, nous le partageons immédiatement avec une proposition de solution — parce qu'un bon partenaire anticipe et tient sa parole, plutôt que de maquiller les difficultés.",
   },
   {
     icon: Lightbulb,
     title: 'Expertise & Simplicité',
     description:
-      "Trouver le profil parfait requiert une compréhension fine de nos métiers. Cependant, cette exigence s'accompagne d'une humilité constante et d'une organisation accessible et à l'écoute.",
+      "Identifier le bon profil ou structurer la bonne mission exige une compréhension fine des métiers techniques que nous servons. Cette exigence ne nous éloigne jamais du terrain : nos consultants restent accessibles, à l'écoute, et privilégient toujours la solution la plus claire à la démonstration la plus complexe. Un savoir-faire véritable se reconnaît à sa lisibilité.",
   },
   {
     icon: Users,
     title: 'Fédérer le Collectif',
     description:
-      'Solidarité, communication et entraide sont nos maîtres mots. Nous bâtissons un environnement bienveillant, fondé sur la proximité avec nos collaborateurs internes comme externes.',
+      "Une équipe soudée produit des missions plus saines et des résultats plus solides. Nous cultivons la solidarité et la communication ouverte entre nos équipes internes, nos consultants en mission et nos clients : chacun mérite d'être entendu, soutenu et respecté. C'est ce tissu humain qui transforme une prestation technique en partenariat durable.",
   },
 ];
 
@@ -68,8 +68,9 @@ const AboutSection = () => {
             Notre <span className="italic font-normal text-white/90">Crédo</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            ACREED Consulting se distingue par ses valeurs fondatrices, alliant exigence
-            professionnelle et aventure humaine.
+            Trois principes guident chaque mission que nous engageons. Bien plus que des
+            slogans, ils dessinent notre exigence opérationnelle, notre relation client
+            et notre posture humaine. Voici ce qui nous tient debout.
           </p>
         </AnimatedSection>
 
