@@ -1,21 +1,32 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { db } from '../db/index.js';
 import { jobs } from '../db/schema.js';
 import { eq, and } from 'drizzle-orm';
 
 const router = Router();
 
+// Validate optional sector query param to avoid arbitrary user input
+// reaching the WHERE clause unfiltered.
+const listQuerySchema = z.object({
+  sector: z.string().max(50).optional(),
+});
+
 // GET /api/jobs — list all active jobs
 router.get('/', async (req, res) => {
   try {
-    const { sector } = req.query;
+    const parsedQuery = listQuerySchema.safeParse(req.query);
+    if (!parsedQuery.success) {
+      return res.status(400).json({ message: 'Parametres de requete invalides' });
+    }
+    const { sector } = parsedQuery.data;
     let result;
 
     if (sector && sector !== 'Tous') {
       result = await db
         .select()
         .from(jobs)
-        .where(and(eq(jobs.isActive, true), eq(jobs.sector, sector as string)));
+        .where(and(eq(jobs.isActive, true), eq(jobs.sector, sector)));
     } else {
       result = await db.select().from(jobs).where(eq(jobs.isActive, true));
     }

@@ -129,6 +129,11 @@ for (const migration of migrations) {
   }
 }
 
+// Performance indexes (idempotent)
+await db.run(sql`CREATE INDEX IF NOT EXISTS idx_jobs_active_sector ON jobs (is_active, sector)`);
+await db.run(sql`CREATE INDEX IF NOT EXISTS idx_applications_created ON applications (created_at)`);
+await db.run(sql`CREATE INDEX IF NOT EXISTS idx_messages_created ON contact_messages (created_at)`);
+
 // Ensure at least one admin has the 'admin' role
 const { rows: adminRoleCheck } = await client.execute(
   "SELECT COUNT(*) as cnt FROM admins WHERE role = 'admin'"

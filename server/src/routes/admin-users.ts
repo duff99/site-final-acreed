@@ -6,8 +6,14 @@ import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import { createAdminSchema, updateAdminSchema } from '../../../shared/schemas.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import { requireRole } from '../middleware/authorize.js';
 
 const router = Router();
+
+// Defense-in-depth: every route under /api/admin/users requires admin role.
+// The mount point in index.ts already enforces this, but a router-level guard
+// makes the constraint explicit and survives any future re-mounting.
+router.use(requireRole('admin'));
 
 const adminFields = {
   id: admins.id,
