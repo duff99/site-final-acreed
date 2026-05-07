@@ -130,10 +130,12 @@
     /* Confine layout/paint recomputation to the panel's own box. Critical when the
        middle panel resizes — without this, the browser invalidates the whole row. */
     contain: layout paint;
-    /* Faster transition + fewer animated properties = less time for jank to be visible. */
-    transition: flex 0.35s cubic-bezier(0.25, 1, 0.2, 1),
-        opacity 0.25s ease,
-        border-color 0.25s ease;
+    /* Restored to the original smoother timing now that the underlying perf issues
+       (translateZ promotion, contain, photo Steven resize, no scale/filter) keep the
+       animation jank-free even at this slower duration. */
+    transition: flex var(--transition-smooth),
+        opacity 0.4s ease,
+        border-color 0.3s ease;
     background-size: cover;
     background-position: center;
     /* background-blend-mode removed — adds compositing cost for no visible benefit
