@@ -10,7 +10,6 @@
     "rootDirs": ["./src", "../shared"],
     "declaration": false,
     "sourceMap": true,
-    "noEmitOnError": false,
     "resolveJsonModule": true,
     "baseUrl": "..",
     "paths": {

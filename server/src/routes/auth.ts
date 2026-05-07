@@ -50,7 +50,7 @@ function signAccessToken(admin: { id: string; email: string; role: string }) {
   return jwt.sign(
     { sub: admin.id, email: admin.email, role: admin.role },
     config.JWT_SECRET,
-    { expiresIn: config.JWT_ACCESS_TTL }
+    { expiresIn: config.JWT_ACCESS_TTL as jwt.SignOptions['expiresIn'] }
   );
 }
 
