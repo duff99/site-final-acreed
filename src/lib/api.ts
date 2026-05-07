@@ -8,6 +8,7 @@ import type {
   CreateAdminInput,
   UpdateAdminInput,
   CreateApplicationInput,
+  CreateContactInput,
   ChangePasswordInput,
   ContactMessage,
   UpdateContactMessageInput,
@@ -200,6 +201,14 @@ class ApiClient {
   // Public - Applications
   submitApplication(data: CreateApplicationInput & { website?: string }) {
     return this.request<{ message: string; id: string }>('/applications', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // Public - Contact
+  sendContact(data: CreateContactInput & { website?: string }) {
+    return this.request<{ ok: true }>('/contact', {
       method: 'POST',
       body: JSON.stringify(data),
     });
