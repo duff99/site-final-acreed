@@ -24,7 +24,9 @@ const TeamSection = () => {
             <span className="text-gradient"> Acreed</span>
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            L'équipe dirigeante incarne nos valeurs et notre vision.
+            Trois trajectoires complémentaires, une même exigence : faire de chaque mission
+            un partenariat durable. Notre équipe dirigeante engage son expérience à chaque
+            étape, de la définition stratégique à l'exécution opérationnelle.
           </p>
         </AnimatedSection>
 
@@ -40,8 +42,9 @@ const TeamSection = () => {
                 <div className="details">
                   <div className="details-inner">
                     <p className="description">
-                      Architecte de la croissance. Tristan identifie de nouvelles opportunités
-                      et tisse des relations solides avec nos partenaires stratégiques.
+                      Architecte de la croissance, Tristan identifie les opportunités
+                      sectorielles et structure les relations stratégiques avec nos
+                      clients et partenaires de long terme.
                     </p>
 
                     <div className="custom-panel-footer">
@@ -71,8 +74,9 @@ const TeamSection = () => {
                 <div className="details">
                   <div className="details-inner">
                     <p className="description">
-                      Visionnaire du projet, Steven dirige la stratégie globale pour assurer
-                      une croissance pérenne et une synergie parfaite de l'équipe.
+                      Fondateur d'Acreed, Steven porte la vision et la stratégie globale
+                      de l'entreprise. Son expérience opérationnelle des télécoms ancre
+                      chacune de ses décisions.
                     </p>
 
                     <div className="custom-panel-footer">
@@ -102,8 +106,9 @@ const TeamSection = () => {
                 <div className="details">
                   <div className="details-inner">
                     <p className="description">
-                      Pilote opérationnel. Maxime garantit l'excellence de l'exécution et
-                      veille à l'optimisation continue de nos processus d'affaires.
+                      Pilote opérationnel, Maxime orchestre l'exécution des missions et
+                      garantit la qualité des livrables. Son rôle pivot assure la
+                      continuité entre vision stratégique et réalité terrain.
                     </p>
 
                     <div className="custom-panel-footer">
