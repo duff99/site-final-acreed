@@ -15,6 +15,7 @@ import contactRouter from './routes/contact.js';
 import applicationsRouter from './routes/applications.js';
 import { requireAuth } from './middleware/auth.js';
 import { requireRole } from './middleware/authorize.js';
+import { purgeExpiredData } from './lib/data-retention.js';
 
 // Block startup if JWT secret is unchanged in production
 if (process.env.NODE_ENV === 'production' && config.JWT_SECRET === 'CHANGE-ME-IN-PRODUCTION') {
@@ -89,3 +90,10 @@ app.use(
 app.listen(config.PORT, () => {
   console.log(`API running on http://localhost:${config.PORT}`);
 });
+
+// GDPR data retention: run once at startup, then every 24h
+purgeExpiredData().catch((err) => console.error('[retention] startup purge failed:', err));
+setInterval(
+  () => purgeExpiredData().catch((err) => console.error('[retention] interval purge failed:', err)),
+  24 * 60 * 60 * 1000
+);
