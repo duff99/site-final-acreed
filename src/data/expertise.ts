@@ -5,6 +5,7 @@ export const expertiseSchema = z.object({
   title: z.string(),
   description: z.string(),
   features: z.array(z.string()),
+  image: z.string(),
 });
 
 export type Expertise = z.infer<typeof expertiseSchema>;
@@ -13,25 +14,29 @@ export const expertises: Expertise[] = [
   {
     icon: 'Users',
     title: 'Consulting Externe sur Mesure',
-    description: 'Mise à disposition de consultants spécialisés pour des missions temporaires ou longues dans les télécoms, IT et cybersécurité.',
+    description: "Mise à disposition de consultants spécialisés pour des missions temporaires ou longues dans les télécoms, IT et cybersécurité.",
     features: ['Consultants experts', 'Missions flexibles', 'Accompagnement personnalisé'],
+    image: '/images/offre-consulting.jpg',
   },
   {
     icon: 'UserPlus',
     title: 'Prestation + Internalisation',
-    description: "Possibilité d'intégrer nos consultants chez le client après une première mission réussie.",
+    description: "Possibilité d'intégrer nos consultants directement chez le client après une première mission réussie et validée.",
     features: ['Transition fluide', 'Intégration progressive', 'Formation continue'],
+    image: '/images/offre-internalisation.jpg',
   },
   {
     icon: 'Search',
     title: 'Recrutement Interne',
-    description: 'Assistance complète au recrutement de talents qualifiés pour répondre aux besoins spécifiques de nos clients.',
+    description: "Assistance complète au recrutement de talents qualifiés pour répondre avec précision aux besoins spécifiques de nos clients.",
     features: ['Sourcing expert', 'Évaluation technique', 'Processus rigoureux'],
+    image: '/images/offre-recrutement.jpg',
   },
   {
-    icon: 'FolderKanban',
+    icon: 'KanbanSquare',
     title: 'Gestion de Projets',
-    description: "Accompagnement complet avec création d'outils personnalisés, pilotage et coordination de projets complexes.",
+    description: "Accompagnement complet avec création d'outils personnalisés, pilotage agile et coordination de vos projets complexes.",
     features: ['Outils sur-mesure', 'Pilotage expert', 'Coordination complète'],
+    image: '/images/offre-gestion.jpg',
   },
 ];

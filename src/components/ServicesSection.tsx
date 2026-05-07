@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Radio, Code, ShieldCheck, Zap, Factory } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { services } from '@/data/services';
 import './ServicesSection.css';
 
 const ServicesSection = () => {
@@ -32,110 +33,34 @@ const ServicesSection = () => {
         <AnimatedSection delay={0.2} className="w-full flex justify-center">
           <div className={`gallery-container${activePanel !== null ? ' has-active' : ''}`}>
 
-            <div className={`panel${isMobile && activePanel === 0 ? ' is-active' : ''}`}
-              onClick={() => handlePanelClick(0)}
-              style={{ backgroundImage: "url('/images/service-recrutement.jpg')" }}>
-              <div className="collapsed-content">
-                <div className="num-line"><span>01</span></div>
-                <div className="vertical-text">Télécoms</div>
-              </div>
-              <div className="expanded-content">
-                <div className="top-row">
-                  <div className="big-num">01</div>
-                  <div className="circle-badge">Infrastructure Réseau</div>
+            {services.map((service, index) => {
+              const Icon = Icons[service.icon as keyof typeof Icons] as Icons.LucideIcon;
+              const num = String(index + 1).padStart(2, '0');
+              return (
+                <div
+                  key={service.title}
+                  className={`panel${isMobile && activePanel === index ? ' is-active' : ''}`}
+                  onClick={() => handlePanelClick(index)}
+                  style={{ backgroundImage: `url('${service.image}')` }}
+                >
+                  <div className="collapsed-content">
+                    <div className="num-line"><span>{num}</span></div>
+                    <div className="vertical-text">{service.title}</div>
+                  </div>
+                  <div className="expanded-content">
+                    <div className="top-row">
+                      <div className="big-num">{num}</div>
+                      <div className="circle-badge">{service.badge}</div>
+                    </div>
+                    <div className="glass-card">
+                      <div className="service-icon"><Icon size={28} /></div>
+                      <h3 className="glass-card-title">{service.title}</h3>
+                      <p>{service.description}</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="glass-card">
-                  <div className="service-icon"><Radio size={28} /></div>
-                  <h3 className="glass-card-title">Télécoms</h3>
-                  <p>Déploiement, ingénierie réseau, optimisation d'infrastructures : nos consultants accompagnent
-                    opérateurs et équipementiers sur leurs projets les plus exigeants.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className={`panel${isMobile && activePanel === 1 ? ' is-active' : ''}`}
-              onClick={() => handlePanelClick(1)}
-              style={{ backgroundImage: "url('/images/service-telecom.jpg')" }}>
-              <div className="collapsed-content">
-                <div className="num-line"><span>02</span></div>
-                <div className="vertical-text">IT / Digital</div>
-              </div>
-              <div className="expanded-content">
-                <div className="top-row">
-                  <div className="big-num">02</div>
-                  <div className="circle-badge">Transformation Digitale</div>
-                </div>
-                <div className="glass-card">
-                  <div className="service-icon"><Code size={28} /></div>
-                  <h3 className="glass-card-title">IT / Digital</h3>
-                  <p>Intégrés directement au sein de vos équipes, nos experts pilotent vos projets de
-                    transformation digitale, développement logiciel et modernisation SI.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className={`panel${isMobile && activePanel === 2 ? ' is-active' : ''}`}
-              onClick={() => handlePanelClick(2)}
-              style={{ backgroundImage: "url('/images/service-cybersecurite.jpg')" }}>
-              <div className="collapsed-content">
-                <div className="num-line"><span>03</span></div>
-                <div className="vertical-text">Cybersécurité</div>
-              </div>
-              <div className="expanded-content">
-                <div className="top-row">
-                  <div className="big-num">03</div>
-                  <div className="circle-badge">Sécurité des SI</div>
-                </div>
-                <div className="glass-card">
-                  <div className="service-icon"><ShieldCheck size={28} /></div>
-                  <h3 className="glass-card-title">Cybersécurité</h3>
-                  <p>Audit, gouvernance, conformité, réponse aux incidents — des profils spécialisés pour
-                    renforcer durablement la sécurité de vos infrastructures critiques.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className={`panel${isMobile && activePanel === 3 ? ' is-active' : ''}`}
-              onClick={() => handlePanelClick(3)}
-              style={{ backgroundImage: "url('/images/service-energie.jpg')" }}>
-              <div className="collapsed-content">
-                <div className="num-line"><span>04</span></div>
-                <div className="vertical-text">Énergie Renouvelable</div>
-              </div>
-              <div className="expanded-content">
-                <div className="top-row">
-                  <div className="big-num">04</div>
-                  <div className="circle-badge">Transition Énergétique</div>
-                </div>
-                <div className="glass-card">
-                  <div className="service-icon"><Zap size={28} /></div>
-                  <h3 className="glass-card-title">Énergie Renouvelable</h3>
-                  <p>Solaire, éolien, smart grids, efficacité énergétique : des ingénieurs-consultants engagés aux
-                    côtés des acteurs de la transition.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className={`panel${isMobile && activePanel === 4 ? ' is-active' : ''}`}
-              onClick={() => handlePanelClick(4)}
-              style={{ backgroundImage: "url('/images/service-digital.jpg')" }}>
-              <div className="collapsed-content">
-                <div className="num-line"><span>05</span></div>
-                <div className="vertical-text">Industrie</div>
-              </div>
-              <div className="expanded-content">
-                <div className="top-row">
-                  <div className="big-num">05</div>
-                  <div className="circle-badge">Performance Industrielle</div>
-                </div>
-                <div className="glass-card">
-                  <div className="service-icon"><Factory size={28} /></div>
-                  <h3 className="glass-card-title">Industrie</h3>
-                  <p>En milieu industriel, nos équipes optimisent vos processus de production, votre supply chain
-                    et accompagnent la conduite du changement.</p>
-                </div>
-              </div>
-            </div>
+              );
+            })}
 
           </div>
         </AnimatedSection>
