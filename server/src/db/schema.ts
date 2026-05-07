@@ -27,7 +27,6 @@ export const contactMessages = sqliteTable('contact_messages', {
   phone: text('phone').default(''),
   subject: text('subject').notNull(),
   message: text('message').notNull(),
-  cvFilename: text('cv_filename'),
   isRead: integer('is_read', { mode: 'boolean' }).notNull().default(false),
   createdAt: text('created_at').notNull().$defaultFn(() => new Date().toISOString()),
 });
