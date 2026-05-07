@@ -69,10 +69,11 @@ const JobsSection = () => {
           ))}
         </div>
 
-        {/* View All — branded aura CTA (same as Contact section bottom-of-landing) */}
+        {/* View All — branded aura CTA (same as Contact section bottom-of-landing). Halo scaled down
+            here so it doesn't bleed into the SectionDividerPremium that follows. */}
         <AnimatedSection delay={0.4} className="mt-16 flex justify-center">
           <div className="button-wrapper">
-            <div className="ambient-glow" />
+            <div className="ambient-glow" style={{ width: 240, height: 110, filter: 'blur(28px)' }} />
             <Link to="/offres" className="btn-aura" aria-label="Voir toutes nos offres d'emploi">
               Voir toutes les offres
               <ArrowRight size={18} className="btn-icon" />
