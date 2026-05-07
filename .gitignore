@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Compiled JS in shared/ — must not be committed; runtime imports `.js` extensions but tsx resolves `.ts` at dev time, and the build emits to dist/
+shared/*.js
+shared/*.js.map
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
