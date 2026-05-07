@@ -9,14 +9,6 @@ export function useAdminContactMessages() {
   });
 }
 
-export function useAdminContactMessage(id: string) {
-  return useQuery({
-    queryKey: ['admin', 'contact-messages', id],
-    queryFn: () => apiClient.getAdminContactMessage(id),
-    enabled: !!id,
-  });
-}
-
 export function useUpdateContactMessage() {
   const queryClient = useQueryClient();
   return useMutation({
