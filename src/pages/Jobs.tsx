@@ -18,6 +18,9 @@ import SkipToContent from '@/components/SkipToContent';
 import SEO from '@/components/SEO';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+// Branded button styles (.btn-aura primary + .btn-aura-secondary). Imported here so the
+// Jobs route ships them even when the home (where ContactSection lives) hasn't been visited.
+import '@/components/ContactSection.css';
 import JobJsonLd from '@/components/JobJsonLd';
 import AnimatedSection from '@/components/AnimatedSection';
 import SpotlightCard from '@/components/SpotlightCard';
@@ -462,22 +465,24 @@ const Jobs = () => {
                 Envoyez-nous votre candidature spontanée. Nous étudions chaque profil avec
                 attention et vous recontactons dès qu'une opportunité se présente.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <motion.button
-                  onClick={() => setSpontaneousOpen(true)}
-                  className="btn-premium btn-premium-primary inline-flex items-center gap-2"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                  aria-label="Envoyer une candidature spontanée"
-                >
-                  <Send size={16} />
-                  Envoyer ma candidature
-                </motion.button>
-                <Link
-                  to="/"
-                  className="btn-premium btn-premium-secondary inline-flex items-center gap-2 text-sm"
-                >
-                  <ArrowRight size={16} />
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                {/* Primary CTA — branded "aura" button (matches the landing page Contact CTA) */}
+                <div className="button-wrapper">
+                  <div className="ambient-glow" />
+                  <button
+                    type="button"
+                    onClick={() => setSpontaneousOpen(true)}
+                    className="btn-aura"
+                    aria-label="Envoyer une candidature spontanée"
+                  >
+                    Envoyer ma candidature
+                    <Send size={18} className="btn-icon" />
+                  </button>
+                </div>
+
+                {/* Secondary CTA — same pill silhouette, quieter outline variant */}
+                <Link to="/" className="btn-aura-secondary" aria-label="Retour à l'accueil">
+                  <ArrowLeft size={18} className="btn-icon" />
                   Retour au site
                 </Link>
               </div>
