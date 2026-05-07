@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   MessageCircle,
   Loader2,
+  Building2,
 } from 'lucide-react';
 import {
   Form,
@@ -24,6 +25,13 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { apiClient } from '@/lib/api';
@@ -36,6 +44,12 @@ import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 import SpotlightCard from '@/components/SpotlightCard';
 import { team } from '@/data/team';
+
+// Order team in Contact page to match the landing page TeamSection (Tristan, Steven, Maxime)
+const CONTACT_ORDER = ['Tristan', 'Steven', 'Maxime'];
+const orderedTeam = [...team].sort(
+  (a, b) => CONTACT_ORDER.indexOf(a.name) - CONTACT_ORDER.indexOf(b.name),
+);
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -63,9 +77,8 @@ const Contact = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const honeypotRef = useRef<HTMLInputElement>(null);
 
-  // Extra UI-only fields that get merged into message before sending
-  const [b2bFields, setB2bFields] = useState({ company: '', positions: '', timeline: '' });
-  const [b2cFields, setB2cFields] = useState({ preferredSector: '', availability: '' });
+  // Optional company field (UI-only, prepended to the message before sending)
+  const [company, setCompany] = useState('');
 
   const form = useForm<CreateContactInput>({
     resolver: zodResolver(createContactSchema),
@@ -80,29 +93,14 @@ const Contact = () => {
   });
 
   const watchedSubject = form.watch('subject');
-  const isB2B = watchedSubject === 'Recrutement' || watchedSubject === 'Consulting';
-  const isB2C = watchedSubject === 'Candidature spontanée';
 
   const onSubmit = async (data: CreateContactInput) => {
     setIsSubmitting(true);
     try {
-      // Enrich message with conditional UI-only fields
-      let enrichedMessage = data.message;
-      if (isB2B) {
-        const extras = [
-          b2bFields.company && `Entreprise : ${b2bFields.company}`,
-          b2bFields.positions && `Postes : ${b2bFields.positions}`,
-          b2bFields.timeline && `Delai : ${b2bFields.timeline}`,
-        ].filter(Boolean);
-        if (extras.length) enrichedMessage = `${extras.join(' | ')}\n\n${enrichedMessage}`;
-      }
-      if (isB2C) {
-        const extras = [
-          b2cFields.preferredSector && `Secteur : ${b2cFields.preferredSector}`,
-          b2cFields.availability && `Disponibilite : ${b2cFields.availability}`,
-        ].filter(Boolean);
-        if (extras.length) enrichedMessage = `${extras.join(' | ')}\n\n${enrichedMessage}`;
-      }
+      // Prepend company to the message if provided
+      const enrichedMessage = company.trim()
+        ? `Entreprise : ${company.trim()}\n\n${data.message}`
+        : data.message;
 
       await apiClient.sendContact({
         ...data,
@@ -115,8 +113,7 @@ const Contact = () => {
         description: 'Notre équipe vous recontactera dans les plus brefs délais.',
       });
       form.reset();
-      setB2bFields({ company: '', positions: '', timeline: '' });
-      setB2cFields({ preferredSector: '', availability: '' });
+      setCompany('');
       setSubmitSuccess(true);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Une erreur est survenue';
@@ -206,23 +203,33 @@ const Contact = () => {
               </h2>
             </AnimatedSection>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {team.map((member, index) => (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8">
+              {orderedTeam.map((member, index) => (
                 <AnimatedSection key={member.name} delay={0.3 + index * 0.1}>
-                  <SpotlightCard className="p-6 text-center" disableHoverMove>
-                    <img
-                      src={member.image}
-                      alt={`Photo de ${member.name}`}
-                      className="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-2 border-white/10"
-                    />
-                    <h3 className="font-display font-bold text-lg">
+                  <SpotlightCard className="p-8 lg:p-9 text-center h-full" disableHoverMove>
+                    <div className="relative inline-block mb-6">
+                      {/* Subtle gold halo behind avatar */}
+                      <div
+                        aria-hidden
+                        className="absolute inset-0 rounded-full blur-2xl opacity-50 bg-[#dbcca5]/20"
+                      />
+                      <img
+                        src={member.image}
+                        alt={`Photo de ${member.name}`}
+                        loading="lazy"
+                        decoding="async"
+                        className="relative w-32 h-32 lg:w-36 lg:h-36 rounded-full object-cover mx-auto border-2 border-white/15 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.6)]"
+                      />
+                    </div>
+
+                    <h3 className="font-display font-bold text-2xl mb-1">
                       {member.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground mb-4">
+                    <p className="text-sm text-[#dbcca5]/80 uppercase tracking-[2px] mb-5">
                       {member.role}
                     </p>
 
-                    <div className="border-t border-white/10 my-4" />
+                    <div className="border-t border-white/10 my-5" />
 
                     <div className="space-y-3">
                       {member.email && (
@@ -284,45 +291,67 @@ const Contact = () => {
               </p>
             </AnimatedSection>
 
-            <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-              {/* Step 1 */}
-              <AnimatedSection delay={0.2} className="h-full">
-                <SpotlightCard className="p-8 h-full flex flex-col items-center text-center" disableHoverMove>
-                  <div className="w-14 h-14 bg-[#dbcca5]/10 border border-[#dbcca5]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(219,204,165,0.1)]">
-                    <MessageCircle className="w-6 h-6 text-[#dbcca5]" />
-                  </div>
-                  <h3 className="text-xl font-display font-bold text-white mb-3">1. Prise en compte</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Dès réception de votre message ou de votre candidature, notre équipe analyse votre besoin avec la plus grande attention.
-                  </p>
-                </SpotlightCard>
-              </AnimatedSection>
+            {/* Horizontal timeline with dotted gold connectors between steps */}
+            <div className="relative grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 max-w-5xl mx-auto">
+              {[
+                {
+                  num: '01',
+                  icon: MessageCircle,
+                  title: 'Prise en compte',
+                  desc: 'Dès réception de votre message, notre équipe analyse votre besoin avec la plus grande attention.',
+                },
+                {
+                  num: '02',
+                  icon: Clock,
+                  title: 'Retours rapides',
+                  desc: 'Un consultant spécialisé vous recontacte sous 48h pour qualifier et approfondir vos enjeux.',
+                },
+                {
+                  num: '03',
+                  icon: CheckCircle2,
+                  title: "Proposition d'action",
+                  desc: 'Nous vous présentons une solution sur-mesure (profils exclusifs, stratégie de consulting) adaptée à votre contexte.',
+                },
+              ].map((step, i) => (
+                <AnimatedSection
+                  key={step.num}
+                  delay={0.2 + i * 0.12}
+                  className="relative"
+                >
+                  {/* Dotted connector to next step (desktop only, hidden on last) */}
+                  {i < 2 && (
+                    <div
+                      aria-hidden
+                      className="hidden md:block absolute top-[60px] left-1/2 right-0 h-px pointer-events-none"
+                      style={{
+                        backgroundImage:
+                          'repeating-linear-gradient(to right, rgba(219,204,165,0.45) 0 6px, transparent 6px 12px)',
+                      }}
+                    />
+                  )}
 
-              {/* Step 2 */}
-              <AnimatedSection delay={0.3} className="h-full">
-                <SpotlightCard className="p-8 h-full flex flex-col items-center text-center" disableHoverMove>
-                  <div className="w-14 h-14 bg-[#dbcca5]/10 border border-[#dbcca5]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(219,204,165,0.1)]">
-                    <Clock className="w-6 h-6 text-[#dbcca5]" />
-                  </div>
-                  <h3 className="text-xl font-display font-bold text-white mb-3">2. Retours rapides</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Un consultant spécialisé de la direction vous recontacte dans les plus brefs délais pour qualifier et approfondir vos enjeux.
-                  </p>
-                </SpotlightCard>
-              </AnimatedSection>
+                  <div className="relative flex flex-col items-center text-center px-4 md:px-6">
+                    {/* Big editorial number above the medallion */}
+                    <span className="font-display text-[11px] uppercase tracking-[3px] text-[#dbcca5]/70 mb-3">
+                      Étape {step.num}
+                    </span>
 
-              {/* Step 3 */}
-              <AnimatedSection delay={0.4} className="h-full">
-                <SpotlightCard className="p-8 h-full flex flex-col items-center text-center" disableHoverMove>
-                  <div className="w-14 h-14 bg-[#dbcca5]/10 border border-[#dbcca5]/30 rounded-full flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(219,204,165,0.1)]">
-                    <CheckCircle2 className="w-6 h-6 text-[#dbcca5]" />
+                    {/* Medallion with icon — sits ON the connector line */}
+                    <div className="relative z-10 w-[120px] h-[120px] rounded-full bg-background border border-[#dbcca5]/30 flex items-center justify-center shadow-[0_0_30px_rgba(219,204,165,0.12)]">
+                      {/* Inner ring */}
+                      <div className="absolute inset-2 rounded-full border border-[#dbcca5]/15" />
+                      <step.icon className="w-8 h-8 text-[#dbcca5]" />
+                    </div>
+
+                    <h3 className="mt-7 text-xl md:text-2xl font-display font-bold text-white tracking-tight">
+                      {step.title}
+                    </h3>
+                    <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-[280px]">
+                      {step.desc}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-display font-bold text-white mb-3">3. Proposition d'action</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Nous vous présentons une solution sur-mesure (profils exclusifs, stratégie de consulting) totalement adaptée à votre contexte.
-                  </p>
-                </SpotlightCard>
-              </AnimatedSection>
+                </AnimatedSection>
+              ))}
             </div>
           </div>
         </section>
@@ -460,7 +489,7 @@ const Contact = () => {
                       />
                     </div>
 
-                    {/* Subject */}
+                    {/* Subject — branded shadcn Select for visual coherence */}
                     <FormField
                       control={form.control}
                       name="subject"
@@ -470,144 +499,47 @@ const Contact = () => {
                             <MessageSquare size={13} className="text-[#dbcca5]/80" />
                             Sujet
                           </FormLabel>
-                          <FormControl>
-                            <select
-                              id="contact-subject"
-                              className={`${inputClasses} appearance-none`}
-                              {...field}
-                            >
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger
+                                id="contact-subject"
+                                className="w-full h-auto bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 py-3.5 text-white placeholder:text-white/20 focus:outline-none focus:border-[#dbcca5]/50 focus:bg-white/[0.04] focus:ring-1 focus:ring-[#dbcca5]/50 transition-all duration-300 font-light hover:bg-white/[0.03] data-[placeholder]:text-white/30"
+                              >
+                                <SelectValue placeholder="Sélectionnez un sujet" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="bg-[#0e0e10] border border-white/[0.08] backdrop-blur-xl">
                               {SUBJECT_OPTIONS.map((option) => (
-                                <option
+                                <SelectItem
                                   key={option}
                                   value={option}
-                                  className="bg-[#121212] text-white"
+                                  className="text-white/85 focus:bg-[#dbcca5]/15 focus:text-white data-[state=checked]:text-[#dbcca5] py-2.5"
                                 >
                                   {option}
-                                </option>
+                                </SelectItem>
                               ))}
-                            </select>
-                          </FormControl>
+                            </SelectContent>
+                          </Select>
                           <FormMessage className="text-xs text-red-400 mt-1 pl-1" />
                         </FormItem>
                       )}
                     />
 
-                    {/* B2B conditional fields */}
-                    <AnimatePresence>
-                      {isB2B && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="space-y-6 overflow-hidden"
-                        >
-                          <div>
-                            <label htmlFor="contact-company" className={labelClasses}>
-                              <User size={13} className="text-[#dbcca5]/80" />
-                              Entreprise
-                            </label>
-                            <input
-                              id="contact-company"
-                              type="text"
-                              value={b2bFields.company}
-                              onChange={(e) => setB2bFields((p) => ({ ...p, company: e.target.value }))}
-                              placeholder="Nom de votre entreprise"
-                              className={inputClasses}
-                            />
-                          </div>
-                          <div className="grid sm:grid-cols-2 gap-6">
-                            <div>
-                              <label htmlFor="contact-positions" className={labelClasses}>
-                                <MessageSquare size={13} className="text-[#dbcca5]/80" />
-                                Nombre de postes
-                              </label>
-                              <select
-                                id="contact-positions"
-                                value={b2bFields.positions}
-                                onChange={(e) => setB2bFields((p) => ({ ...p, positions: e.target.value }))}
-                                className={`${inputClasses} appearance-none`}
-                              >
-                                <option value="" className="bg-[#121212] text-white">Non précisé</option>
-                                <option value="1" className="bg-[#121212] text-white">1 poste</option>
-                                <option value="2-5" className="bg-[#121212] text-white">2-5 postes</option>
-                                <option value="5-10" className="bg-[#121212] text-white">5-10 postes</option>
-                                <option value="10+" className="bg-[#121212] text-white">10+ postes</option>
-                              </select>
-                            </div>
-                            <div>
-                              <label htmlFor="contact-timeline" className={labelClasses}>
-                                <Clock size={13} className="text-[#dbcca5]/80" />
-                                Délai souhaité
-                              </label>
-                              <select
-                                id="contact-timeline"
-                                value={b2bFields.timeline}
-                                onChange={(e) => setB2bFields((p) => ({ ...p, timeline: e.target.value }))}
-                                className={`${inputClasses} appearance-none`}
-                              >
-                                <option value="" className="bg-[#121212] text-white">Non précisé</option>
-                                <option value="urgent" className="bg-[#121212] text-white">Urgent (- de 2 semaines)</option>
-                                <option value="1-month" className="bg-[#121212] text-white">Sous 1 mois</option>
-                                <option value="3-months" className="bg-[#121212] text-white">Sous 3 mois</option>
-                                <option value="flexible" className="bg-[#121212] text-white">Flexible</option>
-                              </select>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    {/* B2C conditional fields */}
-                    <AnimatePresence>
-                      {isB2C && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="space-y-6 overflow-hidden"
-                        >
-                          <div className="grid sm:grid-cols-2 gap-6">
-                            <div>
-                              <label htmlFor="contact-sector" className={labelClasses}>
-                                <MessageSquare size={13} className="text-[#dbcca5]/80" />
-                                Secteur préféré
-                              </label>
-                              <select
-                                id="contact-sector"
-                                value={b2cFields.preferredSector}
-                                onChange={(e) => setB2cFields((p) => ({ ...p, preferredSector: e.target.value }))}
-                                className={`${inputClasses} appearance-none`}
-                              >
-                                <option value="" className="bg-[#121212] text-white">Tous secteurs</option>
-                                <option value="Telecoms" className="bg-[#121212] text-white">Télécoms</option>
-                                <option value="IT" className="bg-[#121212] text-white">IT / Digital</option>
-                                <option value="Cyber" className="bg-[#121212] text-white">Cybersécurité</option>
-                                <option value="Energie" className="bg-[#121212] text-white">Énergie</option>
-                                <option value="Industrie" className="bg-[#121212] text-white">Industrie</option>
-                              </select>
-                            </div>
-                            <div>
-                              <label htmlFor="contact-availability" className={labelClasses}>
-                                <Clock size={13} className="text-[#dbcca5]/80" />
-                                Disponibilité
-                              </label>
-                              <select
-                                id="contact-availability"
-                                value={b2cFields.availability}
-                                onChange={(e) => setB2cFields((p) => ({ ...p, availability: e.target.value }))}
-                                className={`${inputClasses} appearance-none`}
-                              >
-                                <option value="" className="bg-[#121212] text-white">Non précisé</option>
-                                <option value="immediate" className="bg-[#121212] text-white">Immédiate</option>
-                                <option value="1-month" className="bg-[#121212] text-white">Sous 1 mois</option>
-                                <option value="3-months" className="bg-[#121212] text-white">Sous 3 mois</option>
-                                <option value="listening" className="bg-[#121212] text-white">En veille</option>
-                              </select>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    {/* Entreprise (optional) */}
+                    <div>
+                      <label htmlFor="contact-company" className={labelClasses}>
+                        <Building2 size={13} className="text-[#dbcca5]/80" />
+                        Entreprise <span className="ml-1 text-white/30 normal-case tracking-normal">(optionnel)</span>
+                      </label>
+                      <input
+                        id="contact-company"
+                        type="text"
+                        value={company}
+                        onChange={(e) => setCompany(e.target.value)}
+                        placeholder="Nom de votre entreprise"
+                        className={inputClasses}
+                      />
+                    </div>
 
                     {/* Message */}
                     <FormField

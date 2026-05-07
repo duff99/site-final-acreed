@@ -13,14 +13,17 @@ export const businessPartners: BusinessPartner[] = [
   {
     name: 'Michelin',
     tagline: 'Industriel partenaire',
+    logo: '/images/partners/michelin.jpg',
   },
   {
     name: 'La Brasserie du Digital',
     tagline: 'Studio digital partenaire',
+    logo: '/images/partners/brasserie-digital.png',
   },
   {
     name: 'Veilio',
     tagline: 'Sécurité & tokenisation',
+    logo: '/images/partners/veilio.png',
     href: 'https://veilio.xyz',
   },
 ];
