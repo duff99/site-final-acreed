@@ -28,9 +28,9 @@ const ParticleCanvas = () => {
         };
     }, []);
 
-    if (skip) return null;
-
     useEffect(() => {
+        if (skip) return;
+
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
@@ -133,7 +133,9 @@ const ParticleCanvas = () => {
             window.removeEventListener('resize', resizeCanvas);
             cancelAnimationFrame(animationFrameId);
         };
-    }, []);
+    }, [skip]);
+
+    if (skip) return null;
 
     return (
         <canvas
