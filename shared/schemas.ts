@@ -85,8 +85,9 @@ export const updateAdminSchema = z.object({
 // ---------- Application schemas ----------
 
 export const createApplicationSchema = z.object({
-  jobId: z.string().min(1, 'Offre requise'),
-  jobTitle: z.string().min(1),
+  jobId: z.string().optional().default(''),
+  jobTitle: z.string().optional().default(''),
+  isSpontaneous: z.boolean().optional().default(false),
   firstName: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères').max(50),
   lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères').max(50),
   email: z.string().email('Email invalide'),
@@ -143,6 +144,7 @@ export const applicationSchema = z.object({
   id: z.string(),
   jobId: z.string(),
   jobTitle: z.string(),
+  isSpontaneous: z.boolean().optional().default(false),
   firstName: z.string(),
   lastName: z.string(),
   email: z.string(),

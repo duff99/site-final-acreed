@@ -109,6 +109,8 @@ const migrations = [
   `ALTER TABLE admins ADD COLUMN created_by TEXT`,
   `ALTER TABLE admins ADD COLUMN failed_login_attempts INTEGER NOT NULL DEFAULT 0`,
   `ALTER TABLE admins ADD COLUMN locked_until TEXT`,
+  // applications table: add is_spontaneous column for spontaneous applications
+  `ALTER TABLE applications ADD COLUMN is_spontaneous INTEGER NOT NULL DEFAULT 0`,
 ];
 
 for (const migration of migrations) {

@@ -117,16 +117,18 @@ export async function notifyApplication(payload: {
   jobTitle?: string;
   message?: string;
   cvUrl?: string;
+  isSpontaneous?: boolean;
 }) {
   const firstName = payload.firstName ?? '';
   const lastName = payload.lastName ?? '';
   const email = payload.email ?? '';
-  const jobTitle = payload.jobTitle ?? '';
+  const isSpontaneous = payload.isSpontaneous || !payload.jobTitle;
+  const jobTitle = isSpontaneous ? 'Candidature spontanée' : (payload.jobTitle ?? '');
   const html = `
-    <h2>Nouvelle candidature</h2>
+    <h2>Nouvelle candidature${isSpontaneous ? ' spontanée' : ''}</h2>
     <p><strong>Candidat :</strong> ${escapeHtml(firstName)} ${escapeHtml(lastName)} &lt;${escapeHtml(email)}&gt;</p>
     ${payload.phone ? `<p><strong>Téléphone :</strong> ${escapeHtml(payload.phone)}</p>` : ''}
-    <p><strong>Offre :</strong> ${escapeHtml(jobTitle)}</p>
+    ${!isSpontaneous ? `<p><strong>Offre :</strong> ${escapeHtml(jobTitle)}</p>` : ''}
     ${payload.cvUrl ? `<p><strong>CV :</strong> <a href="${escapeHtml(payload.cvUrl)}">${escapeHtml(payload.cvUrl)}</a></p>` : ''}
     ${payload.message ? `<hr/><p style="white-space:pre-wrap">${escapeHtml(payload.message)}</p>` : ''}
     <hr/>
@@ -134,7 +136,7 @@ export async function notifyApplication(payload: {
   `;
   await send({
     to: NOTIFY_EMAIL_RECRUITMENT,
-    subject: `[Acreed] Candidature — ${jobTitle}`,
+    subject: isSpontaneous ? '[Acreed] Candidature spontanée' : `[Acreed] Candidature — ${jobTitle}`,
     html,
     replyTo: email || undefined,
   });

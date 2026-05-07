@@ -25,30 +25,32 @@ import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { apiClient } from '@/lib/api';
 import { createApplicationSchema } from '@shared/schemas';
-import type { CreateApplicationInput } from '@shared/types';
+import type { CreateApplicationInput, Job } from '@shared/types';
 
 interface ApplicationModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  jobId: string;
-  jobTitle: string;
+  /** When undefined, the modal runs in spontaneous mode (no specific job). */
+  job?: Job;
 }
 
 const ApplicationModal = ({
   open,
   onOpenChange,
-  jobId,
-  jobTitle,
+  job,
 }: ApplicationModalProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const honeypotRef = useRef<HTMLInputElement>(null);
 
+  const isSpontaneous = job === undefined;
+
   const form = useForm<CreateApplicationInput>({
     resolver: zodResolver(createApplicationSchema),
     defaultValues: {
-      jobId,
-      jobTitle,
+      jobId: job?.id ?? '',
+      jobTitle: job?.title ?? '',
+      isSpontaneous,
       firstName: '',
       lastName: '',
       email: '',
@@ -111,11 +113,12 @@ const ApplicationModal = ({
       >
         <DialogHeader>
           <DialogTitle className="text-xl font-display text-white">
-            Postuler : {jobTitle}
+            {isSpontaneous ? 'Candidature spontanée' : `Postuler : ${job!.title}`}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Remplissez le formulaire ci-dessous. Nous vous recontacterons
-            dans les plus brefs delais.
+            {isSpontaneous
+              ? 'Envoyez-nous votre candidature. Nous étudions chaque profil avec attention et vous recontactons dès qu\'une opportunité se présente.'
+              : 'Remplissez le formulaire ci-dessous. Nous vous recontacterons dans les plus brefs delais.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -249,12 +252,16 @@ const ApplicationModal = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-white/80">
-                    Message{' '}
+                    {isSpontaneous ? 'Poste recherché / Message' : 'Message'}{' '}
                     <span className="text-white/30 font-normal">(optionnel)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Presentez-vous brievement..."
+                      placeholder={
+                        isSpontaneous
+                          ? 'Présentez-vous et indiquez le type de poste recherché...'
+                          : 'Presentez-vous brievement...'
+                      }
                       className="bg-white/5 border-white/10 text-white placeholder:text-white/30 min-h-[100px] resize-none"
                       {...field}
                     />

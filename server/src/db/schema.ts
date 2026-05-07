@@ -36,6 +36,7 @@ export const applications = sqliteTable('applications', {
   id: text('id').primaryKey(),
   jobId: text('job_id').notNull(),
   jobTitle: text('job_title').notNull(),
+  isSpontaneous: integer('is_spontaneous').notNull().default(0),
   firstName: text('first_name').notNull(),
   lastName: text('last_name').notNull(),
   email: text('email').notNull(),

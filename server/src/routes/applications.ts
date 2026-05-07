@@ -24,11 +24,14 @@ router.post('/', async (req, res) => {
 
     const id = nanoid(12);
     const now = new Date().toISOString();
+    const isSpontaneous = !parsed.data.jobId || parsed.data.isSpontaneous === true;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await db.insert(applications).values({
       id,
-      jobId: parsed.data.jobId,
-      jobTitle: parsed.data.jobTitle,
+      jobId: parsed.data.jobId || '',
+      jobTitle: isSpontaneous ? 'Candidature spontanée' : (parsed.data.jobTitle || ''),
+      isSpontaneous: isSpontaneous ? 1 : 0,
       firstName: parsed.data.firstName,
       lastName: parsed.data.lastName,
       email: parsed.data.email,
@@ -36,9 +39,9 @@ router.post('/', async (req, res) => {
       cvUrl: parsed.data.cvUrl || '',
       message: parsed.data.message || '',
       createdAt: now,
-    });
+    } as any);
 
-    notifyApplication(parsed.data).catch((err) =>
+    notifyApplication({ ...parsed.data, isSpontaneous }).catch((err) =>
       console.error('[applications] notifier failed:', err)
     );
 
