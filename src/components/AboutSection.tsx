@@ -51,7 +51,7 @@ const atoutCards: { suit: string; icon: LucideIcon; title: string; description: 
     icon: Globe,
     title: 'Ouverture Multisectorielle',
     description:
-      "Nous transposons notre modèle d'excellence avec la même rigueur vers l'IT, la Cyber et l'Industrie.",
+      "Télécoms, IT, Cybersécurité, Énergies renouvelables et Industrie : cinq piliers traités avec la même rigueur d'excellence.",
   },
 ];
 

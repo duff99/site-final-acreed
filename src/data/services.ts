@@ -34,7 +34,7 @@ export const services: Service[] = [
   },
   {
     icon: 'Zap',
-    title: 'Énergie Renouvelable',
+    title: 'Énergies renouvelables',
     description: 'Solaire, éolien, smart grids, efficacité énergétique : des ingénieurs-consultants engagés aux côtés des acteurs de la transition.',
     image: '/images/service-energie.jpg',
     badge: 'Transition Énergétique',

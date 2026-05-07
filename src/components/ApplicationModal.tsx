@@ -76,7 +76,7 @@ const ApplicationModal = ({
         website: honeypotRef.current?.value ?? '',
       });
       toast({
-        title: 'Candidature envoyee !',
+        title: 'Candidature envoyée !',
         description: 'Nous reviendrons vers vous rapidement.',
       });
       resetAll();
@@ -118,7 +118,7 @@ const ApplicationModal = ({
           <DialogDescription className="text-muted-foreground">
             {isSpontaneous
               ? 'Envoyez-nous votre candidature. Nous étudions chaque profil avec attention et vous recontactons dès qu\'une opportunité se présente.'
-              : 'Remplissez le formulaire ci-dessous. Nous vous recontacterons dans les plus brefs delais.'}
+              : 'Remplissez le formulaire ci-dessous. Nous vous recontacterons dans les plus brefs délais.'}
           </DialogDescription>
         </DialogHeader>
 

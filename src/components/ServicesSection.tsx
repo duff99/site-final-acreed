@@ -25,7 +25,7 @@ const ServicesSection = () => {
             Nos Domaines <span>d'Expertise</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            Nos consultants interviennent au coeur de 5 secteurs stratégiques, apportant leur savoir-faire technique et une approche sur-mesure à chaque mission.
+            Nos consultants interviennent au cœur de 5 secteurs stratégiques, apportant leur savoir-faire technique et une approche sur mesure à chaque mission.
           </p>
         </AnimatedSection>
 

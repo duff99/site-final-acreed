@@ -52,8 +52,9 @@ const CGU = () => (
                 </p>
                 <p>
                   Le Site présente les services d'Acreed Consulting (cabinet de recrutement,
-                  conseil et services professionnels en télécoms et IT), publie des offres
-                  d'emploi et permet la prise de contact ou la candidature en ligne.
+                  conseil et services professionnels en télécoms, IT, cybersécurité, énergies
+                  renouvelables et industrie), publie des offres d'emploi et permet la prise
+                  de contact ou la candidature en ligne.
                 </p>
               </Section>
 

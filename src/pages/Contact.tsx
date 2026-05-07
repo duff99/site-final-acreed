@@ -284,7 +284,7 @@ const Contact = () => {
                 Notre Processus
               </span>
               <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">
-                Ce qu'il se passe ensuite
+                Ce qui se passe ensuite
               </h2>
               <p className="text-muted-foreground leading-relaxed text-lg max-w-2xl mx-auto">
                 Parce que votre temps est précieux, nous nous engageons à vous apporter une réponse rapide et un suivi entièrement personnalisé pour votre projet.
@@ -382,9 +382,9 @@ const Contact = () => {
                     <div className="w-16 h-16 bg-[#dbcca5]/10 border border-[#dbcca5]/30 rounded-full flex items-center justify-center mb-6">
                       <CheckCircle2 className="w-8 h-8 text-[#dbcca5]" />
                     </div>
-                    <h4 className="text-2xl font-display font-bold text-white mb-3">Message envoye</h4>
+                    <h4 className="text-2xl font-display font-bold text-white mb-3">Message envoyé</h4>
                     <p className="text-muted-foreground mb-8 max-w-md">
-                      Merci pour votre message. Notre equipe vous recontactera dans les plus brefs delais.
+                      Merci pour votre message. Notre équipe vous recontactera dans les plus brefs délais.
                     </p>
                     <motion.button
                       type="button"

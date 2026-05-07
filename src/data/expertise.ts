@@ -14,7 +14,7 @@ export const expertises: Expertise[] = [
   {
     icon: 'Users',
     title: 'Consulting Externe sur Mesure',
-    description: "Mise à disposition de consultants spécialisés pour des missions temporaires ou longues dans les télécoms, IT et cybersécurité.",
+    description: "Mise à disposition de consultants spécialisés pour des missions temporaires ou longues dans les télécoms, l'IT, la cybersécurité, les énergies renouvelables et l'industrie.",
     features: ['Consultants experts', 'Missions flexibles', 'Accompagnement personnalisé'],
     image: '/images/offre-consulting.jpg',
   },

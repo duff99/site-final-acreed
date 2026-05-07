@@ -65,7 +65,7 @@ const TeamSection = () => {
             {/* Steven */}
             <div className={`panel${isMobile && activePanel === 1 ? ' is-active' : ''}`} style={{ backgroundImage: "url('/images/photo_steven.jpg')" }} onClick={() => handlePanelClick(1)}>
               <div className="panel-content">
-                <div className="step-number">CEO & Founder</div>
+                <div className="step-number">Président & Fondateur</div>
                 <h3 className="title">Steven</h3>
 
                 <div className="details">

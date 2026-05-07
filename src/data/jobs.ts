@@ -10,7 +10,7 @@ export const jobs: Job[] = [
     location: 'Lyon',
     title: 'OMC Operations Support',
     description: 'Expertise Nokia/Huawei • Télécoms',
-    sector: 'Telecoms',
+    sector: 'Télécoms',
     experience: '3-5 ans',
     skills: ['Nokia NetAct', 'Huawei U2000', 'UMTS', 'LTE', 'OSS', 'Scripts bash/Python'],
     fullDescription:
@@ -74,9 +74,9 @@ export const jobs: Job[] = [
     id: 'telecom-project-manager',
     type: 'CDI',
     location: 'Lyon',
-    title: 'Telecom Project Manager',
+    title: 'Chef de Projet Télécom',
     description: "5+ ans d'expérience • Gestion de projets",
-    sector: 'Telecoms',
+    sector: 'Télécoms',
     experience: '5+ ans',
     skills: ['Gestion de projet', 'PMP', 'PRINCE2', 'MS Project', 'Réseaux mobiles', 'RAN', 'Core Network'],
     fullDescription:
@@ -109,7 +109,7 @@ export const jobs: Job[] = [
     location: 'Paris',
     title: 'Ingénieur Cybersécurité',
     description: 'SOC, pentest, conformité RGPD • Cybersécurité',
-    sector: 'Cybersecurite',
+    sector: 'Cybersécurité',
     experience: '3-5 ans',
     skills: ['SIEM', 'Splunk', 'Pentest', 'ISO 27001', 'RGPD', 'Firewall', 'Zero Trust', 'Python'],
     fullDescription:
@@ -142,7 +142,7 @@ export const jobs: Job[] = [
     location: 'Lyon',
     title: 'Architecte Réseau 5G',
     description: 'Architecture SA/NSA, slicing réseau • Télécoms',
-    sector: 'Telecoms',
+    sector: 'Télécoms',
     experience: '5+ ans',
     skills: ['5G SA', '5G NSA', 'Network Slicing', 'NFV', 'SDN', 'Kubernetes', 'OpenStack', 'Nokia', 'Ericsson'],
     fullDescription:

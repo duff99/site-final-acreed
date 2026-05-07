@@ -83,8 +83,8 @@ const HistorySection = () => {
             <h3 className="chapter-title">L'Horizon IA</h3>
             <p className="chapter-text-block">
               L'ère de l'innovation. Fin 2025 marque la naissance d'Acreed IA
-              Solutions, notre filière dédiée à l'intelligence artificielle. Une expertise de pointe qui vient
-              compléter notre ouverture vers l'Industrie et les Énergies Renouvelables.
+              Solutions, notre filiale dédiée à l'intelligence artificielle. Une expertise de pointe qui vient
+              compléter notre ouverture vers l'Industrie et les énergies renouvelables.
             </p>
           </div>
           <div className="chapter-visual">

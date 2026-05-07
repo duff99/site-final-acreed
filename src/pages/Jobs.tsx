@@ -32,7 +32,7 @@ import type { Job } from '@shared/types';
 // Constants
 // ---------------------------------------------------------------------------
 
-const SECTORS = ['Tous', 'Télécoms', 'IT & Digital', 'Cybersécurité', 'Énergie', 'Industrie'] as const;
+const SECTORS = ['Tous', 'Télécoms', 'IT & Digital', 'Cybersécurité', 'Énergies renouvelables', 'Industrie'] as const;
 type Sector = (typeof SECTORS)[number];
 
 /** Maps UI filter labels to the DB sector values (case-insensitive match) */
@@ -46,7 +46,7 @@ const sectorMatchesFilter = (jobSector: string, filter: Sector): boolean => {
       return normalised.includes('it') || normalised.includes('digital');
     case 'Cybersécurité':
       return normalised.includes('cyber');
-    case 'Énergie':
+    case 'Énergies renouvelables':
       return normalised.includes('energie') || normalised.includes('énergie');
     case 'Industrie':
       return normalised.includes('industrie');
@@ -329,7 +329,7 @@ const Jobs = () => {
                 Nos Offres
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8">
-                Découvrez toutes nos opportunités dans les télécoms, l'IT et la cybersécurité.
+                Découvrez toutes nos opportunités dans les télécoms, l'IT, la cybersécurité, les énergies renouvelables et l'industrie.
               </p>
               <div className="flex items-center gap-3">
                 <span className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-white/5 text-sm font-semibold">
