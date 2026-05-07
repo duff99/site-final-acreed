@@ -8,19 +8,19 @@ const credoCards: { icon: LucideIcon; title: string; description: string }[] = [
     icon: Eye,
     title: 'Transparence Absolue',
     description:
-      "La confiance se construit dans le détail. Nous communiquons clairement sur nos engagements, nos délais et nos honoraires, sans zone d'ombre. Lorsqu'un imprévu survient, nous le partageons immédiatement avec une proposition de solution — parce qu'un bon partenaire anticipe et tient sa parole, plutôt que de maquiller les difficultés.",
+      "La transparence structure notre méthode plus qu'elle ne l'orne. Clarté sur les méthodologies, traçabilité sur les facturations, restitutions périodiques sur l'état d'avancement : une discipline qui libère la confiance et garantit la qualité décisionnelle de nos clients.",
   },
   {
     icon: Lightbulb,
     title: 'Expertise & Simplicité',
     description:
-      "Identifier le bon profil ou structurer la bonne mission exige une compréhension fine des métiers techniques que nous servons. Cette exigence ne nous éloigne jamais du terrain : nos consultants restent accessibles, à l'écoute, et privilégient toujours la solution la plus claire à la démonstration la plus complexe. Un savoir-faire véritable se reconnaît à sa lisibilité.",
+      "L'expertise se mesure à la justesse du diagnostic plus qu'à la complexité du discours. Maîtrise des métiers techniques, lecture précise de chaque contexte, sélection rigoureuse des profils : autant de prérequis qui demeurent invisibles pour nos clients. Ce que nous livrons, en revanche, doit être lisible, opérationnel et directement actionnable.",
   },
   {
     icon: Users,
     title: 'Fédérer le Collectif',
     description:
-      "Une équipe soudée produit des missions plus saines et des résultats plus solides. Nous cultivons la solidarité et la communication ouverte entre nos équipes internes, nos consultants en mission et nos clients : chacun mérite d'être entendu, soutenu et respecté. C'est ce tissu humain qui transforme une prestation technique en partenariat durable.",
+      "Une mission performante repose sur un collectif aligné. Cohésion entre nos équipes internes, accompagnement continu des consultants détachés, dialogue régulier avec les directions clientes : trois équilibres que nous cultivons avec méthode. Le partenariat durable naît de cette continuité humaine, plus que de la qualité ponctuelle d'une intervention.",
   },
 ];
 
@@ -68,9 +68,10 @@ const AboutSection = () => {
             Notre <span className="italic font-normal text-white/90">Crédo</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Trois principes guident chaque mission que nous engageons. Bien plus que des
-            slogans, ils dessinent notre exigence opérationnelle, notre relation client
-            et notre posture humaine. Voici ce qui nous tient debout.
+            Trois principes structurent notre pratique : la transparence comme méthode,
+            l'expertise comme discipline, le collectif comme exigence. Loin d'être
+            déclaratifs, ils gouvernent nos décisions opérationnelles, nos engagements
+            contractuels et la conduite de chaque mission.
           </p>
         </AnimatedSection>
 
