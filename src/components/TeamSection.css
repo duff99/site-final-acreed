@@ -70,14 +70,12 @@
 
     /* 2. Active panel state */
     .ecosystem-container .panel.is-active {
-        flex: 1.8;
-        transform: scale(1);
-        filter: brightness(1);
+        flex: 1.5;
         opacity: 1;
         z-index: 10;
         border-color: #dbcca5;
-        box-shadow: 0 0 50px rgba(219, 204, 165, 0.45),
-                    inset 0 -350px 200px -20px rgba(0, 0, 0, 0.95);
+        box-shadow: 0 0 40px rgba(219, 204, 165, 0.4),
+                    inset 0 -180px 130px -20px rgba(0, 0, 0, 0.92);
     }
 
     .ecosystem-container .panel.is-active::after {
@@ -91,18 +89,16 @@
 
     /* 3. Dim non-active panels */
     .ecosystem-container.has-active .panel:not(.is-active) {
-        transform: scale(0.95);
-        filter: brightness(0.6);
-        opacity: 0.7;
+        opacity: 0.55;
         border-color: #2a2a2a;
     }
 
     /* Re-apply for active even when hovered */
     .ecosystem-container .panel.is-active:hover {
-        flex: 1.8;
+        flex: 1.5;
         border-color: #dbcca5;
-        box-shadow: 0 0 50px rgba(219, 204, 165, 0.45),
-                    inset 0 -350px 200px -20px rgba(0, 0, 0, 0.95);
+        box-shadow: 0 0 40px rgba(219, 204, 165, 0.4),
+                    inset 0 -180px 130px -20px rgba(0, 0, 0, 0.92);
     }
 
     .ecosystem-container .panel.is-active:hover .details {
@@ -129,19 +125,19 @@
     flex-direction: column;
     justify-content: flex-end;
     padding: 25px;
-    /* Force each panel onto its own GPU compositing layer up-front so the browser
-       doesn't have to re-promote layers when the row enters hover (was a major lag source
-       on the middle panel which has 2 neighbors animating at once). */
+    /* Promote each panel to its own GPU compositing layer up-front. */
     transform: translateZ(0);
-    /* Drop `filter` from the transition list — brightness was the most expensive part
-       of the animated cocktail. We rely on opacity alone for the dimming effect. */
-    transition: flex 0.5s cubic-bezier(0.25, 1, 0.2, 1),
-        opacity 0.35s ease,
-        border-color 0.3s ease,
-        box-shadow 0.3s ease;
+    /* Confine layout/paint recomputation to the panel's own box. Critical when the
+       middle panel resizes — without this, the browser invalidates the whole row. */
+    contain: layout paint;
+    /* Faster transition + fewer animated properties = less time for jank to be visible. */
+    transition: flex 0.35s cubic-bezier(0.25, 1, 0.2, 1),
+        opacity 0.25s ease,
+        border-color 0.25s ease;
     background-size: cover;
     background-position: center;
-    background-blend-mode: overlay;
+    /* background-blend-mode removed — adds compositing cost for no visible benefit
+       given the near-transparent glass-bg layer underneath. */
     box-shadow: inset 0 -150px 100px -30px rgba(0, 0, 0, 0.4);
 }
 
@@ -167,11 +163,14 @@
 }
 
 .ecosystem-container .panel:hover {
-    flex: 1.8;
+    /* Reduced flex amplitude (1.8 -> 1.5) means less layout shift on neighbors. */
+    flex: 1.5;
     opacity: 1;
     z-index: 10;
     border-color: #dbcca5;
-    box-shadow: 0 0 50px rgba(219, 204, 165, 0.45), inset 0 -350px 200px -20px rgba(0, 0, 0, 0.95);
+    /* Smaller inset shadow — was -350px tall, GPU was painting a giant gradient zone
+       that had to be invalidated on every frame of the flex animation. */
+    box-shadow: 0 0 40px rgba(219, 204, 165, 0.4), inset 0 -180px 130px -20px rgba(0, 0, 0, 0.92);
 }
 
 /* CONTENU INTERNE */
