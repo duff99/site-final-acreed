@@ -129,24 +129,20 @@
     flex-direction: column;
     justify-content: flex-end;
     padding: 25px;
-    filter: none;
-    /* Animate only what's strictly needed; box-shadow + border-color get a shorter timing
-       to avoid stacking long transitions on top of the layout-triggering flex change. */
-    transition: flex 0.55s cubic-bezier(0.25, 1, 0.2, 1),
-        transform 0.55s cubic-bezier(0.25, 1, 0.2, 1),
-        opacity 0.4s ease,
-        filter 0.4s ease,
+    /* Force each panel onto its own GPU compositing layer up-front so the browser
+       doesn't have to re-promote layers when the row enters hover (was a major lag source
+       on the middle panel which has 2 neighbors animating at once). */
+    transform: translateZ(0);
+    /* Drop `filter` from the transition list — brightness was the most expensive part
+       of the animated cocktail. We rely on opacity alone for the dimming effect. */
+    transition: flex 0.5s cubic-bezier(0.25, 1, 0.2, 1),
+        opacity 0.35s ease,
         border-color 0.3s ease,
         box-shadow 0.3s ease;
     background-size: cover;
     background-position: center;
     background-blend-mode: overlay;
     box-shadow: inset 0 -150px 100px -30px rgba(0, 0, 0, 0.4);
-}
-
-/* Hint the GPU only while the user is actively interacting with the row */
-.ecosystem-container:hover .panel {
-    will-change: flex, transform, opacity, filter;
 }
 
 /* Overlay sombre sur les portraits */
@@ -165,16 +161,13 @@
 }
 
 .ecosystem-container:hover .panel {
-    transform: scale(0.95);
-    filter: brightness(0.6);
-    opacity: 0.7;
+    /* Lighter dim — opacity alone, no scale/filter (both were forcing extra recompositing) */
+    opacity: 0.55;
     border-color: #2a2a2a;
 }
 
 .ecosystem-container .panel:hover {
     flex: 1.8;
-    transform: scale(1);
-    filter: brightness(1);
     opacity: 1;
     z-index: 10;
     border-color: #dbcca5;
