@@ -49,7 +49,6 @@ await db.run(sql`
     phone TEXT DEFAULT '',
     subject TEXT NOT NULL,
     message TEXT NOT NULL,
-    cv_filename TEXT,
     is_read INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL
   )
@@ -60,6 +59,7 @@ await db.run(sql`
     id TEXT PRIMARY KEY,
     job_id TEXT NOT NULL,
     job_title TEXT NOT NULL,
+    is_spontaneous INTEGER NOT NULL DEFAULT 0,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     email TEXT NOT NULL,
@@ -94,6 +94,8 @@ await db.run(sql`
     role TEXT NOT NULL DEFAULT 'editor',
     is_active INTEGER NOT NULL DEFAULT 1,
     last_login_at TEXT,
+    failed_login_attempts INTEGER NOT NULL DEFAULT 0,
+    locked_until TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL DEFAULT '',
     created_by TEXT
@@ -126,6 +128,11 @@ for (const migration of migrations) {
     }
   }
 }
+
+// Performance indexes (idempotent)
+await db.run(sql`CREATE INDEX IF NOT EXISTS idx_jobs_active_sector ON jobs (is_active, sector)`);
+await db.run(sql`CREATE INDEX IF NOT EXISTS idx_applications_created ON applications (created_at)`);
+await db.run(sql`CREATE INDEX IF NOT EXISTS idx_messages_created ON contact_messages (created_at)`);
 
 // Ensure at least one admin has the 'admin' role
 const { rows: adminRoleCheck } = await client.execute(

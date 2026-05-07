@@ -130,14 +130,14 @@ const CookieBanner = () => {
                     <button
                       type="button"
                       onClick={refuseAll}
-                      className="px-4 py-2.5 text-sm rounded-xl border border-white/[0.08] text-white/80 hover:text-white hover:bg-white/[0.04] transition-colors"
+                      className="px-5 py-2.5 text-sm font-medium rounded-xl border border-white/[0.12] bg-white/[0.04] text-white hover:bg-white/[0.08] hover:border-white/[0.18] transition-colors"
                     >
                       Tout refuser
                     </button>
                     <button
                       type="button"
                       onClick={acceptAll}
-                      className="px-5 py-2.5 text-sm font-medium rounded-xl bg-[#dbcca5] text-[#0a0a0b] hover:bg-white transition-colors"
+                      className="px-5 py-2.5 text-sm font-medium rounded-xl border border-white/[0.12] bg-white/[0.04] text-white hover:bg-white/[0.08] hover:border-white/[0.18] transition-colors"
                     >
                       Tout accepter
                     </button>

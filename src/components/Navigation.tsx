@@ -181,7 +181,7 @@ const Navigation = () => {
             <div className="flex flex-col items-center justify-center h-full gap-6">
               <img
                 src="/images/favicon_navbar.jpg"
-                alt="Acreed"
+                alt="Acreed Consulting"
                 className="h-10 w-auto rounded-md mb-8 opacity-60"
               />
               {navLinks.map((link, index) => (

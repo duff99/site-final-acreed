@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
       id,
       ...parsed.data,
       createdAt: now,
-    });
+    } as typeof contactMessages.$inferInsert);
 
     // Fire-and-forget — never block response on email delivery
     notifyContact(parsed.data).catch((err) =>

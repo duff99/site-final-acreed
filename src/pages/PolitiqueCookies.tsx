@@ -112,7 +112,7 @@ const PolitiqueCookies = () => {
                     headers={['Nom', 'Émetteur', 'Catégorie', 'Finalité', 'Durée', 'Base légale']}
                     rows={[
                       [
-                        'refreshToken',
+                        'acreed_session',
                         'acreedconsulting.com (1ʳᵉ partie)',
                         'Strictement nécessaire',
                         'Maintien de la session de l\'espace administrateur (httpOnly, Secure, SameSite=Strict)',
@@ -125,7 +125,7 @@ const PolitiqueCookies = () => {
                         'Strictement nécessaire',
                         'Mémoriser votre choix sur les cookies optionnels',
                         '12 mois (durée recommandée par la CNIL)',
-                        'Intérêt légitime — exempté de consentement',
+                        'Strictement nécessaire (art. 82 loi Informatique et Libertés) — exempté de consentement',
                       ],
                     ]}
                   />
@@ -221,12 +221,12 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 );
 
 const Table = ({ headers, rows }: { headers: string[]; rows: string[][] }) => (
-  <div className="overflow-x-auto rounded-xl border border-white/[0.06] bg-white/[0.02]">
-    <table className="w-full text-sm">
+  <div className="rounded-xl border border-white/[0.06] bg-white/[0.02]">
+    <table className="w-full text-sm table-fixed">
       <thead>
         <tr className="border-b border-white/[0.06] bg-white/[0.02]">
           {headers.map((h) => (
-            <th key={h} className="text-left px-4 py-3 text-[11px] uppercase tracking-[1.5px] text-white/45 font-medium">
+            <th key={h} className="text-left px-3 py-3 text-[11px] uppercase tracking-[1.5px] text-white/45 font-medium break-words">
               {h}
             </th>
           ))}
@@ -236,7 +236,7 @@ const Table = ({ headers, rows }: { headers: string[]; rows: string[][] }) => (
         {rows.map((row, i) => (
           <tr key={i} className="hover:bg-white/[0.015]">
             {row.map((cell, j) => (
-              <td key={j} className="px-4 py-3 text-white/75 font-light leading-relaxed align-top">
+              <td key={j} className="px-3 py-3 text-white/75 font-light leading-relaxed align-top break-words">
                 {cell}
               </td>
             ))}

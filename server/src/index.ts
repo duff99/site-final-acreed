@@ -33,7 +33,7 @@ app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 
-// Global API rate limiting (30 requests per minute per IP)
+// Global API rate limiting (60 requests per minute per IP)
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 60,

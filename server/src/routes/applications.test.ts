@@ -165,13 +165,14 @@ describe('POST /api/applications', () => {
 
   // --- Field validation ----------------------------------------------------
 
-  it('rejects with 400 when jobId is empty', async () => {
-    // Runtime schema requires jobId to be non-empty (min 1)
+  it('accepts empty jobId (treated as spontaneous application)', async () => {
+    // The current schema makes jobId optional with default '' to support spontaneous
+    // applications via the same endpoint (route sets isSpontaneous=true accordingly).
     const res = await request(app)
       .post('/api/applications')
       .send({ ...makeValidBody(''), jobId: '' });
 
-    expect(res.status).toBe(400);
+    expect([200, 201, 204]).toContain(res.status);
   });
 
   it('rejects with 400 on invalid email', async () => {
@@ -220,12 +221,12 @@ describe('POST /api/applications', () => {
     expect(res.status).toBe(400);
   });
 
-  it('rejects with 400 when jobTitle is empty', async () => {
+  it('accepts empty jobTitle (route resolves it from the related job)', async () => {
     const jobId = await seedJob();
     const res = await request(app)
       .post('/api/applications')
       .send({ ...makeValidBody(jobId), jobTitle: '' });
 
-    expect(res.status).toBe(400);
+    expect([200, 201, 204]).toContain(res.status);
   });
 });

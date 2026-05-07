@@ -53,7 +53,7 @@ router.post('/', requireRole('admin', 'editor'), async (req, res) => {
       isActive: true,
     };
 
-    await db.insert(jobs).values(jobData);
+    await db.insert(jobs).values(jobData as typeof jobs.$inferInsert);
 
     const result = await db.select().from(jobs).where(eq(jobs.id, id));
     res.status(201).json(result[0]);

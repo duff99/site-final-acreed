@@ -9,14 +9,6 @@ export function useAdminApplications() {
   });
 }
 
-export function useAdminApplication(id: string) {
-  return useQuery({
-    queryKey: ['admin', 'applications', id],
-    queryFn: () => apiClient.getAdminApplication(id),
-    enabled: !!id,
-  });
-}
-
 export function useUpdateApplication() {
   const queryClient = useQueryClient();
   return useMutation({

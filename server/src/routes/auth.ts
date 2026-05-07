@@ -12,7 +12,7 @@ import { requireAuth, type AuthRequest } from '../middleware/auth.js';
 const router = Router();
 
 // Refresh token cookie + lifetime constants.
-const REFRESH_COOKIE_NAME = 'refreshToken';
+const REFRESH_COOKIE_NAME = 'acreed_session';
 const REFRESH_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
 // Account lockout policy.
@@ -24,6 +24,12 @@ const refreshCookieOptions = {
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'strict' as const,
   maxAge: REFRESH_TTL_SECONDS * 1000,
+};
+
+const clearCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
 };
 
 async function issueRefreshToken(adminId: string) {
@@ -50,7 +56,7 @@ function signAccessToken(admin: { id: string; email: string; role: string }) {
   return jwt.sign(
     { sub: admin.id, email: admin.email, role: admin.role },
     config.JWT_SECRET,
-    { expiresIn: config.JWT_ACCESS_TTL }
+    { expiresIn: config.JWT_ACCESS_TTL as jwt.SignOptions['expiresIn'] }
   );
 }
 
@@ -156,19 +162,19 @@ router.post('/refresh', async (req, res) => {
             and(eq(refreshTokens.adminId, payload.sub), isNull(refreshTokens.revokedAt))
           );
       }
-      res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
+      res.clearCookie(REFRESH_COOKIE_NAME, clearCookieOptions);
       return res.status(401).json({ message: 'Token invalide' });
     }
 
     if (new Date(stored.expiresAt).getTime() < Date.now()) {
-      res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
+      res.clearCookie(REFRESH_COOKIE_NAME, clearCookieOptions);
       return res.status(401).json({ message: 'Token expire' });
     }
 
     const adminRows = await db.select().from(admins).where(eq(admins.id, payload.sub));
     const admin = adminRows[0];
     if (!admin) {
-      res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
+      res.clearCookie(REFRESH_COOKIE_NAME, clearCookieOptions);
       return res.status(401).json({ message: 'Utilisateur introuvable' });
     }
     if (!admin.isActive) {
@@ -176,7 +182,7 @@ router.post('/refresh', async (req, res) => {
         .update(refreshTokens)
         .set({ revokedAt: new Date().toISOString() })
         .where(eq(refreshTokens.jti, payload.jti));
-      res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
+      res.clearCookie(REFRESH_COOKIE_NAME, clearCookieOptions);
       return res.status(403).json({ message: 'Compte desactive' });
     }
 
@@ -216,7 +222,7 @@ router.post('/logout', async (req, res) => {
       // Already invalid — nothing to revoke, just clear the cookie.
     }
   }
-  res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
+  res.clearCookie(REFRESH_COOKIE_NAME, clearCookieOptions);
   res.json({ message: 'Deconnecte' });
 });
 
@@ -264,7 +270,7 @@ router.post('/change-password', requireAuth, async (req: AuthRequest, res) => {
         and(eq(refreshTokens.adminId, admin.id), isNull(refreshTokens.revokedAt))
       );
 
-    res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
+    res.clearCookie(REFRESH_COOKIE_NAME, clearCookieOptions);
     res.json({ message: 'Mot de passe mis a jour. Reconnectez-vous.' });
   } catch (err) {
     console.error('Change password error:', err);

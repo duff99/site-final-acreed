@@ -71,7 +71,7 @@ const Footer = () => {
           <div className="footer-legal">
             <span>&copy; {new Date().getFullYear()} Acreed Consulting. Tous droits réservés.</span>
             <span>Saint-Vidal, Haute-Loire — France</span>
-            <Link to="/admin/login" className="footer-admin-link" aria-label="Espace pro">
+            <Link to="/admin/login" className="footer-admin-link">
               Espace pro
             </Link>
           </div>

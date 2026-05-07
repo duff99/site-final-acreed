@@ -206,14 +206,9 @@ async function seed() {
   // Seed jobs (only if table is empty)
   const existingJobs = await db.select().from(jobs);
   if (existingJobs.length === 0) {
-    const now = new Date().toISOString();
     for (const job of seedJobs) {
-      await db.insert(jobs).values({
-        ...job,
-        createdAt: now,
-        updatedAt: now,
-        isActive: true,
-      });
+      // createdAt, updatedAt, isActive rely on schema defaults
+      await db.insert(jobs).values(job);
     }
     console.log(`Seeded ${seedJobs.length} jobs.`);
   } else {
@@ -224,17 +219,12 @@ async function seed() {
   const existingAdmins = await db.select().from(admins);
   if (existingAdmins.length === 0 && config.ADMIN_EMAIL && config.ADMIN_PASSWORD) {
     const hash = await bcrypt.hash(config.ADMIN_PASSWORD, 12);
-    const now = new Date().toISOString();
     await db.insert(admins).values({
       id: nanoid(),
       email: config.ADMIN_EMAIL,
       name: config.ADMIN_NAME || 'Admin',
       passwordHash: hash,
       role: 'admin',
-      isActive: true,
-      createdAt: now,
-      updatedAt: now,
-      createdBy: null,
     });
     console.log(`Seeded admin user: ${config.ADMIN_EMAIL} (role: admin)`);
   } else if (existingAdmins.length > 0) {
