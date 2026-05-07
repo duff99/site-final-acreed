@@ -14,9 +14,9 @@
 .credo-card {
     background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%),
-        rgba(15, 15, 15, 0.6);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+        rgba(15, 15, 15, 0.78);
+    /* backdrop-filter: blur(24px) removed — background bumped to 78% opacity, blur
+       was barely visible while costing a constant compositing pass on every credo card. */
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     border-left: 1px solid rgba(255, 255, 255, 0.12);
@@ -193,9 +193,8 @@
     border-left: 1px solid rgba(255, 255, 255, 0.12);
     background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%),
-        rgba(15, 15, 15, 0.85);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+        rgba(15, 15, 15, 0.92);
+    /* backdrop-filter removed — background was already 85% opaque, blur invisible. */
     box-shadow: -5px 10px 30px rgba(0, 0, 0, 0.6);
 }
 

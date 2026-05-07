@@ -68,21 +68,25 @@
 .timeline-glow {
     position: absolute;
     left: 0;
+    /* Anchor at the top, drive the animation with transform — animating `top` triggers
+       layout recalc on every frame; `transform: translateY` runs purely on the GPU. */
+    top: 0;
     width: 100%;
     height: 400px;
     background: linear-gradient(to bottom, transparent 0%, #dbcca5 50%, transparent 100%);
     animation: flowAnimation 3.5s linear infinite;
     opacity: 0.9;
     box-shadow: 0 0 20px rgba(219, 204, 165, 0.4);
+    will-change: transform;
 }
 
 @keyframes flowAnimation {
     0% {
-        top: -400px;
+        transform: translateY(-400px);
     }
 
     100% {
-        top: 100%;
+        transform: translateY(calc(100vh + 400px));
     }
 }
 
@@ -221,7 +225,14 @@
 
 .stat-icon .svg-icon {
     display: inline-block;
+    /* Float only when the card is hovered — saves continuous GPU draw on icons
+       that are most of the time outside the user's attention. */
     animation: floatingIcon 3s ease-in-out infinite;
+    animation-play-state: paused;
+}
+
+.glass-stat-card:hover .stat-icon .svg-icon {
+    animation-play-state: running;
 }
 
 @keyframes floatingIcon {
@@ -256,7 +267,14 @@ a.glass-stat-card.highlight-link {
     color: #ffffff;
     border-color: #dbcca5;
     box-shadow: 0 0 30px rgba(219, 204, 165, 0.4), inset 0 0 20px rgba(219, 204, 165, 0.1);
+    /* Halo pulse paused until hover — animating box-shadow is repaint-heavy when
+       running 24/24 across the page. */
     animation: pulseHalo 2.5s infinite;
+    animation-play-state: paused;
+}
+
+a.glass-stat-card.highlight-link:hover {
+    animation-play-state: running;
 }
 
 @keyframes pulseHalo {
