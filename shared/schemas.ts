@@ -37,7 +37,11 @@ export const changePasswordSchema = z
     currentPassword: z.string().min(1, 'Mot de passe actuel requis'),
     newPassword: z
       .string()
-      .min(8, 'Le nouveau mot de passe doit contenir au moins 8 caractères'),
+      .min(12, 'Le mot de passe doit faire au moins 12 caractères')
+      .regex(/[a-z]/, 'Doit contenir au moins une minuscule')
+      .regex(/[A-Z]/, 'Doit contenir au moins une majuscule')
+      .regex(/[0-9]/, 'Doit contenir au moins un chiffre')
+      .regex(/[^a-zA-Z0-9]/, 'Doit contenir au moins un caractère spécial'),
     confirmPassword: z.string().min(1, 'Confirmation requise'),
   })
   .refine((d) => d.newPassword === d.confirmPassword, {
@@ -70,14 +74,25 @@ export const adminUserSchema = z.object({
 export const createAdminSchema = z.object({
   email: z.string().email('Email invalide'),
   name: z.string().min(2, 'Le nom doit contenir au moins 2 caracteres'),
-  password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caracteres'),
+  password: z.string()
+    .min(12, 'Le mot de passe doit faire au moins 12 caractères')
+    .regex(/[a-z]/, 'Doit contenir au moins une minuscule')
+    .regex(/[A-Z]/, 'Doit contenir au moins une majuscule')
+    .regex(/[0-9]/, 'Doit contenir au moins un chiffre')
+    .regex(/[^a-zA-Z0-9]/, 'Doit contenir au moins un caractère spécial'),
   role: adminRoleSchema,
 });
 
 export const updateAdminSchema = z.object({
   email: z.string().email('Email invalide').optional(),
   name: z.string().min(2).optional(),
-  password: z.string().min(8).optional(),
+  password: z.string()
+    .min(12, 'Le mot de passe doit faire au moins 12 caractères')
+    .regex(/[a-z]/, 'Doit contenir au moins une minuscule')
+    .regex(/[A-Z]/, 'Doit contenir au moins une majuscule')
+    .regex(/[0-9]/, 'Doit contenir au moins un chiffre')
+    .regex(/[^a-zA-Z0-9]/, 'Doit contenir au moins un caractère spécial')
+    .optional(),
   role: adminRoleSchema.optional(),
   isActive: z.boolean().optional(),
 });

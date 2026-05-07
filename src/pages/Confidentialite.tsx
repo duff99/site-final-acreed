@@ -71,11 +71,11 @@ const Confidentialite = () => (
                 <Table
                   headers={['Donnée', 'Finalité', 'Base légale']}
                   rows={[
-                    ['Nom, prénom', 'Identification de l\'expéditeur', 'Consentement (art. 6.1.a RGPD)'],
-                    ['Email', 'Réponse à votre demande', 'Consentement'],
-                    ['Téléphone (optionnel)', 'Reprise de contact si fourni', 'Consentement'],
-                    ['Sujet, message', 'Traitement de la demande', 'Consentement'],
-                    ['Entreprise / délai / secteur (selon sujet)', 'Qualification de la demande B2B/B2C', 'Consentement'],
+                    ['Nom, prénom', 'Identification de l\'expéditeur', 'Intérêt légitime (art. 6.1.f RGPD)'],
+                    ['Email', 'Réponse à votre demande', 'Intérêt légitime'],
+                    ['Téléphone (optionnel)', 'Reprise de contact si fourni', 'Intérêt légitime'],
+                    ['Sujet, message', 'Traitement de la demande', 'Intérêt légitime'],
+                    ['Entreprise / délai / secteur (selon sujet)', 'Qualification de la demande B2B', 'Intérêt légitime'],
                   ]}
                 />
 
@@ -83,11 +83,11 @@ const Confidentialite = () => (
                 <Table
                   headers={['Donnée', 'Finalité', 'Base légale']}
                   rows={[
-                    ['Nom, prénom, email', 'Identification du candidat', 'Mesures précontractuelles (art. 6.1.b RGPD)'],
-                    ['Téléphone (optionnel)', 'Prise de contact', 'Mesures précontractuelles'],
-                    ['Lien CV (optionnel)', 'Évaluation de la candidature', 'Mesures précontractuelles'],
-                    ['Message de motivation', 'Évaluation de la candidature', 'Mesures précontractuelles'],
-                    ['Référence offre (jobId, intitulé)', 'Rattachement de la candidature', 'Mesures précontractuelles'],
+                    ['Nom, prénom, email', 'Identification du candidat', 'Intérêt légitime (art. 6.1.f RGPD) — gestion des candidatures'],
+                    ['Téléphone (optionnel)', 'Prise de contact', 'Intérêt légitime'],
+                    ['Lien CV (optionnel)', 'Évaluation de la candidature', 'Intérêt légitime'],
+                    ['Message de motivation', 'Évaluation de la candidature', 'Intérêt légitime'],
+                    ['Référence offre (jobId, intitulé)', 'Rattachement de la candidature', 'Intérêt légitime'],
                   ]}
                 />
 
@@ -98,7 +98,7 @@ const Confidentialite = () => (
                     ['Adresse IP', 'Sécurité, détection d\'abus, limite de débit', 'Intérêt légitime (art. 6.1.f RGPD)'],
                     ['User-Agent', 'Compatibilité, statistiques anonymes', 'Intérêt légitime'],
                     ['Logs serveur (date, route, code HTTP)', 'Sécurité, diagnostic technique', 'Intérêt légitime'],
-                    ['Cookies techniques (session admin)', 'Authentification de l\'espace administrateur', 'Intérêt légitime + obligation contractuelle'],
+                    ['Cookies techniques (session admin)', 'Authentification de l\'espace administrateur', 'Exécution du contrat (art. 6.1.b RGPD)'],
                   ]}
                 />
                 <p className="text-sm text-white/55">
@@ -114,14 +114,19 @@ const Confidentialite = () => (
                 <Table
                   headers={['Catégorie', 'Durée active', 'Archivage / suppression']}
                   rows={[
-                    ['Messages de contact', '3 ans à compter du dernier échange', 'Suppression à l\'issue'],
-                    ['Candidatures', '2 ans à compter de la candidature (recommandation CNIL)', 'Suppression — sauf consentement renouvelé'],
-                    ['Comptes administrateurs', 'Pendant la durée de la fonction', 'Suppression dans les 30 jours suivant la fin de fonction'],
+                    ['Messages de contact', '3 ans à compter de la réception', 'Suppression automatique à l\'issue'],
+                    ['Candidatures (offre ou spontanée)', '24 mois à compter du dépôt', 'Suppression automatique — sauf embauche'],
+                    ['Comptes administrateurs', 'Durée de la collaboration + 1 an', 'Suppression dans les 30 jours suivant la fin de collaboration'],
                     ['Logs serveur (sécurité)', '12 mois', 'Purge automatique'],
                     ['Logs d\'authentification', '12 mois', 'Purge automatique'],
-                    ['Données comptables', '10 ans (art. L.123-22 Code de commerce)', 'Archivage sécurisé'],
                   ]}
                 />
+                <p className="text-sm text-white/55 mt-2">
+                  Une purge automatisée s'exécute quotidiennement sur nos serveurs pour appliquer
+                  ces durées aux messages de contact et aux candidatures. Les données sont
+                  supprimées définitivement à l'issue de la période applicable, sauf en cas
+                  d'embauche pour les candidatures.
+                </p>
               </Section>
 
               <Section title="4. Destinataires et sous-traitants">
@@ -187,7 +192,7 @@ const Confidentialite = () => (
                   <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" className="text-[#dbcca5] underline decoration-dotted underline-offset-2 hover:text-white">
                     CNIL
                   </a>{' '}
-                  (3 place de Fontenoy, 75007 Paris).
+                  (3 Place de Fontenoy, TSA 80715, 75334 Paris Cedex 07).
                 </p>
               </Section>
 

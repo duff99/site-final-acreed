@@ -52,14 +52,13 @@ const MentionsLegales = () => (
                     ['Raison sociale', 'ACREED CONSULTING'],
                     ['Forme juridique', 'Société par actions simplifiée (SAS)'],
                     ['Capital social', '30 000 €'],
-                    ['Siège social', '5 Lotissement La Chaud — Grazac, 43320 Saint-Vidal, France'],
+                    ['Siège social', '5 Lotissement La Chaud, 43320 Saint-Vidal, France'],
                     ['SIREN', '883 042 798'],
                     ['SIRET (siège)', '883 042 798 00016'],
                     ['RCS', 'Le Puy-en-Velay 883 042 798'],
                     ['Numéro TVA intracommunautaire', 'FR12 883 042 798'],
                     ['Code APE / NAF', '6202A — Conseil en systèmes et logiciels informatiques'],
                     ['Date d\'immatriculation', '24 avril 2020'],
-                    ['Téléphone', '[À COMPLÉTER]'],
                     ['Email', 'contact@acreedconsulting.com'],
                   ]}
                 />
