@@ -7,7 +7,7 @@ const PartnersMarquee = () => {
   const duplicatedPartners = [...partners, ...partners];
 
   return (
-    <section className="py-20 overflow-hidden">
+    <section id="clients" className="scroll-mt-24 py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 mb-16">
         <AnimatedSection className="text-center">
           <span className="text-sm text-muted-foreground uppercase tracking-premium mb-4 block">

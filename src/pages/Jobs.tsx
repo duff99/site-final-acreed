@@ -220,8 +220,7 @@ const JobCard = ({ job }: { job: Job }) => {
       <ApplicationModal
         open={applyOpen}
         onOpenChange={setApplyOpen}
-        jobId={job.id}
-        jobTitle={job.title}
+        job={job}
       />
     </motion.div>
   );
@@ -234,6 +233,7 @@ const JobCard = ({ job }: { job: Job }) => {
 const Jobs = () => {
   const [activeSector, setActiveSector] = useState<Sector>('Tous');
   const [searchQuery, setSearchQuery] = useState('');
+  const [spontaneousOpen, setSpontaneousOpen] = useState(false);
   const location = useLocation();
   const { data: jobs = [] } = useJobs();
 
@@ -454,8 +454,8 @@ const Jobs = () => {
                 attention et vous recontactons dès qu'une opportunité se présente.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <motion.a
-                  href="mailto:recrutement@acreedconsulting.com?subject=Candidature%20spontan%C3%A9e"
+                <motion.button
+                  onClick={() => setSpontaneousOpen(true)}
                   className="btn-premium btn-premium-primary inline-flex items-center gap-2"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
@@ -463,7 +463,7 @@ const Jobs = () => {
                 >
                   <Send size={16} />
                   Envoyer ma candidature
-                </motion.a>
+                </motion.button>
                 <Link
                   to="/"
                   className="btn-premium btn-premium-secondary inline-flex items-center gap-2 text-sm"
@@ -479,6 +479,12 @@ const Jobs = () => {
 
       {/* Footer */}
       <Footer />
+
+      {/* Spontaneous application modal — no specific job targeted */}
+      <ApplicationModal
+        open={spontaneousOpen}
+        onOpenChange={setSpontaneousOpen}
+      />
     </div>
   );
 };

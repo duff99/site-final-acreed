@@ -7,11 +7,11 @@
     "strict": false,
     "skipLibCheck": true,
     "outDir": "dist",
-    "rootDir": "src",
-    "declaration": true,
+    "rootDirs": ["./src", "../shared"],
+    "declaration": false,
+    "sourceMap": true,
+    "noEmitOnError": false,
     "resolveJsonModule": true,
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
     "baseUrl": "..",
     "paths": {
       "@shared/*": ["./shared/*"]

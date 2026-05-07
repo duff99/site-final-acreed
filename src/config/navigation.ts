@@ -11,6 +11,7 @@ export const navLinks: NavLink[] = [
   { href: '#about', label: 'Crédo' },
   { href: '#team', label: "L'Équipe" },
   { href: '#histoire', label: 'À propos' },
+  { href: '#clients', label: 'Nos clients' },
 ];
 
 export const ctaLink = {
