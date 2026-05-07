@@ -6,9 +6,13 @@ const JOB_VALIDITY_DAYS = 60;
 /**
  * Renders a hidden <script type="application/ld+json"> for a single JobPosting.
  * Google uses this for rich results in search and Google Jobs.
+ *
+ * @param canonicalUrl - When provided, used as the `url` field of the schema.
+ *   Defaults to the listing page URL for backward compatibility.
  */
-const JobJsonLd = ({ job }: { job: Job }) => {
+const JobJsonLd = ({ job, canonicalUrl }: { job: Job; canonicalUrl?: string }) => {
   const validThrough = computeValidThrough(job.publishedDate);
+  const jobUrl = canonicalUrl ?? `${SITE_URL}/offres`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -17,6 +21,7 @@ const JobJsonLd = ({ job }: { job: Job }) => {
     description: job.fullDescription,
     datePosted: job.publishedDate,
     validThrough,
+    url: jobUrl,
     employmentType: mapEmploymentType(job.type),
     jobLocation: {
       '@type': 'Place',

@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Briefcase, Plus, CheckCircle, XCircle } from 'lucide-react';
+import { Briefcase, Plus, CheckCircle, XCircle, Mail, FileText } from 'lucide-react';
 import { useAdminJobs } from '@/hooks/use-jobs';
+import { useAdminContactMessages } from '@/hooks/use-admin-contact';
+import { useAdminApplications } from '@/hooks/use-admin-applications';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,16 +10,21 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminDashboard() {
   const { data: jobs, isLoading } = useAdminJobs();
+  const { data: messages, isLoading: isLoadingMessages } = useAdminContactMessages();
+  const { data: applications, isLoading: isLoadingApplications } = useAdminApplications();
   const { hasPermission } = useAuth();
 
   const totalJobs = jobs?.length || 0;
   const activeJobs = jobs?.filter((j) => j.isActive).length || 0;
   const inactiveJobs = totalJobs - activeJobs;
 
+  const unreadMessages = messages?.filter((m) => !m.isRead).length ?? undefined;
+  const newApplications = applications?.filter((a) => a.status === 'new').length ?? undefined;
+
   const stats = [
-    { label: 'Total offres', value: totalJobs, icon: Briefcase, color: 'text-white' },
-    { label: 'Actives', value: activeJobs, icon: CheckCircle, color: 'text-green-400' },
-    { label: 'Inactives', value: inactiveJobs, icon: XCircle, color: 'text-white/40' },
+    { label: 'Total offres', value: totalJobs, icon: Briefcase, color: 'text-white', loading: isLoading, to: null },
+    { label: 'Actives', value: activeJobs, icon: CheckCircle, color: 'text-green-400', loading: isLoading, to: null },
+    { label: 'Inactives', value: inactiveJobs, icon: XCircle, color: 'text-white/40', loading: isLoading, to: null },
   ];
 
   return (
@@ -49,7 +56,7 @@ export default function AdminDashboard() {
               <stat.icon className={`w-4 h-4 ${stat.color}`} />
             </CardHeader>
             <CardContent>
-              {isLoading ? (
+              {stat.loading ? (
                 <Skeleton className="h-8 w-16 bg-white/10" />
               ) : (
                 <div className={`text-3xl font-bold ${stat.color}`}>{stat.value}</div>
@@ -57,6 +64,44 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <Link to="/admin/messages" className="block">
+          <Card className="admin-card transition-colors hover:bg-white/[0.07]">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-white/60">
+                Messages non lus
+              </CardTitle>
+              <Mail className="w-4 h-4 text-white" />
+            </CardHeader>
+            <CardContent>
+              {isLoadingMessages ? (
+                <Skeleton className="h-8 w-16 bg-white/10" />
+              ) : (
+                <div className="text-3xl font-bold text-white">{unreadMessages ?? '—'}</div>
+              )}
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link to="/admin/candidatures" className="block">
+          <Card className="admin-card transition-colors hover:bg-white/[0.07]">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-white/60">
+                Nouvelles candidatures
+              </CardTitle>
+              <FileText className="w-4 h-4 text-white" />
+            </CardHeader>
+            <CardContent>
+              {isLoadingApplications ? (
+                <Skeleton className="h-8 w-16 bg-white/10" />
+              ) : (
+                <div className="text-3xl font-bold text-white">{newApplications ?? '—'}</div>
+              )}
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       <Card className="admin-card">

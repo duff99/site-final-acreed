@@ -254,7 +254,6 @@
 a.glass-stat-card.highlight-link {
     text-decoration: none;
     color: #ffffff;
-    cursor: pointer;
     border-color: #dbcca5;
     box-shadow: 0 0 30px rgba(219, 204, 165, 0.4), inset 0 0 20px rgba(219, 204, 165, 0.1);
     animation: pulseHalo 2.5s infinite;

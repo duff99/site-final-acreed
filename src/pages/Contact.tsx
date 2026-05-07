@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
@@ -14,6 +16,19 @@ import {
   MessageCircle,
   Loader2,
 } from 'lucide-react';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
+import { apiClient } from '@/lib/api';
+import { createContactSchema } from '@shared/schemas';
+import type { CreateContactInput } from '@shared/types';
 import SkipToContent from '@/components/SkipToContent';
 import SEO from '@/components/SEO';
 import Navigation from '@/components/Navigation';
@@ -43,94 +58,73 @@ const Contact = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [consent, setConsent] = useState(false);
-  const [consentError, setConsentError] = useState<string | null>(null);
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-    // B2B fields (Recrutement / Consulting)
-    company: '',
-    positions: '',
-    timeline: '',
-    // B2C fields (Candidature spontanée)
-    preferredSector: '',
-    availability: '',
-    // Honeypot — must stay empty. Hidden from real users via aria + offscreen
-    // styling. Bots that auto-fill every input populate it; the API silently
-    // drops those submissions.
-    website: '',
+  // Extra UI-only fields that get merged into message before sending
+  const [b2bFields, setB2bFields] = useState({ company: '', positions: '', timeline: '' });
+  const [b2cFields, setB2cFields] = useState({ preferredSector: '', availability: '' });
+
+  const form = useForm<CreateContactInput>({
+    resolver: zodResolver(createContactSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      subject: 'Recrutement',
+      message: '',
+      consent: false as unknown as true,
+    },
   });
 
-  const isB2B = form.subject === 'Recrutement' || form.subject === 'Consulting';
-  const isB2C = form.subject === 'Candidature spontanée';
+  const watchedSubject = form.watch('subject');
+  const isB2B = watchedSubject === 'Recrutement' || watchedSubject === 'Consulting';
+  const isB2C = watchedSubject === 'Candidature spontanée';
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
-  ) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setConsentError(null);
-    if (!consent) {
-      setConsentError('Le consentement au traitement des données est requis');
-      return;
-    }
+  const onSubmit = async (data: CreateContactInput) => {
     setIsSubmitting(true);
-    setSubmitError(null);
-
     try {
-      // Enrich message with conditional fields
-      let enrichedMessage = form.message;
+      // Enrich message with conditional UI-only fields
+      let enrichedMessage = data.message;
       if (isB2B) {
         const extras = [
-          form.company && `Entreprise : ${form.company}`,
-          form.positions && `Postes : ${form.positions}`,
-          form.timeline && `Delai : ${form.timeline}`,
+          b2bFields.company && `Entreprise : ${b2bFields.company}`,
+          b2bFields.positions && `Postes : ${b2bFields.positions}`,
+          b2bFields.timeline && `Delai : ${b2bFields.timeline}`,
         ].filter(Boolean);
         if (extras.length) enrichedMessage = `${extras.join(' | ')}\n\n${enrichedMessage}`;
       }
       if (isB2C) {
         const extras = [
-          form.preferredSector && `Secteur : ${form.preferredSector}`,
-          form.availability && `Disponibilite : ${form.availability}`,
+          b2cFields.preferredSector && `Secteur : ${b2cFields.preferredSector}`,
+          b2cFields.availability && `Disponibilite : ${b2cFields.availability}`,
         ].filter(Boolean);
         if (extras.length) enrichedMessage = `${extras.join(' | ')}\n\n${enrichedMessage}`;
       }
 
-      const API_BASE = import.meta.env.VITE_API_URL || '/api';
-      const res = await fetch(`${API_BASE}/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          subject: form.subject,
-          message: enrichedMessage,
-          consent: true,
-          website: form.website,
-        }),
+      await apiClient.sendContact({
+        ...data,
+        message: enrichedMessage,
+        website: honeypotRef.current?.value ?? '',
       });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({ message: 'Erreur inconnue' }));
-        throw new Error(data.message);
-      }
-
+      toast({
+        title: 'Message envoyé !',
+        description: 'Notre équipe vous recontactera dans les plus brefs délais.',
+      });
+      form.reset();
+      setB2bFields({ company: '', positions: '', timeline: '' });
+      setB2cFields({ preferredSector: '', availability: '' });
       setSubmitSuccess(true);
-      setForm({ name: '', email: '', phone: '', subject: '', message: '', company: '', positions: '', timeline: '', preferredSector: '', availability: '', website: '' });
-      setConsent(false);
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Une erreur est survenue');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Une erreur est survenue';
+      toast({
+        title: 'Erreur',
+        description: message,
+        variant: 'destructive',
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -374,331 +368,333 @@ const Contact = () => {
                     </motion.button>
                   </motion.div>
                 ) : (
-                <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-                  {/* Honeypot — invisible to humans, irresistible to bots */}
-                  <div
-                    aria-hidden="true"
-                    style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}
-                  >
-                    <label htmlFor="contact-website">Ne pas remplir</label>
-                    <input
-                      id="contact-website"
-                      type="text"
-                      name="website"
-                      tabIndex={-1}
-                      autoComplete="off"
-                      value={form.website}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  {submitError && (
-                    <div className="p-4 border border-red-500/20 bg-red-500/5 rounded-xl text-sm text-red-400">
-                      {submitError}
-                    </div>
-                  )}
-
-                  {/* Name */}
-                  <div>
-                    <label
-                      htmlFor="contact-name"
-                      className={labelClasses}
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 relative z-10">
+                    {/* Honeypot — invisible to humans, irresistible to bots */}
+                    <div
+                      aria-hidden="true"
+                      style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}
                     >
-                      <User size={13} className="text-[#dbcca5]/80" />
-                      Nom complet
-                    </label>
-                    <input
-                      id="contact-name"
-                      type="text"
+                      <label htmlFor="contact-website">Ne pas remplir</label>
+                      <input
+                        ref={honeypotRef}
+                        id="contact-website"
+                        type="text"
+                        name="website"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        defaultValue=""
+                      />
+                    </div>
+
+                    {/* Name */}
+                    <FormField
+                      control={form.control}
                       name="name"
-                      value={form.name}
-                      onChange={handleChange}
-                      placeholder="Votre nom et prénom"
-                      className={inputClasses}
-                      required
-                    />
-                  </div>
-
-                  {/* Email + Phone row */}
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <div>
-                      <label
-                        htmlFor="contact-email"
-                        className={labelClasses}
-                      >
-                        <Mail size={13} className="text-[#dbcca5]/80" />
-                        Email
-                      </label>
-                      <input
-                        id="contact-email"
-                        type="email"
-                        name="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        placeholder="votre@email.com"
-                        className={inputClasses}
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="contact-phone"
-                        className={labelClasses}
-                      >
-                        <Phone size={13} className="text-[#dbcca5]/80" />
-                        Téléphone
-                      </label>
-                      <input
-                        id="contact-phone"
-                        type="tel"
-                        name="phone"
-                        value={form.phone}
-                        onChange={handleChange}
-                        placeholder="+33 6 00 00 00 00"
-                        className={inputClasses}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Subject */}
-                  <div>
-                    <label
-                      htmlFor="contact-subject"
-                      className={labelClasses}
-                    >
-                      <MessageSquare size={13} className="text-[#dbcca5]/80" />
-                      Sujet
-                    </label>
-                    <select
-                      id="contact-subject"
-                      name="subject"
-                      value={form.subject}
-                      onChange={handleChange}
-                      className={`${inputClasses} appearance-none`}
-                      required
-                    >
-                      <option value="" disabled>
-                        Sélectionnez un sujet
-                      </option>
-                      {SUBJECT_OPTIONS.map((option) => (
-                        <option
-                          key={option}
-                          value={option}
-                          className="bg-[#121212] text-white"
-                        >
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* B2B conditional fields */}
-                  <AnimatePresence>
-                    {isB2B && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="space-y-6 overflow-hidden"
-                      >
-                        <div>
-                          <label htmlFor="contact-company" className={labelClasses}>
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={labelClasses}>
                             <User size={13} className="text-[#dbcca5]/80" />
-                            Entreprise
-                          </label>
-                          <input
-                            id="contact-company"
-                            type="text"
-                            name="company"
-                            value={form.company}
-                            onChange={handleChange}
-                            placeholder="Nom de votre entreprise"
-                            className={inputClasses}
-                          />
-                        </div>
-                        <div className="grid sm:grid-cols-2 gap-6">
-                          <div>
-                            <label htmlFor="contact-positions" className={labelClasses}>
-                              <MessageSquare size={13} className="text-[#dbcca5]/80" />
-                              Nombre de postes
-                            </label>
-                            <select
-                              id="contact-positions"
-                              name="positions"
-                              value={form.positions}
-                              onChange={handleChange}
-                              className={`${inputClasses} appearance-none`}
-                            >
-                              <option value="" className="bg-[#121212] text-white">Non précisé</option>
-                              <option value="1" className="bg-[#121212] text-white">1 poste</option>
-                              <option value="2-5" className="bg-[#121212] text-white">2-5 postes</option>
-                              <option value="5-10" className="bg-[#121212] text-white">5-10 postes</option>
-                              <option value="10+" className="bg-[#121212] text-white">10+ postes</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label htmlFor="contact-timeline" className={labelClasses}>
-                              <Clock size={13} className="text-[#dbcca5]/80" />
-                              Délai souhaité
-                            </label>
-                            <select
-                              id="contact-timeline"
-                              name="timeline"
-                              value={form.timeline}
-                              onChange={handleChange}
-                              className={`${inputClasses} appearance-none`}
-                            >
-                              <option value="" className="bg-[#121212] text-white">Non précisé</option>
-                              <option value="urgent" className="bg-[#121212] text-white">Urgent (- de 2 semaines)</option>
-                              <option value="1-month" className="bg-[#121212] text-white">Sous 1 mois</option>
-                              <option value="3-months" className="bg-[#121212] text-white">Sous 3 mois</option>
-                              <option value="flexible" className="bg-[#121212] text-white">Flexible</option>
-                            </select>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* B2C conditional fields */}
-                  <AnimatePresence>
-                    {isB2C && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="space-y-6 overflow-hidden"
-                      >
-                        <div className="grid sm:grid-cols-2 gap-6">
-                          <div>
-                            <label htmlFor="contact-sector" className={labelClasses}>
-                              <MessageSquare size={13} className="text-[#dbcca5]/80" />
-                              Secteur préféré
-                            </label>
-                            <select
-                              id="contact-sector"
-                              name="preferredSector"
-                              value={form.preferredSector}
-                              onChange={handleChange}
-                              className={`${inputClasses} appearance-none`}
-                            >
-                              <option value="" className="bg-[#121212] text-white">Tous secteurs</option>
-                              <option value="Telecoms" className="bg-[#121212] text-white">Télécoms</option>
-                              <option value="IT" className="bg-[#121212] text-white">IT / Digital</option>
-                              <option value="Cyber" className="bg-[#121212] text-white">Cybersécurité</option>
-                              <option value="Energie" className="bg-[#121212] text-white">Énergie</option>
-                              <option value="Industrie" className="bg-[#121212] text-white">Industrie</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label htmlFor="contact-availability" className={labelClasses}>
-                              <Clock size={13} className="text-[#dbcca5]/80" />
-                              Disponibilité
-                            </label>
-                            <select
-                              id="contact-availability"
-                              name="availability"
-                              value={form.availability}
-                              onChange={handleChange}
-                              className={`${inputClasses} appearance-none`}
-                            >
-                              <option value="" className="bg-[#121212] text-white">Non précisé</option>
-                              <option value="immediate" className="bg-[#121212] text-white">Immédiate</option>
-                              <option value="1-month" className="bg-[#121212] text-white">Sous 1 mois</option>
-                              <option value="3-months" className="bg-[#121212] text-white">Sous 3 mois</option>
-                              <option value="listening" className="bg-[#121212] text-white">En veille</option>
-                            </select>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Message */}
-                  <div>
-                    <label
-                      htmlFor="contact-message"
-                      className={labelClasses}
-                    >
-                      <MessageSquare size={13} className="text-[#dbcca5]/80" />
-                      Message
-                    </label>
-                    <textarea
-                      id="contact-message"
-                      name="message"
-                      value={form.message}
-                      onChange={handleChange}
-                      placeholder="Décrivez votre projet ou votre besoin..."
-                      rows={5}
-                      className={`${inputClasses} resize-none`}
-                      required
+                            Nom complet
+                          </FormLabel>
+                          <FormControl>
+                            <input
+                              id="contact-name"
+                              type="text"
+                              placeholder="Votre nom et prénom"
+                              className={inputClasses}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs text-red-400 mt-1 pl-1" />
+                        </FormItem>
+                      )}
                     />
-                  </div>
 
-                  {/* Consent (RGPD) */}
-                  <div className="flex items-start gap-3 rounded-lg border border-white/[0.08] p-3 bg-white/[0.02]">
-                    <input
-                      id="contact-consent"
-                      type="checkbox"
-                      checked={consent}
-                      onChange={(e) => {
-                        setConsent(e.target.checked);
-                        if (e.target.checked) setConsentError(null);
-                      }}
-                      className="mt-1 h-4 w-4 accent-[#dbcca5] cursor-pointer"
-                      aria-required="true"
+                    {/* Email + Phone row */}
+                    <div className="grid sm:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={labelClasses}>
+                              <Mail size={13} className="text-[#dbcca5]/80" />
+                              Email
+                            </FormLabel>
+                            <FormControl>
+                              <input
+                                id="contact-email"
+                                type="email"
+                                placeholder="votre@email.com"
+                                className={inputClasses}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs text-red-400 mt-1 pl-1" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={labelClasses}>
+                              <Phone size={13} className="text-[#dbcca5]/80" />
+                              Téléphone
+                            </FormLabel>
+                            <FormControl>
+                              <input
+                                id="contact-phone"
+                                type="tel"
+                                placeholder="+33 6 00 00 00 00"
+                                className={inputClasses}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs text-red-400 mt-1 pl-1" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Subject */}
+                    <FormField
+                      control={form.control}
+                      name="subject"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={labelClasses}>
+                            <MessageSquare size={13} className="text-[#dbcca5]/80" />
+                            Sujet
+                          </FormLabel>
+                          <FormControl>
+                            <select
+                              id="contact-subject"
+                              className={`${inputClasses} appearance-none`}
+                              {...field}
+                            >
+                              {SUBJECT_OPTIONS.map((option) => (
+                                <option
+                                  key={option}
+                                  value={option}
+                                  className="bg-[#121212] text-white"
+                                >
+                                  {option}
+                                </option>
+                              ))}
+                            </select>
+                          </FormControl>
+                          <FormMessage className="text-xs text-red-400 mt-1 pl-1" />
+                        </FormItem>
+                      )}
                     />
-                    <div className="flex-1">
-                      <label
-                        htmlFor="contact-consent"
-                        className="text-sm text-white/70 leading-snug font-light cursor-pointer"
-                      >
-                        J'accepte que mes données soient traitées pour répondre à ma demande,
-                        conformément à la{' '}
-                        <Link
-                          to="/confidentialite"
-                          target="_blank"
-                          className="text-[#dbcca5] underline hover:text-white"
+
+                    {/* B2B conditional fields */}
+                    <AnimatePresence>
+                      {isB2B && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="space-y-6 overflow-hidden"
                         >
-                          politique de confidentialité
-                        </Link>
-                        .
-                      </label>
-                      {consentError && (
-                        <p className="text-xs text-red-400 mt-1">{consentError}</p>
+                          <div>
+                            <label htmlFor="contact-company" className={labelClasses}>
+                              <User size={13} className="text-[#dbcca5]/80" />
+                              Entreprise
+                            </label>
+                            <input
+                              id="contact-company"
+                              type="text"
+                              value={b2bFields.company}
+                              onChange={(e) => setB2bFields((p) => ({ ...p, company: e.target.value }))}
+                              placeholder="Nom de votre entreprise"
+                              className={inputClasses}
+                            />
+                          </div>
+                          <div className="grid sm:grid-cols-2 gap-6">
+                            <div>
+                              <label htmlFor="contact-positions" className={labelClasses}>
+                                <MessageSquare size={13} className="text-[#dbcca5]/80" />
+                                Nombre de postes
+                              </label>
+                              <select
+                                id="contact-positions"
+                                value={b2bFields.positions}
+                                onChange={(e) => setB2bFields((p) => ({ ...p, positions: e.target.value }))}
+                                className={`${inputClasses} appearance-none`}
+                              >
+                                <option value="" className="bg-[#121212] text-white">Non précisé</option>
+                                <option value="1" className="bg-[#121212] text-white">1 poste</option>
+                                <option value="2-5" className="bg-[#121212] text-white">2-5 postes</option>
+                                <option value="5-10" className="bg-[#121212] text-white">5-10 postes</option>
+                                <option value="10+" className="bg-[#121212] text-white">10+ postes</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label htmlFor="contact-timeline" className={labelClasses}>
+                                <Clock size={13} className="text-[#dbcca5]/80" />
+                                Délai souhaité
+                              </label>
+                              <select
+                                id="contact-timeline"
+                                value={b2bFields.timeline}
+                                onChange={(e) => setB2bFields((p) => ({ ...p, timeline: e.target.value }))}
+                                className={`${inputClasses} appearance-none`}
+                              >
+                                <option value="" className="bg-[#121212] text-white">Non précisé</option>
+                                <option value="urgent" className="bg-[#121212] text-white">Urgent (- de 2 semaines)</option>
+                                <option value="1-month" className="bg-[#121212] text-white">Sous 1 mois</option>
+                                <option value="3-months" className="bg-[#121212] text-white">Sous 3 mois</option>
+                                <option value="flexible" className="bg-[#121212] text-white">Flexible</option>
+                              </select>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* B2C conditional fields */}
+                    <AnimatePresence>
+                      {isB2C && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="space-y-6 overflow-hidden"
+                        >
+                          <div className="grid sm:grid-cols-2 gap-6">
+                            <div>
+                              <label htmlFor="contact-sector" className={labelClasses}>
+                                <MessageSquare size={13} className="text-[#dbcca5]/80" />
+                                Secteur préféré
+                              </label>
+                              <select
+                                id="contact-sector"
+                                value={b2cFields.preferredSector}
+                                onChange={(e) => setB2cFields((p) => ({ ...p, preferredSector: e.target.value }))}
+                                className={`${inputClasses} appearance-none`}
+                              >
+                                <option value="" className="bg-[#121212] text-white">Tous secteurs</option>
+                                <option value="Telecoms" className="bg-[#121212] text-white">Télécoms</option>
+                                <option value="IT" className="bg-[#121212] text-white">IT / Digital</option>
+                                <option value="Cyber" className="bg-[#121212] text-white">Cybersécurité</option>
+                                <option value="Energie" className="bg-[#121212] text-white">Énergie</option>
+                                <option value="Industrie" className="bg-[#121212] text-white">Industrie</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label htmlFor="contact-availability" className={labelClasses}>
+                                <Clock size={13} className="text-[#dbcca5]/80" />
+                                Disponibilité
+                              </label>
+                              <select
+                                id="contact-availability"
+                                value={b2cFields.availability}
+                                onChange={(e) => setB2cFields((p) => ({ ...p, availability: e.target.value }))}
+                                className={`${inputClasses} appearance-none`}
+                              >
+                                <option value="" className="bg-[#121212] text-white">Non précisé</option>
+                                <option value="immediate" className="bg-[#121212] text-white">Immédiate</option>
+                                <option value="1-month" className="bg-[#121212] text-white">Sous 1 mois</option>
+                                <option value="3-months" className="bg-[#121212] text-white">Sous 3 mois</option>
+                                <option value="listening" className="bg-[#121212] text-white">En veille</option>
+                              </select>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Message */}
+                    <FormField
+                      control={form.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={labelClasses}>
+                            <MessageSquare size={13} className="text-[#dbcca5]/80" />
+                            Message
+                          </FormLabel>
+                          <FormControl>
+                            <textarea
+                              id="contact-message"
+                              placeholder="Décrivez votre projet ou votre besoin..."
+                              rows={5}
+                              className={`${inputClasses} resize-none`}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs text-red-400 mt-1 pl-1" />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Consent (RGPD) */}
+                    <FormField
+                      control={form.control}
+                      name="consent"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start gap-3 rounded-lg border border-white/[0.08] p-3 bg-white/[0.02]">
+                          <FormControl>
+                            <Checkbox
+                              id="contact-consent"
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              className="mt-1 border-white/30 data-[state=checked]:bg-white data-[state=checked]:text-black"
+                            />
+                          </FormControl>
+                          <div className="flex-1 space-y-1">
+                            <FormLabel className="text-sm text-white/70 leading-snug font-light">
+                              J'accepte que mes données soient traitées pour répondre à ma demande,
+                              conformément à la{' '}
+                              <Link
+                                to="/confidentialite"
+                                target="_blank"
+                                className="text-[#dbcca5] underline hover:text-white"
+                              >
+                                politique de confidentialité
+                              </Link>
+                              .
+                            </FormLabel>
+                            <FormMessage className="text-xs text-red-400" />
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Submit */}
+                    <div className="pt-6 mt-6 border-t border-white/5">
+                      <motion.button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="group relative w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#dbcca5] text-[#0a0a0b] text-[13px] uppercase tracking-[2px] font-semibold rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(219,204,165,0.15)] disabled:opacity-60"
+                        whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
+                        whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+                        aria-label="Envoyer le message"
+                      >
+                        <span className="relative z-10 flex items-center gap-2">
+                          {isSubmitting ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
+                          {isSubmitting ? 'Envoi en cours...' : 'Finaliser l\'envoi'}
+                        </span>
+                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                      </motion.button>
+
+                      {watchedSubject === 'Candidature spontanée' && (
+                        <p className="text-[11px] text-white/40 text-center mt-4 leading-relaxed">
+                          Pour postuler à une offre précise avec votre CV, rendez-vous sur la page{' '}
+                          <Link to="/offres" className="text-[#dbcca5] hover:underline">
+                            Nos offres
+                          </Link>
+                          .
+                        </p>
                       )}
                     </div>
-                  </div>
-
-                  {/* Submit */}
-                  <div className="pt-6 mt-6 border-t border-white/5">
-                    <motion.button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="group relative w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#dbcca5] text-[#0a0a0b] text-[13px] uppercase tracking-[2px] font-semibold rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(219,204,165,0.15)] disabled:opacity-60"
-                      whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
-                      whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
-                      aria-label="Envoyer le message"
-                    >
-                      <span className="relative z-10 flex items-center gap-2">
-                        {isSubmitting ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
-                        {isSubmitting ? 'Envoi en cours...' : 'Finaliser l\'envoi'}
-                      </span>
-                      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                    </motion.button>
-
-                    {form.subject === 'Candidature spontanée' && (
-                      <p className="text-[11px] text-white/40 text-center mt-4 leading-relaxed">
-                        Pour postuler à une offre précise avec votre CV, rendez-vous sur la page{' '}
-                        <Link to="/offres" className="text-[#dbcca5] hover:underline">
-                          Nos offres
-                        </Link>
-                        .
-                      </p>
-                    )}
-                  </div>
-                </form>
+                  </form>
+                </Form>
                 )}
                 </AnimatePresence>
               </SpotlightCard>

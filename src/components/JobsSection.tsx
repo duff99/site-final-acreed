@@ -40,7 +40,7 @@ const JobsSection = () => {
           )}
           {displayedJobs.map((job, index) => (
             <AnimatedSection key={job.id} delay={index * 0.1}>
-              <Link to={`/offres#${job.id}`} className="block">
+              <Link to={`/offres/${job.id}`} className="block">
                 <SpotlightCard className="p-8">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex-1">

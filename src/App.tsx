@@ -17,6 +17,7 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 // Lazy-loaded routes (code splitting)
 const AcreedVisionPremium = lazy(() => import("./pages/AcreedVisionPremium"));
 const Jobs = lazy(() => import("./pages/Jobs"));
+const JobDetail = lazy(() => import("./pages/JobDetail"));
 const Contact = lazy(() => import("./pages/Contact"));
 const MentionsLegales = lazy(() => import("./pages/MentionsLegales"));
 const Confidentialite = lazy(() => import("./pages/Confidentialite"));
@@ -51,6 +52,7 @@ const App = () => (
               {/* Public routes */}
               <Route path="/" element={<Index />} />
               <Route path="/vision" element={<AcreedVisionPremium />} />
+              <Route path="/offres/:id" element={<JobDetail />} />
               <Route path="/offres" element={<Jobs />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />

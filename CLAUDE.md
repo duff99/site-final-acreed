@@ -118,7 +118,7 @@ SQLite via Drizzle ORM + @libsql/client. Tables created inline on server startup
 
 ## Styling Conventions
 
-Monochrome black/white/gray only — no colors. All theming via CSS custom properties (HSL) in `src/index.css`.
+Palette: black, white, gray + gold accent (`#dbcca5`) used for CTAs and premium accents. All theming via HSL CSS custom properties in `src/index.css`.
 
 **Fonts**: Playfair Display (headings, `.font-playfair`), Inter (body)
 
