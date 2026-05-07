@@ -9,6 +9,7 @@ import {
   Clock,
   Calendar,
   CheckCircle2,
+  ExternalLink,
   Wifi,
   Send,
   Search,
@@ -211,7 +212,15 @@ const JobCard = ({ job }: { job: Job }) => {
             <Send size={16} />
             Postuler
           </motion.button>
-          <span className="text-xs text-white/30">
+          <Link
+            to={`/offres/${job.id}`}
+            className="btn-premium btn-premium-secondary inline-flex items-center gap-2 text-sm"
+            aria-label={`Voir le détail de l'offre ${job.title}`}
+          >
+            <ExternalLink size={16} />
+            Voir le détail
+          </Link>
+          <span className="text-xs text-white/30 sm:ml-auto">
             Ref : {job.id}
           </span>
         </div>

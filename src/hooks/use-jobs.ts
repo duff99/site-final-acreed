@@ -12,6 +12,14 @@ export function useJobs(sector?: string) {
   });
 }
 
+export function useJob(id: string | undefined) {
+  return useQuery({
+    queryKey: ['jobs', id],
+    queryFn: () => apiClient.getJob(id!),
+    enabled: !!id,
+  });
+}
+
 export function useAdminJobs() {
   return useQuery({
     queryKey: ['admin', 'jobs'],
