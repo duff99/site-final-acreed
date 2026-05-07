@@ -63,7 +63,7 @@ const TeamSection = () => {
             </div>
 
             {/* Steven */}
-            <div className={`panel${isMobile && activePanel === 1 ? ' is-active' : ''}`} style={{ backgroundImage: "url('/images/steven.jpg')" }} onClick={() => handlePanelClick(1)}>
+            <div className={`panel${isMobile && activePanel === 1 ? ' is-active' : ''}`} style={{ backgroundImage: "url('/images/photo_steven.jpg')" }} onClick={() => handlePanelClick(1)}>
               <div className="panel-content">
                 <div className="step-number">CEO & Founder</div>
                 <h3 className="title">Steven</h3>

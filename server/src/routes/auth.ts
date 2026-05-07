@@ -12,7 +12,7 @@ import { requireAuth, type AuthRequest } from '../middleware/auth.js';
 const router = Router();
 
 // Refresh token cookie + lifetime constants.
-const REFRESH_COOKIE_NAME = 'refreshToken';
+const REFRESH_COOKIE_NAME = 'acreed_session';
 const REFRESH_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
 // Account lockout policy.

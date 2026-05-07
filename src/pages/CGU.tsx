@@ -190,14 +190,9 @@ const CGU = () => (
 
               <Section title="11. Droit applicable et juridiction">
                 <p>
-                  Les présentes CGU sont régies par le droit français. En cas de litige et à
-                  défaut de résolution amiable, les tribunaux français seront seuls compétents,
-                  sous réserve des règles d'ordre public applicables aux consommateurs.
-                </p>
-                <p>
-                  Conformément à l'article L.612-1 du Code de la consommation, l'utilisateur
-                  consommateur peut recourir gratuitement au médiateur de la consommation en vue
-                  de la résolution amiable d'un litige.
+                  Les présentes CGU sont régies par le droit français. Le site s'adresse à une
+                  clientèle professionnelle (B2B). En cas de litige et à défaut de résolution
+                  amiable, les tribunaux français seront seuls compétents.
                 </p>
               </Section>
 

@@ -17,7 +17,7 @@ export const team: TeamMember[] = [
     name: 'Steven',
     role: 'PDG & Fondateur',
     bio: 'Passionné par les télécoms depuis 2011, avec une expérience confirmée en missions de consulting auprès de PME et de grands comptes.',
-    image: '/images/steven.jpg',
+    image: '/images/photo_steven.jpg',
     linkedin: 'https://www.linkedin.com/in/steven-breuil-824330110/',
     email: 'steven.breuil@acreedconsulting.com',
   },
