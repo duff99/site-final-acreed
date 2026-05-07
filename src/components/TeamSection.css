@@ -122,8 +122,7 @@
     height: 100%;
     border-radius: 28px;
     background-color: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    /* backdrop-filter removed — invisible behind the opaque background-image and very GPU-heavy */
     border: 1px solid #2a2a2a;
     overflow: hidden;
     display: flex;
@@ -131,16 +130,23 @@
     justify-content: flex-end;
     padding: 25px;
     filter: none;
-    transition: flex var(--transition-smooth),
-        transform var(--transition-smooth),
-        filter var(--transition-smooth),
-        box-shadow var(--transition-smooth),
-        border-color var(--transition-smooth),
-        opacity var(--transition-smooth);
+    /* Animate only what's strictly needed; box-shadow + border-color get a shorter timing
+       to avoid stacking long transitions on top of the layout-triggering flex change. */
+    transition: flex 0.55s cubic-bezier(0.25, 1, 0.2, 1),
+        transform 0.55s cubic-bezier(0.25, 1, 0.2, 1),
+        opacity 0.4s ease,
+        filter 0.4s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
     background-size: cover;
     background-position: center;
     background-blend-mode: overlay;
     box-shadow: inset 0 -150px 100px -30px rgba(0, 0, 0, 0.4);
+}
+
+/* Hint the GPU only while the user is actively interacting with the row */
+.ecosystem-container:hover .panel {
+    will-change: flex, transform, opacity, filter;
 }
 
 /* Overlay sombre sur les portraits */
@@ -302,7 +308,15 @@
     background: #dbcca5;
     border-radius: 2px 2px 0 0;
     transform-origin: bottom;
+    /* Animation paused by default — only runs while the panel is hovered or active.
+       Saves continuous GPU draw on the 3 inner micro-animations. */
     animation: growBar 1.5s infinite alternate ease-in-out;
+    animation-play-state: paused;
+}
+
+.ecosystem-container .panel:hover .chart-bar,
+.ecosystem-container .panel.is-active .chart-bar {
+    animation-play-state: running;
 }
 
 .ecosystem-container .chart-bar:nth-child(1) {
@@ -357,6 +371,12 @@
     border: 1px solid #dbcca5;
     border-radius: 50%;
     animation: rippleExpand 2s infinite ease-out;
+    animation-play-state: paused;
+}
+
+.ecosystem-container .panel:hover .ripple-ring,
+.ecosystem-container .panel.is-active .ripple-ring {
+    animation-play-state: running;
 }
 
 .ecosystem-container .ripple-ring:nth-child(2) {
@@ -396,6 +416,12 @@
     background: #dbcca5;
     border-radius: 2px;
     animation: fillKpi 2s infinite alternate ease-in-out;
+    animation-play-state: paused;
+}
+
+.ecosystem-container .panel:hover .kpi-fill,
+.ecosystem-container .panel.is-active .kpi-fill {
+    animation-play-state: running;
 }
 
 .ecosystem-container .kpi-track:nth-child(1) .kpi-fill {
