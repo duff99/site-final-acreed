@@ -3,10 +3,7 @@ import { Helmet } from 'react-helmet-async';
 const SITE_URL = 'https://site.acreedconsulting.com';
 const SITE_NAME = 'Acreed Consulting';
 
-// Placeholder until a 1200x630 OG image is provided. See
-// memory/project_og_image_pending.md — swap to '/images/og-cover.png' once
-// the asset is shipped.
-const DEFAULT_OG_IMAGE = `${SITE_URL}/images/favicon_footer.png`;
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 interface SEOProps {
   /** Page title — appended with " | Acreed Consulting" automatically unless `bareTitle` is true. */
