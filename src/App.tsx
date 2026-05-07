@@ -1,4 +1,29 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, type ComponentType } from "react";
+
+// Wraps React.lazy with retry-and-reload-on-failure logic. After a deploy, the user's
+// cached HTML may reference chunk hashes that no longer exist on the server (each build
+// produces new hashes); the import then 404s and React Suspense gets stuck on its fallback,
+// which renders a black screen. We catch that, force a single hard reload (sessionStorage
+// guards against an infinite loop) so the browser fetches the up-to-date HTML + chunks.
+const lazyWithReload = <T extends ComponentType<unknown>>(
+  factory: () => Promise<{ default: T }>,
+) =>
+  lazy(async () => {
+    const KEY = 'acreed_chunk_reload';
+    try {
+      const mod = await factory();
+      // Successful import — clear any leftover guard flag so a future stale-cache
+      // failure can also trigger one auto-reload.
+      if (typeof window !== 'undefined') sessionStorage.removeItem(KEY);
+      return mod;
+    } catch (err) {
+      if (typeof window !== 'undefined' && !sessionStorage.getItem(KEY)) {
+        sessionStorage.setItem(KEY, '1');
+        window.location.reload();
+      }
+      throw err;
+    }
+  });
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import ConditionalParticles from "@/components/ConditionalParticles";
@@ -15,23 +40,23 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 // Lazy-loaded routes (code splitting)
-const Jobs = lazy(() => import("./pages/Jobs"));
-const JobDetail = lazy(() => import("./pages/JobDetail"));
-const Contact = lazy(() => import("./pages/Contact"));
-const MentionsLegales = lazy(() => import("./pages/MentionsLegales"));
-const Confidentialite = lazy(() => import("./pages/Confidentialite"));
-const PolitiqueCookies = lazy(() => import("./pages/PolitiqueCookies"));
-const CGU = lazy(() => import("./pages/CGU"));
-const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
-const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
-const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
-const AdminJobList = lazy(() => import("./pages/admin/AdminJobList"));
-const AdminJobForm = lazy(() => import("./pages/admin/AdminJobForm"));
-const AdminUserList = lazy(() => import("./pages/admin/AdminUserList"));
-const AdminUserForm = lazy(() => import("./pages/admin/AdminUserForm"));
-const AdminMessageList = lazy(() => import("./pages/admin/AdminMessageList"));
-const AdminApplicationList = lazy(() => import("./pages/admin/AdminApplicationList"));
-const AdminProfile = lazy(() => import("./pages/admin/AdminProfile"));
+const Jobs = lazyWithReload(() => import("./pages/Jobs"));
+const JobDetail = lazyWithReload(() => import("./pages/JobDetail"));
+const Contact = lazyWithReload(() => import("./pages/Contact"));
+const MentionsLegales = lazyWithReload(() => import("./pages/MentionsLegales"));
+const Confidentialite = lazyWithReload(() => import("./pages/Confidentialite"));
+const PolitiqueCookies = lazyWithReload(() => import("./pages/PolitiqueCookies"));
+const CGU = lazyWithReload(() => import("./pages/CGU"));
+const AdminLogin = lazyWithReload(() => import("./pages/admin/AdminLogin"));
+const AdminLayout = lazyWithReload(() => import("./pages/admin/AdminLayout"));
+const AdminDashboard = lazyWithReload(() => import("./pages/admin/AdminDashboard"));
+const AdminJobList = lazyWithReload(() => import("./pages/admin/AdminJobList"));
+const AdminJobForm = lazyWithReload(() => import("./pages/admin/AdminJobForm"));
+const AdminUserList = lazyWithReload(() => import("./pages/admin/AdminUserList"));
+const AdminUserForm = lazyWithReload(() => import("./pages/admin/AdminUserForm"));
+const AdminMessageList = lazyWithReload(() => import("./pages/admin/AdminMessageList"));
+const AdminApplicationList = lazyWithReload(() => import("./pages/admin/AdminApplicationList"));
+const AdminProfile = lazyWithReload(() => import("./pages/admin/AdminProfile"));
 
 const queryClient = new QueryClient();
 
