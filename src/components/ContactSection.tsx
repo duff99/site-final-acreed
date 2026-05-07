@@ -9,7 +9,7 @@ const ContactSection = () => {
       <AnimatedSection className="cta-content w-full">
         <h2 className="cta-title">
           Donnons de l'élan
-          <em>à vos projets.</em>
+          <em>à vos projets</em>
         </h2>
 
         <p className="cta-desc">
