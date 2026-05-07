@@ -44,7 +44,7 @@ const Footer = () => {
           </div>
 
           <nav className="footer-nav">
-            <a href="mailto:recrutement@acreedconsulting.com">
+            <a href="mailto:contact@acreedconsulting.com">
               <Mail size={16} /> Contact
             </a>
             <a
