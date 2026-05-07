@@ -235,11 +235,13 @@ const Contact = () => {
                       {member.email && (
                         <a
                           href={`mailto:${member.email}`}
-                          className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors justify-center"
+                          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors justify-center"
                           aria-label={`Envoyer un email à ${member.name}`}
                         >
-                          <Mail size={15} className="flex-shrink-0" />
-                          <span className="truncate">{member.email}</span>
+                          <Mail size={13} className="flex-shrink-0" />
+                          <span className="text-[12px] tracking-tight whitespace-nowrap">
+                            {member.email}
+                          </span>
                         </a>
                       )}
 
