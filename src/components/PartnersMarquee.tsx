@@ -101,16 +101,24 @@ const PartnerCard = ({ partner, index }: { partner: BusinessPartner; index: numb
       />
 
       <div className="relative flex flex-col items-center text-center gap-5">
-        {/* Logo or branded placeholder */}
-        <div className="flex h-16 md:h-20 items-center justify-center w-full">
+        {/* Logo or branded placeholder. If the logo is icon-only (no wordmark),
+            render the name next to it for legibility (showName flag). */}
+        <div className="flex h-16 md:h-20 items-center justify-center gap-3 w-full">
           {partner.logo ? (
-            <img
-              src={partner.logo}
-              alt={partner.name}
-              loading="lazy"
-              decoding="async"
-              className="max-h-full max-w-[180px] w-auto object-contain opacity-85 group-hover:opacity-100 transition-opacity duration-500"
-            />
+            <>
+              <img
+                src={partner.logo}
+                alt={partner.name}
+                loading="lazy"
+                decoding="async"
+                className={`max-h-full ${partner.showName ? 'max-w-[64px]' : 'max-w-[180px]'} w-auto object-contain opacity-85 group-hover:opacity-100 transition-opacity duration-500`}
+              />
+              {partner.showName && (
+                <span className="font-display text-2xl md:text-3xl font-semibold text-white/85 group-hover:text-[#dbcca5] transition-colors duration-500 tracking-tight">
+                  {partner.name}
+                </span>
+              )}
+            </>
           ) : (
             <span className="font-display text-2xl md:text-3xl font-semibold text-white/85 group-hover:text-[#dbcca5] transition-colors duration-500 tracking-tight">
               {partner.name}
