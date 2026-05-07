@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/
 
-Sitemap: https://www.acreedconsulting.com/sitemap.xml
+Sitemap: https://site.acreedconsulting.com/sitemap.xml
